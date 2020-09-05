@@ -1,0 +1,30 @@
+aw_user_profile:
+    path: /profile
+    defaults:
+        _controller: AWUserBundle:Default:profile
+
+aw_user_reset_password:
+    path: /reset/password
+    defaults:
+        _controller: AWUserBundle:Default:resetPassword
+
+aw_user_switch:
+    path: /switch
+    defaults:
+        _controller: AWUserBundle:Default:switch
+
+aw_user_param_plans_datatables:
+    path: /param/datatables/state.{_format}
+    defaults:
+        _controller: AWUserBundle:Param:plansDataTablesState
+        _format: json
+    requirements:
+        _format: json
+
+aw_user_param_infos_news_update:
+    path: /param/infos/news/update/{key}.{_format}
+    defaults:
+        _controller: AWUserBundle:Param:infosNewsUpdate
+        _format: json
+    requirements:
+        _format: json

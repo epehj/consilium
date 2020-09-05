@@ -1,0 +1,59 @@
+aw_plans_edit:
+    path: /{element}/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:edit
+    requirements:
+        id: \d+
+        element: commande|site|shipping
+
+aw_plans_edit_receive:
+    path: /receive/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:receive
+
+aw_plans_edit_cancel:
+    path: /cancel/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:cancel
+
+aw_plans_edit_reopen:
+    path: /reopen/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:reopen
+
+aw_plans_edit_clone:
+    path: /clone/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:clone
+
+aw_plans_edit_delete:
+    path: /delete/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:delete
+
+aw_plans_edit_closed:
+    path: /closed/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:closed
+
+aw_plans_edit_det:
+    path: /det/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:editDet
+    requirements:
+        id: \d+
+
+aw_plans_edit_add_det:
+    path: /add/det/{type}/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:addDet
+    requirements:
+        id: \d+
+        type: pe|pi|pc|pm
+
+aw_plans_edit_delete_det:
+    path: /delete/det/{id}
+    defaults:
+        _controller: AWPlansBundle:Edit:deleteDet
+    requirements:
+        id: \d+

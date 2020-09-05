@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "blueimp-file-upload": "9.21.0",
+    "bootstrap-3-typeahead": "4.0.2",
+    "datatables.net": "1.10.16",
+    "datatables.net-responsive": "2.2.1",
+    "googlemaps-js-marker-clusterer": "git://github.com/googlemaps/js-marker-clusterer.git#gh-pages",
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^1.0",
+    "grunt-contrib-copy": "^1.0",
+    "grunt-contrib-cssmin": "^1.0",
+    "grunt-contrib-less": "^1.4",
+    "magnific-popup": "1.1.0",
+    "patternfly": "3.49.0",
+    "patternfly-bootstrap-combobox": "1.1.7",
+    "patternfly-bootstrap-treeview": "2.1.5",
+    "signature_pad": "2.3.2"
+  }
+}

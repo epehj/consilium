@@ -1,0 +1,4 @@
+aw_plans_config_consigne:
+    path: /consigne
+    defaults:
+        _controller: AWPlansBundle:Admin:consigne

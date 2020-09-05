@@ -1,0 +1,27 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<p>L'archive contenant les fichiers nécessaires à la production va se télécharger...</p>
+<p>Vous allez être redirigé dans <span id="timeout">10</span> secondes ou sinon cliquez <a href="{{ path('aw_plans_production_view', {id: commande.id}) }}">ici</a> pour ne pas attendre...</p>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  window.location.href = "{{ path('aw_plans_production_download', {id: commande.id}) }}";
+
+  window.setTimeout(function(){
+    window.location.href = "{{ path('aw_plans_production_view', {id: commande.id}) }}";
+  }, 10000);
+
+  var timeout = 10;
+  window.setInterval(function(){
+    timeout = timeout - 1;
+    $('#timeout').text(timeout);
+  }, 1000);
+});
+</script>
+{% endblock %}

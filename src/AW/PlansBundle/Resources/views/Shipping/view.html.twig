@@ -1,0 +1,63 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Expédition de plans :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include('AWPlansBundle:Shipping:header.html.twig') %}
+
+{% include('AWPlansBundle:Shipping:plans.html.twig') %}
+
+<div class="row toolbar-pf">
+  <div class="col-sm-12">
+    <div class="toolbar-pf-actions">
+      <button class="btn btn-primary" id="viewBL" type="button">Imprimer le bon de livraison</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="fileViewer" tabindex="-1" role="dialog" aria-labelledby="fileViewerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <h4 class="modal-title">Bon de livraison</h4>
+      </div>
+      <div class="modal-body">
+        <div class="embed-responsive embed-responsive-4by3">
+          <object class="embed-responsive-item" type="application/pdf" data="{{ path('aw_plans_shipping_view', {id: expedition.id, _format: 'pdf'}) }}">
+            Pas de support PDF.
+          </object>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <span class="pficon pficon-close"></span> Fermer
+        </button>
+        <a href="{{ path('aw_plans_shipping_view', {id: expedition.id, _format: 'pdf'}) }}" class="btn btn-default" id="fileViewerLink" target="_blank">
+          <span class="glyphicon glyphicon-download"></span> Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  $('#fileViewer').modal('show');
+
+  $('#viewBL').click(function(e){
+    $('#fileViewer').modal('show');
+  });
+});
+</script>
+{% endblock %}

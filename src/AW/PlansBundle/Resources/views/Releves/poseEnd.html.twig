@@ -1,0 +1,211 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+canvas{
+  border: 1px solid black;
+}
+</style>
+<link rel="stylesheet" href="{{ asset('libs/jquery-file-upload/css/jquery.fileupload.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+{% include "AWPlansBundle:Default:header.html.twig" %}
+
+<div class="row toolbar-pf">
+  <div class="col-sm-12">
+    <div class="toolbar-pf-actions">
+      <span class="btn btn-primary fileinput-button visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+        <i class="glyphicon glyphicon-plus"></i>
+        <span>Ajouter des photos de plans posés</span>
+        <input type="file" name="form[files][]" id="fileupload" multiple>
+      </span>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="list-group" id="filelist">
+    {% for file in finder %}
+    <a href="{{ path('aw_plans_pose_upload', {id: commande.id, file: file.filename}) }}" class="list-group-item">
+      <span class="glyphicon glyphicon-file"></span>
+      <span class="truncate">{{ file.filename }}</span>
+      <span class="pull-right">
+        <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_pose_upload', {id: commande.id, file: file.filename}) }}">
+          <span class="glyphicon glyphicon-trash"></span>
+          <span class="hidden-xs">Supprimer</span>
+        </button>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">Signature du technicien</h3>
+        <div class="btn-group pull-right">
+          <button type="button" class="btn btn-warning reset-signature" data-target="technicien">
+            <span class="glyphicon glyphicon-erase"></span>
+            <span class="hidden-xs">Effacer</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body text-center">
+        <canvas id="technicien"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">Signature du client</h3>
+        <div class="btn-group pull-right">
+          <button type="button" class="btn btn-warning reset-signature" data-target="client">
+            <span class="glyphicon glyphicon-erase"></span>
+            <span class="hidden-xs">Effacer</span>
+          </button>
+        </div>
+      </div>
+      <div class="panel-body text-center">
+        <canvas id="client"></canvas>
+        <div class="form-group">
+          <div class="col-sm-12">
+            <input id="name_client" type="text" class="form-control" name="name_client" placeholder="Nom du client signataire">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row toolbar-pf">
+  <div class="col-sm-12">
+    <div class="toolbar-pf-actions">
+      <button type="button" class="btn btn-success" id="save">Pose terminée et validée</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/signature_pad.min.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
+<script>
+$(function(){
+  var width = $('.panel-body').width() ? $('.panel-body').width() : 230;
+  var height = $('.panel-body').height() ? $('.panel-body').height() : 70;
+  var canvas1 = document.querySelector("canvas#technicien");
+  canvas1.width = width;
+  canvas1.heigth = height;
+
+  var canvas2 = document.querySelector("canvas#client");
+  canvas2.width = width;
+  canvas2.heigth = height;
+
+  var signatureTechnicien = new SignaturePad(canvas1);
+  var signatureClient = new SignaturePad(canvas2);
+
+  $('#save').click(function(e){
+    var postData = {
+      form: {
+        signature_technicien: '',
+        signature_client: '',
+        name_client: $('#name_client').val()
+      }
+    };
+
+    if(signatureTechnicien.isEmpty()){
+      alert('Signature du technicien obligatoire');
+      return;
+    }
+
+    var dataUrl = signatureTechnicien.toDataURL('image/png');
+    postData.form.signature_technicien = dataUrl.replace(/^data:image\/png;base64,/, '');
+
+    if(!signatureClient.isEmpty()){
+      var dataUrl = signatureClient.toDataURL('image/png');
+      postData.form.signature_client = dataUrl.replace(/^data:image\/png;base64,/, '');
+    }
+
+    $.ajax({
+      url: "{{ path('aw_plans_pose_end', {id: commande.id, _format: 'json'}) }}",
+      type: "POST",
+      data: postData,
+      success: function(data){
+        window.location.href = "{{ path('aw_plans_releves_view', {id: commande.id}) }}";
+      }
+    });
+  });
+
+  $('.btn.reset-signature').click(function(e){
+    var target = $(this).data('target');
+
+    if(target == 'technicien'){
+      signatureTechnicien.clear();
+    }else if(target == 'client'){
+      signatureClient.clear();
+    }
+  });
+
+  $('#fileupload').fileupload({
+    url: "{{ path('aw_plans_pose_upload', {id: commande.id}) }}",
+    dataType: 'json',
+    add: function(e, data){
+      data.context = [];
+      $.each(data.files, function(index, file){
+        item = $('<a/>')
+          .addClass('list-group-item')
+          .append('<span class="glyphicon glyphicon-file"></span> <span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+        item.appendTo('#filelist');
+        data.context.push(item);
+      });
+
+      data.submit();
+    },
+    done: function(e, data){
+      $.each(data.result, function (index, file){
+        data.context[index].attr('href', file.url);
+        data.context[index].find('.filename').text(file.name);
+        data.context[index].find('.pull-right').html('<button class="btn btn-danger delete-file" data-link="'+file.url+'"><span class="glyphicon glyphicon-trash"></span><span class="hidden-xs">Supprimer</span></button>');
+      });
+    },
+    fail: function(e, data){
+      $.each(data.files, function(index, file){
+        data.context[index].find('.pull-right').html('<strong>Échec</strong>');
+      });
+    }
+  });
+
+  $('#filelist').delegate('.delete-file', 'click', function(e){
+    e.preventDefault();
+
+    var r = confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')
+    if(r == true){
+      $.ajax({
+        url: $(this).data('link'),
+        method: 'DELETE'
+      })
+        .done(function(data, textStatus, jqXHR){
+          location.reload();
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+          alert('Échec de suppression du fichier !');
+        })
+      ;
+    }
+  });
+});
+</script>
+{% endblock %}

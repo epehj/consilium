@@ -1,0 +1,4 @@
+aw_plans_stats_production:
+    path: /production
+    defaults:
+        _controller: AWPlansBundle:Stats:production

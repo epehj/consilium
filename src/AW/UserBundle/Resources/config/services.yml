@@ -1,0 +1,8 @@
+services:
+    aw.user.security.user_rights:
+        class: AW\UserBundle\Security\UserRights
+        arguments:
+            - "@security.access.decision_manager"
+            - "@aw.doli.event_listener.user_rights_manager"
+        tags:
+            - { name: security.voter }

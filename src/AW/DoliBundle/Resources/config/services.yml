@@ -1,0 +1,55 @@
+services:
+    aw.doli.security.user_provider:
+        class: AW\DoliBundle\Security\UserProvider
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    aw.doli.event_listener.user_rights_manager:
+        class: AW\DoliBundle\EventListener\UserRightsManager
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    aw.doli.event_listener.useraccess_listener:
+        class: AW\DoliBundle\EventListener\UserAccessListener
+        arguments:
+            - "@security.http_utils"
+            - "@aw.doli.event_listener.user_rights_manager"
+
+    aw.doli.eventlistener.commande:
+        class: AW\DoliBundle\EventListener\CommandeListener
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+
+    aw.doli.eventlistener.commandedet:
+        class: AW\DoliBundle\EventListener\CommandeDetListener
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+
+    aw.doli.service.pricelist_utils:
+        class: AW\DoliBundle\Service\PricelistUtils
+        arguments:
+            - "@doctrine.orm.entity_manager"
+
+    aw.doli.service.api:
+        class: AW\DoliBundle\Service\Api
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.token_storage"
+            - "%doli_api_url%"
+
+    aw.doli.twig.pricelist:
+        class: AW\DoliBundle\Twig\Pricelist
+        arguments:
+            - "@aw.doli.service.pricelist_utils"
+        tags:
+            - { name: twig.extension }
+
+    aw_doli.form.commande_shop_type:
+        class: AW\DoliBundle\Form\CommandeShopType
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@security.token_storage"
+            - "@aw.doli.service.pricelist_utils"
+        tags:
+            - { name: form.type }

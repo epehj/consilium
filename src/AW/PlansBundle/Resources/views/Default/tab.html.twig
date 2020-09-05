@@ -1,0 +1,34 @@
+{% set route = app.request.attributes.get('_route') %}
+<ul class="nav nav-tabs">
+  {% if is_granted('VIEW', commande) %}
+  <li {% if route == 'aw_plans_view' %}class="active"{% endif %}><a href="{{ path('aw_plans_view', {id: commande.id}) }}">Fiche</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_PRODUCTION', commande) %}
+  <li {% if route == 'aw_plans_production_view' %}class="active"{% endif %}><a href="{{ path('aw_plans_production_view', {id: commande.id}) }}">Production</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_FILE', commande) %}
+  <li {% if route == 'aw_plans_files' or route == 'aw_plans_files_upload' %}class="active"{% endif %}><a href="{{ path('aw_plans_files', {id: commande.id}) }}">Fichiers joints</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_RELEVE', commande) %}
+  <li {% if route == 'aw_plans_releves_view' or route == 'aw_plans_pose_end' %}class="active"{% endif %}><a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}">Relevé/Pose</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_NOTE_PRIVATE', commande) %}
+  <li {% if route == 'aw_plans_notes' and type == 'private' %}class="active"{% endif %}><a href="{{ path('aw_plans_notes', {id: commande.id, type: 'private'}) }}">Discussion privée</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_NOTE_PUBLIC', commande) %}
+  <li {% if route == 'aw_plans_notes' and type == 'public' %}class="active"{% endif %}><a href="{{ path('aw_plans_notes', {id: commande.id, type: 'public'}) }}">Discussion publique</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_MAIL', commande) %}
+  <li {% if route == 'aw_plans_view_mail' %}class="active"{% endif %}><a href="{{ path('aw_plans_view_mail', {id: commande.id}) }}">Mail</a></li>
+  {% endif %}
+
+  {% if is_granted('VIEW_SUIVI', commande) %}
+  <li {% if route == 'aw_plans_view_suivi' %}class="active"{% endif %}><a href="{{ path('aw_plans_view_suivi', {id: commande.id}) }}">Historique</a></li>
+  {% endif %}
+</ul>

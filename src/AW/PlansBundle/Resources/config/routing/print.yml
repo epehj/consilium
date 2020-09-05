@@ -1,0 +1,30 @@
+aw_plans_print_new:
+    path: /new/{format}
+    defaults:
+        _controller: AWPlansBundle:Print:new
+    requirements:
+        format: A0|A1|A2|A3|A4|A5
+
+aw_plans_print_upload:
+    path: /upload/{_format}/{format}/{dirName}/{file}
+    defaults:
+        _controller: AWPlansBundle:Print:upload
+        _format: json
+        file:
+    requirements:
+        _format: json
+        format: A0|A1|A2|A3|A4|A5
+
+aw_plans_print_generate:
+    path: /generate/{format}/{dirName}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Print:generate
+        _format: json
+    requirements:
+        format: A0|A1|A2|A3|A4|A5
+        _format: json
+
+aw_plans_print_output:
+    path: /output/{dirName}
+    defaults:
+        _controller: AWPlansBundle:Print:output

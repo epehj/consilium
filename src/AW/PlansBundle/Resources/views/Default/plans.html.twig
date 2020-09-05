@@ -1,0 +1,75 @@
+{% set cType = '' %}
+{% for det in commande.listDet %}
+{% if cType != det.type %}
+  {% set cType = det.type %}
+  <div class="row plan-{{ det.type | lower }}">
+    <div class="col-md-12 text-center"><strong>{{ det.getTypeName }}</strong></div>
+  </div>
+
+  <div class="row hidden-xs hidden-sm plan-header text-center">
+    <div class="col-md-1"><strong>Quantité</strong></div>
+    <div class="col-md-1"><strong>Format</strong></div>
+    <div class="col-md-2"><strong>Matière toto</strong></div>
+    {% if det.type != 'PM' %}
+    <div class="col-md-1"><strong>Design</strong></div>
+    {% endif %}
+    <div class="col-md-2"><strong>Vue</strong></div>
+    <div class="col-md-2"><strong>Finition</strong></div>
+    {% if is_granted('EDIT', commande) %}
+    <div class="col-md-1"><strong>Remise</strong></div>
+    {% endif %}
+    {% if is_granted('EDIT_INTERNAL_USER', commande) %}
+    <div class="col-md-{% if det.type != 'PM' %}2{% else %}3{% endif %}"></div>
+    {% endif %}
+  </div>
+{% endif %}
+
+<div class="row">
+  <div class="visible-xs visible-sm col-xs-2"><strong>Quantité</strong></div>
+  <div class="col-xs-10 col-md-1 text-center">{{ det.qty }}</div>
+
+  <div class="visible-xs visible-sm col-xs-2"><strong>Format</strong></div>
+  <div class="col-xs-10 col-md-1 text-center">{{ det.getFormatName }}</div>
+
+  <div class="visible-xs visible-sm col-xs-2"><strong>Matière</strong></div>
+  <div class="col-xs-10 col-md-2 text-center">
+    {{ det.matiereName }}
+    {% if det.matiere == 'DB' %}
+      {% if det.hole %}- Avec trou{% else %}- Sans trou{% endif %}
+    {% elseif det.matiere == 'PX' %}
+      - {{ det.backgroundName }}
+    {% endif %}
+  </div>
+
+  {% if det.type != 'PM' %}
+  <div class="visible-xs visible-sm col-xs-2"><strong>Design</strong></div>
+  <div class="col-xs-10 col-md-1 text-center">{{ det.getDesignName }}</div>
+  {% endif %}
+
+  <div class="visible-xs visible-sm col-xs-2"><strong>Vue</strong></div>
+  <div class="col-xs-10 col-md-2 text-center">{{ det.getVueName }}</div>
+
+  <div class="visible-xs visible-sm col-xs-2"><strong>Finition</strong></div>
+  <div class="col-xs-10 col-md-2 text-center">{{ det.getFinitionName }}</div>
+
+  {% if is_granted('EDIT', commande) %}
+  <div class="visible-xs visible-sm col-xs-2"><strong>Remise</strong></div>
+  {% endif %}
+
+  {% if is_granted('EDIT_INTERNAL_USER', commande) %}
+  <div class="col-xs-10 col-md-1 text-center">{{ det.remise | number_format(2, ',', ' ') }}</div>
+
+  <div class="col-xs-12 col-md-{% if det.type != 'PM' %}2{% else %}3{% endif %} text-right">
+    <a href="{{ path('aw_plans_edit_det', {id: det.id}) }}" class="btn btn-default">
+      <span class="glyphicon glyphicon-edit"></span>
+      Modifier
+    </a>
+
+    <a href="{{ path('aw_plans_edit_delete_det', {id: det.id}) }}" class="btn btn-danger confirm" data-confirm-message="Êtes-vous sûr de vouloir supprimer ce plan ?">
+      <span class="glyphicon glyphicon-trash"></span>
+      Supprimer
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endfor %}

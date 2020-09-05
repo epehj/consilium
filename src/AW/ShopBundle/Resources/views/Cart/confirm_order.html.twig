@@ -1,0 +1,99 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Confirmation de commande :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('bundles/awshop/css/shop.css') }}">
+{% endblock %}
+
+{% block shopContent %}
+
+<h2>Confirmation de commande</h2>
+
+<div class="row hidden-xs hidden-sm list-header">
+  <div class="col-md-8"><strong>Désignation</strong></div>
+  <div class="col-md-2 text-right"><strong>Quantité</strong></div>
+  <div class="col-md-2 text-right"><strong>Total HT</strong></div>
+</div>
+
+<div class="list-item">
+  {% set total = 0 %}
+  {% for cart in carts %}
+  {% set subprice = getCustomPrice(cart.qty, cart.product, form.vars.value.societe) %}
+  {% set price = subprice*cart.qty %}
+  {% set total = total + price %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-8"><a href="{{ path('aw_shop_product_view', {id: cart.product.id }) }}" target="_blank">{{ cart.product.name }}</a></div>
+
+    <div class="visible-xs visible-sm col-xs-4">Quantité</div>
+    <div class="col-xs-8 col-md-2 text-right">{{ cart.qty }}</div>
+
+    <div class="visible-xs visible-sm col-xs-4">Total HT</div>
+    <div class="col-xs-8 col-md-2 text-right">{{ price | number_format(2, ',', ' ') }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<p class="text-right">
+  Total : <strong>{{ total | number_format(2, ',', ' ') }} € HT</strong>
+</p>
+
+{{ form_start(form) }}
+
+{{ form_row(form.societe) }}
+{{ form_row(form.refClient) }}
+{{ form_row(form.shippingMethod) }}
+{{ form_row(form.contactShipping) }}
+{{ form_row(form.files) }}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <p><a href="{{ asset('public/CGV.pdf') }}" target="_blank">Télécharger et lire les conditions générales de vente</a>.</p>
+    {{ form_widget(form.cgv) }}
+
+    <button type="submit" class="btn btn-primary btn-submit" name="action" value="confirm" disabled="disabled">
+      <span class="glyphicon glyphicon-send"></span>
+      Commander
+    </button>
+  </div>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script>
+$(function(){
+  $('#aw_dolibundle_commande_shop_societe').change(function(e){
+    $('form[name="aw_dolibundle_commande_shop"]').submit();
+  });
+
+  $('.selectpicker').selectpicker();
+
+  $('#aw_dolibundle_commande_shop_shippingMethod').change(function(e){
+    if($(this).val() == "{{ constant('AW\\DoliBundle\\Entity\\Commande::SHIPMENT_MODE_AGENCE') }}"){
+      $('#aw_dolibundle_commande_shop_contactShipping').selectpicker('val', '');
+      $('#aw_dolibundle_commande_shop_contactShipping').prop('disabled', true);
+      $('#aw_dolibundle_commande_shop_contactShipping').selectpicker('refresh');
+    }else{
+      $('#aw_dolibundle_commande_shop_contactShipping').selectpicker('val', '');
+      $('#aw_dolibundle_commande_shop_contactShipping').prop('disabled', false);
+      $('#aw_dolibundle_commande_shop_contactShipping').selectpicker('refresh');
+    }
+  });
+
+  $('#aw_dolibundle_commande_shop_cgv').click(function(){
+    if(this.checked){
+      $('.btn-submit').prop('disabled', false);
+    }else{
+      $('.btn-submit').prop('disabled', true);
+    }
+  });
+});
+</script>
+{% endblock %}

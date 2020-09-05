@@ -1,0 +1,4 @@
+services:
+#    aw_shop.example:
+#        class: AW\ShopBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

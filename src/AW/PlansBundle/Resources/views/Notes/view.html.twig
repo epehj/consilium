@@ -1,0 +1,127 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3" id="list"></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="input-group">
+      <input type="text" class="form-control" id="message">
+      <div class="input-group-btn">
+        <button class="btn btn-primary" id="send">Envoyer</button>
+      </div>
+    </div>
+  </div>
+
+  {% if form is not null %}
+  {{ form_start(form) }}
+  <div class="col-xs-12">
+    <hr>
+  </div>
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    {{ form_rest(form) }}
+  </div>
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <button type="submit" class="btn btn-primary">Ajouter un rappel</button>
+  </div>
+  {{ form_end(form) }}
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script>
+$(function(){
+  var lastId = 0;
+  var updating = false;
+
+  function addNote(note){
+    var html = '<blockquote class="'+({{ app.user.id }} == note.userid ? 'blockquote-reverse' : '')+'">';
+    html += '<p>'+note.message+'</p><footer>';
+    html += note.username+' - Posté le '+note.date;
+    if(note.deadline){
+      html += ' - Rappel le '+note.deadline;
+    }
+    html += '</footer></blockquote>';
+    $('#list').append(html);
+    $('#list').scrollTop($('#list')[0].scrollTopMax);
+    lastId = note.id;
+  }
+
+  function updateList(){
+    if(updating){
+      return;
+    }
+
+    updating = true;
+
+    $.ajax({
+      url : "{{ path('aw_plans_notes_last', {id: commande.id, type: type}) }}",
+      data: {lastid: lastId},
+      method: "post",
+      dataType: "json"
+    })
+    .done(function(notes, textStatus, jqXHR){
+      updating = false;
+      $.each(notes, function(i, note){
+        addNote(note);
+      });
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+      updating = false;
+    });
+  }
+  updateList();
+  setInterval(updateList, 10000);
+
+  $('#message').keypress(function(e){
+    if(e.keyCode == 13){
+      $('#send').trigger('click');
+    }
+  });
+
+  $('#send').click(function(e){
+    var message = $('#message').val();
+    if(message.trim() == ''){
+      return;
+    }
+
+    updating = true;
+
+    $.ajax({
+      url: "{{ path('aw_plans_notes_add', {id: commande.id, type: type}) }}",
+      data: {message: message},
+      method: "post",
+      dataType: "json"
+    })
+    .done(function(note, textStatus, jqXHR){
+      $('#message').val('');
+      updating = false;
+      addNote(note);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+      updating = false;
+      alert("Échec d'envoi du message");
+    });
+  });
+
+  {% if type == 'private' %}
+  $('#aw_plansbundle_deadline_note_deadline_date').datepicker({
+    autoclose: true,
+    format: 'dd-mm-yyyy',
+    language: 'fr'
+  });
+  {% endif %}
+});
+</script>
+{% endblock %}

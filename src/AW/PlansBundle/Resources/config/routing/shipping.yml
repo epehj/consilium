@@ -1,0 +1,30 @@
+aw_plans_shipping_receipt:
+    path: /receipt/list.{_format}
+    defaults:
+        _controller: AWPlansBundle:Shipping:receiptList
+        _format: html
+    requirements:
+        _format: html|json
+
+aw_plans_shipping_list:
+    path: /list
+    defaults:
+        _controller: AWPlansBundle:Shipping:list
+
+aw_plans_shipping_new:
+    path: /new/{ids}/{method}
+    defaults:
+        _controller: AWPlansBundle:Shipping:new
+        method:
+    requirements:
+        ids: "[0-9,]+"
+        method: none|chronopost|tnt
+
+aw_plans_shipping_view:
+    path: /view/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Shipping:view
+        _format: html
+    requirements:
+        id: \d+
+        _format: html|pdf

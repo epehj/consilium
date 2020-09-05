@@ -1,0 +1,97 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Modifier le site de la commande {{ commande.ref }}</h3>
+      </div>
+      <div class="panel-body">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.site) }}
+        {{ form_row(form.address1, {attr: {autocomplete: 'off'}}) }}
+        {{ form_row(form.address2) }}
+        {{ form_row(form.zip) }}
+        {{ form_row(form.town) }}
+        {{ form_row(form.remarques) }}
+
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Si un technicien CONSILIUM doit effectuer les relevés de plans sur site, mettre à <strong>Oui</strong> le champs ci-dessous.
+        </div>
+        {{ form_row(form.releve) }}
+
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Si un technicien CONSILIUM doit effectuer la pose des plans sur site, mettre à <strong>Oui</strong> le champs ci-dessous.
+        </div>
+        {{ form_row(form.pose) }}
+
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Ajouter une information concernant le relevé et/ou la pose de plans (date de rendez-vous, anomalie...).
+        </div>
+        {{ form_row(form.releveNote) }}
+
+        {% if form.children.contactBATName is defined %}
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Veuillez indiquer ci-dessous les coordonnées d'une tierce personne pour l'envoi des BATs.
+        </div>
+        {% endif %}
+
+        {{ form_rest(form) }}
+
+        <div class="row">
+          <a href="{{ path('aw_plans_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap3-typeahead.min.js') }}"></script>
+<script>
+$(function(){
+  $('#aw_plansbundle_commande_site_address1').typeahead({
+    minLength: 5,
+    items: 8,
+    fitToElement: true,
+    source: function(query, process){
+      $.getJSON('//api-adresse.data.gouv.fr/search/', {q: query, limit: 8})
+        .done(function(json){
+          var data = [];
+          $.each(json.features, function(key, item){
+            data.push({
+              name    : item.properties.label,
+              address : item.properties.name,
+              zip     : item.properties.postcode,
+              town    : item.properties.city
+            });
+          });
+
+          process(data);
+        })
+      ;
+    },
+    updater: function(item){
+      $('#aw_plansbundle_commande_site_zip').val(item.zip);
+      $('#aw_plansbundle_commande_site_town').val(item.town);
+
+      return item.address;
+    }
+  });
+});
+</script>
+{% endblock %}

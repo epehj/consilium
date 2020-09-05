@@ -1,0 +1,68 @@
+aw_plans_production_list:
+    path: /list.{_format}
+    defaults:
+        _controller: AWPlansBundle:Production:list
+        _format: html
+    requirements:
+        _format: html|js|json
+
+aw_plans_production_view:
+    path: /{id}
+    defaults:
+        _controller: AWPlansBundle:Production:view
+    requirements:
+        id: \d+
+
+aw_plans_production_start:
+    path: /start/{id}
+    defaults:
+        _controller: AWPlansBundle:Production:start
+    requirements:
+        id: \d+
+
+aw_plans_production_download:
+    path: /download/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Production:download
+        _format: zip
+    requirements:
+        id: \d+
+        _format: zip
+
+aw_plans_production_end:
+    path: /end/{id}
+    defaults:
+        _controller: AWPlansBundle:Production:end
+    requirements:
+        id: \d+
+
+aw_plans_production_upload:
+    path: /upload/{_format}/{dirName}/{file}
+    defaults:
+        _controller: AWPlansBundle:Production:upload
+        _format: json
+        file:
+    requirements:
+        _format: json
+
+aw_plans_production_finish:
+    path: /finish/{dirName}/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Production:finish
+        _format: json
+    requirements:
+        id: \d+
+
+aw_plans_production_return:
+    path: /return/{id}
+    defaults:
+        _controller: AWPlansBundle:Production:return
+    requirements:
+        id: \d+
+
+aw_plans_production_cancel:
+    path: /cancel/{id}
+    defaults:
+        _controller: AWPlansBundle:Production:cancel
+    requirements:
+        id: \d+

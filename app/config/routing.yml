@@ -1,0 +1,22 @@
+aw_shop:
+    resource: "@AWShopBundle/Resources/config/routing.yml"
+    prefix:   /shop
+
+aw_user:
+    resource: "@AWUserBundle/Resources/config/routing.yml"
+    prefix:   /users
+
+aw_plans:
+    resource: "@AWPlansBundle/Resources/config/routing.yml"
+    prefix:   /plans
+
+aw_doli:
+    resource: "@AWDoliBundle/Resources/config/routing.yml"
+    prefix:   /d
+
+aw_core:
+    resource: "@AWCoreBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_user_security:
+    resource: "@FOSUserBundle/Resources/config/routing/security.xml"

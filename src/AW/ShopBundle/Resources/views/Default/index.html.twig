@@ -1,0 +1,82 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block shopContent %}
+
+<div class="row">
+  <div class="col-sm-12">
+    <ol class="breadcrumb">
+      {% if category %}
+      <li><a href="{{ path('aw_shop_homepage') }}">Accueil</a></li>
+      {% if category.parent and category.parent.id > 0 and category.parent.parent and category.parent.parent.id > 0 %}
+      <li><a href="{{ path('aw_shop_list_by_category', {id: category.parent.parent.id}) }}">{{ category.parent.parent.name }}</a></li>
+      {% endif %}
+      {% if category.parent and category.parent.id > 0 %}
+      <li><a href="{{ path('aw_shop_list_by_category', {id: category.parent.id}) }}">{{ category.parent.name }}</a></li>
+      {% endif %}
+      <li class="active"><strong>{{ category.name }}</strong></li>
+      {% elseif search is empty %}
+      <li class="active"><strong>Accueil</strong></li>
+      {% endif %}
+
+      {% if search is not empty %}
+      <li>Résultats de recherche</li>
+      <li class="active"><strong>{{ search }}</strong></li>
+      {% endif %}
+    </ol>
+  </div>
+</div>
+
+<div class="alert alert-info">
+  <span class="pficon pficon-info"></span>
+  Franco de port pour toute commande signalétique supérieure à 300 € HT.
+</div>
+
+<div class="row">
+  {% for product in products %}
+  <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="thumbnail">
+      <a href="{{ path('aw_shop_product_view', {id: product.id}) }}" class="thumbnail-product">
+        <img src="{{ path('aw_shop_product_image', {id: product.id, version: 'thumbnail'}) }}" alt="{{ product.name }}">
+      </a>
+      <div class="caption">
+        <h3>{{ product.name }}</h3>
+        {% set price = app.user.societe ? getCustomPrice(1, product, app.user.societe) : product.price %}
+        <p class="text-center"><strong>{{ price | number_format(2, ',', ' ') }} €</strong></p>
+        <p class="text-center"><a href="{{ path('aw_shop_product_view', {id: product.id}) }}" class="btn btn-default">Détail</a></p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if products is not empty %}
+<ul class="pager">
+  <li class="previous {% if page <= 1 %}disabled{% endif %}">
+    <a
+    {% if page > 1 %}
+      {% if category %}href="{{ path('aw_shop_list_by_category', {id: category.id, page: page-1}) }}"
+      {% else %}href="{{ path('aw_shop_homepage', {page: page-1, search: search}) }}"
+      {% endif %}
+    {% endif %}
+    >
+      <span class="i fa fa-angle-left"></span>
+      Précédente
+    </a>
+  </li>
+  <li>{{ page }} / {{ nbPages }}</li>
+  <li class="next {% if page >= nbPages %}disabled{% endif %}">
+    <a
+    {% if page < nbPages %}
+      {% if category %}href="{{ path('aw_shop_list_by_category', {id: category.id, page: page+1}) }}"
+      {% else %}href="{{ path('aw_shop_homepage', {page: page+1, search: search}) }}"
+      {% endif %}
+    {% endif %}
+    >
+      Suivante
+      <span class="i fa fa-angle-right"></span>
+    </a>
+  </li>
+</ul>
+{% endif %}
+
+{% endblock %}

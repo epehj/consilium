@@ -1,0 +1,71 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <td>Commandée le {{ commande.dateCreation | date('d/m/Y à H:i') }} par {{ commande.userCreation.fullName }}</td>
+    </tr>
+
+    {% if commande.dateValidation %}
+    <tr>
+      <td>Validée le {{ commande.dateValidation | date('d/m/Y à H:i') }} par {{ commande.userValidation.fullName }}</td>
+    </tr>
+    {% endif %}
+
+    {% for bat in commande.bats %}
+      <tr>
+        <td>BAT {{ bat.numero }} le {{ bat.dateCreation | date('d/m/Y à H:i') }} par {{ bat.userCreation.fullName }}</td>
+      </tr>
+      {% if bat.dateModification %}
+      <tr>
+        <td>BAT {{ bat.numero }} en modification le {{ bat.dateModification | date('d/m/Y à H:i') }} par {{ bat.userModification.fullName }}</td>
+      </tr>
+      {% elseif bat.dateValidation %}
+      <tr>
+        <td>BAT {{ bat.numero }} validé le {{ bat.dateValidation | date('d/m/Y à H:i') }} par {{ bat.userValidation.fullName }}</td>
+      </tr>
+      {% endif %}
+    {% endfor %}
+
+    {% if commande.dateFabrication %}
+    <tr>
+      <td>En fabrication le {{ commande.dateFabrication | date('d/m/Y à H:i') }} par {{ commande.userFabrication.fullName }}</td>
+    </tr>
+    {% endif %}
+
+    {% if commande.dateExpedition %}
+    <tr>
+      <td>En expédition le {{ commande.dateExpedition | date('d/m/Y à H:i') }} par {{ commande.userExpedition.fullName }}</td>
+    </tr>
+    {% endif %}
+
+    {% if commande.dateCancel %}
+    <tr>
+      <td>Annulée le {{ commande.dateCancel | date('d/m/Y à H:i') }} par {{ commande.userCancel.fullName }}</td>
+    </tr>
+    {% endif %}
+
+    {% if commande.dateClose %}
+    <tr>
+      <td>
+        Clôturée le {{ commande.dateClose | date('d/m/Y à H:i') }}
+        {% if commande.userClose %}par {{ commande.userClose.fullName }}{% endif %}
+      </td>
+    </tr>
+    {% endif %}
+
+    {% if commande.dateModification %}
+    <tr>
+      <td>Dernière modification le {{ commande.dateModification | date('d/m/Y à H:i') }} par {{ commande.userModification.fullName }}</td>
+    </tr>
+    {% endif %}
+  </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:header.html.twig" %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel">
+      <div class="panel-heading plan-{{ form.vars.value.type | lower }}">
+        <h3 class="panel-title">{{ commande.ref }} // {{ form.vars.value.typeName }}</h3>
+      </div>
+      <div class="panel-body">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_rest(form) }}
+
+        <div class="row">
+          <a href="{{ path('aw_plans_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  var plans = new function(){
+    var self = this;
+
+    this.init = function(){
+      self.updateView();
+      self.updateMatiere();
+    };
+
+    this.updateView = function(){
+      if($('#aw_plansbundle_commandedet_type').val() == 'PM'){
+        $('#aw_plansbundle_commandedet_design').val('');
+        $('label[for="aw_plansbundle_commandedet_design"]').parent().addClass('hidden');
+      }else{
+        $('#aw_plansbundle_commandedet_design option[value=""]').remove();
+        $('label[for="aw_plansbundle_commandedet_design"]').parent().removeClass('hidden');
+      }
+    };
+
+    this.updateMatiere = function(){
+      $('#aw_plansbundle_commandedet_background option[value=""]').addClass('hidden');
+
+      if(['DB', 'DAB'].indexOf($('#aw_plansbundle_commandedet_matiere').val()) == -1){
+        $('label[for="aw_plansbundle_commandedet_hole"]').parent().addClass('hidden');
+      }
+
+      if(['PX', 'AL'].indexOf($('#aw_plansbundle_commandedet_matiere').val()) == -1){
+        $('label[for="aw_plansbundle_commandedet_background"]').parent().addClass('hidden');
+      }
+
+      $('#aw_plansbundle_commandedet_matiere').change(function(e){
+        if(['DB', 'DAB'].indexOf($(this).val()) != -1){
+          $('label[for="aw_plansbundle_commandedet_hole"]').parent().removeClass('hidden');
+        }else{
+          $('label[for="aw_plansbundle_commandedet_hole"]').parent().addClass('hidden');
+        }
+
+        if(['PX', 'AL'].indexOf($(this).val()) != -1){
+          $('label[for="aw_plansbundle_commandedet_background"]').parent().removeClass('hidden');
+          $('#aw_plansbundle_commandedet_background').val('T');
+        }else{
+          $('label[for="aw_plansbundle_commandedet_background"]').parent().addClass('hidden');
+          $('#aw_plansbundle_commandedet_background').val('');
+        }
+      });
+
+      $('#aw_plansbundle_commandedet_hole').change(function(e){
+        if($(this).val() == 1){
+          $('#aw_plansbundle_commandedet_finition').val('EN');
+        }else{
+          $('#aw_plansbundle_commandedet_finition').val('CT');
+        }
+      });
+    };
+  }();
+  plans.init();
+});
+</script>
+{% endblock %}

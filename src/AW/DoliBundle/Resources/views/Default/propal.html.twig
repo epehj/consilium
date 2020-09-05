@@ -1,0 +1,168 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Devis :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+<div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
+  <div class="col-sm-12">
+    <form class="toolbar-pf-actions">
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-ref">N° Devis</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="ref" id="filter-ref" placeholder="Filtrer par numéro de devis...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-ref-client">Ref. Client</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="refClient" id="filter-ref-client" placeholder="Filtrer par référence client...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-client">Client</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="societe" id="filter-client" placeholder="Filtrer par client...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-status">Status</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="status" id="filter-status">
+          <option value="">Tous</option>
+          <option value="1">Ouvert</option>
+          <option value="2">Signé</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="row toolbar-pf-results">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-default filter-col-apply">
+          <span class="fa fa-filter"></span>
+          Appliquer les filtres
+        </button>
+
+        <button type="button" class="btn btn-default filter-col-reset">
+          <span class="pficon pficon-close"></span>
+          Supprimer les filtres
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped table-bordered table-hover" id="table1">
+  <thead>
+    <tr>
+      <th class="all">N°<span class="hidden-xs"> Devis</span></th>
+      <th class="min-tablet-p">Ref. client</th>
+      <th class="all">Client</th>
+      <th class="text-center min-tablet-l">Date de fin</th>
+      <th class="text-center min-tablet-l">État</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="content-view-pf-pagination table-view-pf-pagination clearfix" id="pagination1">
+  <div class="form-group">
+    <select class="selectpicker pagination-pf-pagesize">
+      <option value="10">10</option>
+      <option value="20" selected="selected">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <span class="hidden-xs">par page</span>
+  </div>
+
+  <div class="form-group">
+    <span><span class="pagination-pf-items-current">0-0</span> de <span class="pagination-pf-items-total">0</span></span>
+    <ul class="pagination pagination-pf-back">
+      <li class="disabled"><a title="Permière Page"><span class="i fa fa-angle-double-left"></span></a></li>
+      <li class="disabled"><a title="Page Précédente"><span class="i fa fa-angle-left"></span></a></li>
+    </ul>
+    <label for="pagination1-page" class="sr-only">Page en cours</label>
+    <input class="pagination-pf-page" type="text" value="1" id="pagination1-page"/>
+    <span>sur <span class="pagination-pf-pages">1</span></span>
+    <ul class="pagination pagination-pf-forward">
+    <li><a title="Page Suivante"><span class="i fa fa-angle-right"></span></a></li>
+    <li><a title="Dernière Page"><span class="i fa fa-angle-double-right"></span></a></li>
+    </ul>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block jsBeforePatternfly %}
+<script src="{{ asset('libs/dataTables/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('libs/dataTables/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('libs/patternfly/js/patternfly.dataTables.pfPagination.min.js') }}"></script>
+<script src="{{ asset('bundles/awcore/js/dataTables.filterCol.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script>
+$(function(){
+  $('.selectpicker').selectpicker();
+
+  $("#table1").DataTable({
+    processing: true,
+    serverSide: true,
+    columns: [
+      {
+        name: 'ref',
+        data: null,
+        render: function(data, type, row){
+          return '<a href="'+data.url+'">'+data.ref+'</a>';
+        }
+      }, {
+        name: 'refClient',
+        data: 'refClient'
+      }, {
+        name: 'societe',
+        data: 'societe'
+      }, {
+        name: 'finValidite',
+        data: 'finValidite',
+        className: 'text-center'
+      }, {
+        name: 'status',
+        data: null,
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.status == 1){
+            return '<span class="text-success">Ouvert</span>';
+          }else if(data.status == 2){
+            return '<span class="text-muted">Signée</span>';
+          }else{
+            return '?';
+          }
+        }
+      }
+    ],
+    ajax: "{{ path('aw_doli_propal', {_format: 'json'}) }}",
+    order: [[3, 'desc']],
+    dom: "t",
+    language: {
+      zeroRecoreds: "Aucun devis"
+    },
+    pfConfig: {
+      pageSize: 20,
+      paginationSelector: "#pagination1",
+      toolbarSelector: "#toolbar1"
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+        renderer: function(api, rowIdx, columns){
+          var data = $.map(columns, function(col, i ){
+            return col.hidden ? '<strong>'+col.title+'</strong> : '+col.data+'<br>' : '';
+          }).join('');
+
+          return data ? $('<table/>').append(data) : false;
+        }
+      }
+    },
+    filterCol: true
+  });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Modifier modèle de mail :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWCoreBundle:Admin:tab.html.twig" %}
+
+<div class="alert alert-warning">
+  <span class="pficon pficon-warning-triangle-o"></span>
+  Ne pas modifier qu'en connaissance de cause.
+</div>
+
+{{ form(form) }}
+
+{% endblock %}

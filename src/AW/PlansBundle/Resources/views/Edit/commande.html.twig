@@ -1,0 +1,48 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Modifier la commande {{ commande.ref }}</h3>
+      </div>
+      <div class="panel-body">
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.userContact) }}
+        {{ form_row(form.refClient) }}
+
+        {% if not app.user.societe and is_granted('webappli.cmdplan.chgstatut') %}
+          {{ form_row(form.urgent) }}
+          {{ form_row(form.batOnlyByFr) }}
+          {{ form_row(form.qtyDeclination) }}
+
+          <div class="alert alert-info">
+            <span class="pficon pficon-info"></span>
+            Si vous modifier le statut de la commande, pour éviter d'avoir des incohérences :
+            <ul>
+              <li>Le passage <strong>BAT, BAT en modification et BAT validé</strong> n'est pas autorisé à ce niveau;</li>
+              <li>Si un BAT client est en cours, ce dernier sera supprimé, quelque soit le nouveau statut;</li>
+              <li>Si un BAT a été validé et que vous passez la commande <strong>En attente de validation ou Validée</strong>, le BAT validé sera re-classé BAT en modification.</li>
+            </ul>
+          </div>
+          {{ form_row(form.status) }}
+        {% endif %}
+
+        {{ form_rest(form) }}
+
+        <div class="row">
+          <a href="{{ path('aw_plans_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% set route = app.request.attributes.get('_route') %}
+<nav class="navbar navbar-default navbar-pf" role="navigation">
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-5">
+			<span class="sr-only">Navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+
+		<a class="navbar-brand" href="/">
+			<img src="{{ asset('img/logo.png') }}" alt="CONSILIUM">
+		</a>
+	</div>
+
+  <div class="collapse navbar-collapse navbar-collapse-5">
+		<ul class="nav navbar-nav navbar-utility">
+      {% if app.user.societe %}
+      <li class="drawer-pf-trigger dropdown">
+        <a href="{{ path('aw_shop_cart_list') }}" class="nav-item-iconic drawer-pf-trigger-icon">
+          <span class="fa fa-shopping-cart" title="Panier"></span>
+          <span class="badge badge-pf-bordered"></span>
+        </a>
+      </li>
+      {% endif %}
+
+      <li class="drawer-pf-trigger dropdown notifications">
+        <a href="#" class="nav-item-iconic drawer-pf-trigger-icon">
+          <span class="fa fa-bell" title="Notifications"></span>
+          <span class="badge badge-pf-bordered" id="notifications-count"></span>
+        </a>
+      </li>
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+					<span class="pficon pficon-user"></span>
+					{{ app.user.lastname }} {{ app.user.firstname }}
+					<b class="caret"></b>
+				</a>
+				<ul class="dropdown-menu">
+          <li>
+            <a href="{{ path('aw_user_profile') }}">Mon compte</a>
+          </li>
+          {% if is_granted('webappli.admin') %}
+          <li class="dropdown-submenu">
+            <a href="#">Zone Admin</a>
+            <ul class="dropdown-menu">
+              {% if is_granted('ROLE_ALLOWED_TO_SWITCH') %}
+              <li>
+                <a href="{{ path('aw_user_switch') }}">Switcher d'utilisateur</a>
+              </li>
+              {% endif %}
+              <li>
+                <a href="{{ path('aw_core_documents_manage') }}">Gérer les documents</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="{{ path('aw_core_config_mails') }}">Configurations</a>
+          </li>
+          <li class="divider"></li>
+          {% endif %}
+          {% if is_granted('ROLE_PREVIOUS_ADMIN') %}
+          <li>
+            <a href="{{ path('aw_core_homepage', {'_switch_user': '_exit'}) }}">Retourner à ma session</a>
+          </li>
+          {% endif %}
+					<li>
+						<a href="{{ path('fos_user_security_logout') }}">Déconnexion</a>
+					</li>
+				</ul>
+			</li>
+		</ul>
+
+    <div class="drawer-pf hide drawer-pf-notifications-non-clickable notifications">
+      <div class="drawer-pf-title">
+        <a class="drawer-pf-toggle-expand fa fa-angle-double-left hidden-xs"></a>
+        <a  class="drawer-pf-close pficon pficon-close"></a>
+        <h3 class="text-center">Notifications</h3>
+      </div>
+      <div class="panel-group" id="notification-drawer-accordion"></div>
+    </div>
+
+    <ul class="nav navbar-nav navbar-primary">
+      {% if is_granted('webappli.cmdplan.seeprod') %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Productions
+          <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="{{ path('aw_plans_production_list') }}">Liste</a>
+          </li>
+          <li>
+            <a href="{{ path('aw_plans_stats_production') }}">Stats Utilisateurs</a>
+          </li>
+        </ul>
+      </li>
+      {% endif %}
+
+      {% if app.user.societe is null and is_granted('webappli.cmdplan.see_expedition') %}
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Atelier
+          <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="{{ path('aw_plans_shipping_receipt') }}">Réception de plans</a>
+          </li>
+          <li>
+            <a href="{{ path('aw_plans_shipping_list') }}">Expédition de plans</a>
+          </li>
+        </ul>
+      </li>
+      {% endif %}
+
+      <li>
+        <a href="{{ path('aw_shop_homepage') }}">Boutique</a>
+      </li>
+
+      {% if is_granted('webappli.cmdplan.see') %}
+      <li class="dropdown{% if route == 'aw_plans_releves' %} active{% endif %}">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+          Commandes Plans
+          <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a href="{{ path('aw_plans_list') }}">Liste</a>
+          </li>
+
+          {% if is_granted('webappli.cmdplan.new') %}
+          <li>
+            <a href="{{ path('aw_plans_new') }}">Nouvelle commande</a>
+          </li>
+          {% endif %}
+
+          {% if is_granted('webappli.cmdplan.see_facturation') %}
+          <li>
+            <a href="{{ path('aw_plans_billing') }}">Facturation</a>
+          </li>
+          {% endif %}
+
+          {% if app.user.societe is null and is_granted('webappli.cmdplan.releves') %}
+          <li>
+            <a href="{{ path('aw_plans_releves') }}">Relevé/Pose de plans</a>
+          </li>
+          {% endif %}
+
+          {% if app.user.societe is null and is_granted('webappli.cmdplan.see') %}
+          <li class="dropdown-submenu">
+            <a href="#">Générateur de fichiers d'impression</a>
+            <ul class="dropdown-menu">
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A0'}) }}">Format A0</a></li>
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A1'}) }}">Format A1</a></li>
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A2'}) }}">Format A2</a></li>
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A3'}) }}">Format A3</a></li>
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A4'}) }}">Format A4</a></li>
+              <li><a href="{{ path('aw_plans_print_new', {format: 'A5'}) }}">Format A5</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="{{ path('aw_plans_ofs') }}">Bon de fabrication</a>
+          </li>
+          {% endif %}
+        </ul>
+      </li>
+      {% endif %}
+
+      {% if is_granted('webappli.devis') %}
+      <li>
+        <a href="{{ path('aw_doli_propal') }}">Devis</a>
+      </li>
+      {% endif %}
+
+      {% if is_granted('webappli.facture') %}
+      <li>
+        <a href="{{ path('aw_doli_factures') }}">Factures</a>
+      </li>
+      {% endif %}
+
+      {% if is_granted('webappli.docs') %}
+      <li>
+        <a href="{{ path('aw_core_documents_list') }}">Documents</a>
+      </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

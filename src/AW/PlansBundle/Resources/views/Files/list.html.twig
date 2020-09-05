@@ -1,0 +1,156 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Cliquez sur le nom d'un dossier (<span class="icon node-icon fa fa-folder"></span>) pour voir son contenu.
+      Cliquez ensuite sur le nom d'un fichier (<span class="icon node-icon fa fa-file-o"></span>) pour le visualiser.
+      Appuyez en même temps la touche <span class="label label-default">Ctrl</span> de votre clavier pour ouvrir un fichier dans un nouvel onglet.
+    </div>
+  </div>
+</div>
+
+{% if is_granted('EDIT_INTERNAL_USER', commande) %}
+<div class="row toolbar-pf">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="toolbar-pf-actions">
+      <a href="{{ path('aw_plans_files_generate', {id: commande.id}) }}" class="btn btn-primary">Regénérer le BL</a>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+          Ajouter des fichiers dans ...
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="{{ path('aw_plans_files_upload', {id: commande.id, dirName: 'creation'}) }}">creation</a></li>
+          <li><a href="{{ path('aw_plans_files_upload', {id: commande.id, dirName: 'modification'}) }}">modification</a></li>
+          <li><a href="{{ path('aw_plans_files_upload', {id: commande.id, dirName: 'validation'}) }}">validation</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <table class="table table-bordered table-hover table-treegrid">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th class="hidden-xs">Taille</th>
+          <th class="hidden-xs">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dir in treeview %}
+        <tr id="{{ dir.key }}" class="collapsed">
+          <td class="treegrid-node">
+            <span class="icon node-icon fa fa-folder"></span>
+            {{ dir.name }}
+          </td>
+          <td class="hidden-xs">{{ dir.children|length }} element(s)</td>
+          <td class="hidden-xs"></td>
+        </tr>
+          {% for file in dir.children %}
+            {% if file.children is defined %}
+              <tr id="{{ file.key }}" data-parent="#{{ dir.key }}">
+                <td class="treegrid-node">
+                  <span class="icon node-icon fa fa-folder"></span>
+                  {{ file.name }}
+                </td>
+                <td class="hidden-xs">{{ file.children|length }} element(s)</td>
+                <td class="hidden-xs"></td>
+              </tr>
+              {% for file2 in file.children %}
+              <tr data-parent="#{{ file.key }}">
+                <td class="treegrid-node">
+                  <span class="icon node-icon fa fa-file-o"></span>
+                  <a class="file" data-extension="{{ file2.extension }}" href="{{ file2.link }}">{{ file2.name }}</a>
+                </td>
+                <td class="hidden-xs">{{ file2.size }}</td>
+                <td class="hidden-xs">{{ file2.date }}</td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr data-parent="#{{ dir.key }}">
+                <td class="treegrid-node">
+                  <span class="icon node-icon fa fa-file-o"></span>
+                  <a class="file" data-extension="{{ file.extension }}" href="{{ file.link }}">{{ file.name }}</a>
+                </td>
+                <td class="hidden-xs">{{ file.size }}</td>
+                <td class="hidden-xs">{{ file.date }}</td>
+              </tr>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="fileViewer" tabindex="-1" role="dialog" aria-labelledby="fileViewerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <h4 class="modal-title" id="fileViewerLabel">File Viewer</h4>
+      </div>
+      <div class="modal-body" id="fileViewerBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <span class="pficon pficon-close"></span> Fermer
+        </button>
+        <a href="#" class="btn btn-default" id="fileViewerLink" target="_blank">
+          <span class="glyphicon glyphicon-download"></span> Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  $('.table-treegrid').treegrid();
+
+  $('a.file').click(function(e){
+    if(e.ctrlKey){
+      return true;
+    }
+
+    e.preventDefault();
+
+    var filename = $(this).text();
+    var link = $(this).attr('href');
+    var extension = $(this).data('extension');
+
+    $('#fileViewerLabel').text(filename);
+    $('#fileViewerLink').attr('href', link+'?download=1');
+
+    if(['png', 'jpeg', 'jpg', 'gif'].indexOf(extension) != -1){
+      $('#fileViewerBody').html('<a href="'+link+'" class="thumbnail"><img src="'+link+'" alt="'+filename+'"></a>');
+    }else if(['pdf', 'ai'].indexOf(extension) != -1){
+      $('#fileViewerBody').html('<div class="embed-responsive embed-responsive-4by3"><object class="embed-responsive-item" type="application/pdf" data="'+link+'">Pas de support PDF.</object></div>');
+    }else{
+      $('#fileViewerBody').html('<p>Ce fichier ne peut être directement affiché ici. Cliquez sur le bouton télécharger si le téléchargement ne se lance pas automatiquement.</p>');
+      window.location.href = link+'?download=1';
+    }
+
+    $('#fileViewer').modal('show');
+  });
+});
+</script>
+{% endblock %}

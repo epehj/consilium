@@ -1,0 +1,71 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Boutique :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+.container-fluid{
+  margin: 0;
+  padding: 0;
+  background-color: #E5E5E5;
+}
+
+.thumbnail{
+  height: 318px;
+  width: 257px;
+}
+
+.thumbnail-product{
+  display: block;
+  height: 50%;
+}
+
+.thumbnail-product img{
+  vertical-align: middle;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+{# see sidebar https://rawgit.com/patternfly/patternfly/master-dist/dist/tests/tab.html #}
+<div class="row">
+  <div class="col-xs-12 col-sm-9 col-md-10 col-sm-push-3 col-md-push-2">
+    {% block shopContent %}{% endblock %}
+  </div>
+
+  <div class="col-xs-12 col-sm-3 col-md-2 col-sm-pull-9 col-md-pull-10 sidebar-pf sidebar-pf-left">
+    {% if category is defined and category is not null %}
+      {{ render(controller("AWShopBundle:Default:sidebar", {id: category.id, search: app.request.get('search')})) }}
+    {% else %}
+      {{ render(controller("AWShopBundle:Default:sidebar", {search: app.request.get('search')})) }}
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+$(function(){
+  $(".search-pf .has-clear .clear").each(function(){
+    if(!$(this).prev('.form-control').val()){
+      $(this).hide();
+    }
+  });
+
+  $(".search-pf .has-clear .form-control").keyup(function(){
+    var t = $(this);
+    t.next('button').toggle(Boolean(t.val()));
+  });
+
+  $(".search-pf .has-clear .clear").click(function(){
+    $(this).prev('.form-control').val('').focus();
+    $(this).hide();
+  });
+});
+</script>
+{% endblock %}

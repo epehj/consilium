@@ -1,0 +1,79 @@
+aw_plans_releves:
+    path: /list.{_format}
+    defaults:
+        _controller: AWPlansBundle:Releves:list
+        _format: html
+    requirements:
+        _format: html|json
+
+aw_plans_releves_maps:
+    path: /maps/{markers}
+    defaults:
+        _controller: AWPlansBundle:Releves:maps
+        markers: rp
+    requirements:
+        markers: rp|r|p
+
+aw_plans_releves_view:
+    path: /{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:view
+    requirements:
+        id: \d+
+
+aw_plans_releves_upload:
+    path: /upload/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Releves:upload
+        _format: json
+    requirements:
+        id: \d+
+        _format: json
+
+aw_plans_releves_download:
+    path: /download/{id}/{file}
+    defaults:
+        _controller: AWPlansBundle:Releves:download
+    requirements:
+        id: \d+
+
+aw_plans_releves_delete:
+    path: /delete/{id}/{file}
+    defaults:
+        _controller: AWPlansBundle:Releves:delete
+    requirements:
+        id: \d+
+
+aw_plans_releves_update:
+    path: /update/{status}/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:update
+    requirements:
+        status: \d+
+        id: \d+
+
+aw_plans_pose_end:
+    path: /pose/end/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Releves:poseEnd
+        _format: html
+    requirements:
+        id: \d+
+        _format: html|json
+
+aw_plans_pose_upload:
+    path: /pose/upload/{_format}/{id}/{file}
+    defaults:
+        _controller: AWPlansBundle:Releves:uploadPose
+        _format: json
+        file:
+    requirements:
+        _format: json
+        id: \d+
+
+aw_plans_releves_add_rdv:
+    path: /add/rdv/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:addRDV
+    requirements:
+        id: \d+

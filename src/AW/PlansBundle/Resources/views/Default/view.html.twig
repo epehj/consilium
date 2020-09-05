@@ -1,0 +1,80 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+{% include "AWPlansBundle:Default:header.html.twig" %}
+
+{% include "AWPlansBundle:Default:info.html.twig" %}
+
+<div class="row toolbar-pf">
+  <div class="col-sm-12">
+    <div class="toolbar-pf-actions">
+      {% if is_granted('VALIDATE', commande) %}
+      <a href="{{ path('aw_plans_mail_action', {action: 'validation', id: commande.id}) }}" class="btn btn-success">Valider</a>
+      {% endif %}
+
+      {% if is_granted('SEND_BAT', commande) %}
+      <a href="{{ path('aw_plans_mail_action', {action: 'bat', id: commande.id}) }}" class="btn btn-success">BAT {{ commande.bats | length + 1 }}</a>
+      {% endif %}
+
+      {% if is_granted('MODIFY_BAT', commande) %}
+      <a href="{{ path('aw_plans_mail_action', {action: 'modificationbat', id: commande.id}) }}" class="btn btn-success">Modifier BAT</a>
+      <a href="{{ path('aw_plans_mail_action', {action: 'validationbat', id: commande.id}) }}" class="btn btn-success">Valider BAT</a>
+      {% endif %}
+
+      {% if is_granted('SEND_PRINTER', commande) %}
+      <a href="{{ path('aw_plans_mail_action', {action: 'fabrication', id: commande.id}) }}" class="btn btn-success">Fabriquer</a>
+      {% endif %}
+
+      {% if is_granted('EDIT_INTERNAL_USER', commande) %}
+      <div class="btn-group">
+        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown">
+          Ajouter un plan...
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="{{ path('aw_plans_edit_add_det', {type: 'pe', id: commande.id}) }}">d'évacuation</a></li>
+          <li><a href="{{ path('aw_plans_edit_add_det', {type: 'pi', id: commande.id}) }}">d'intervention</a></li>
+          <li><a href="{{ path('aw_plans_edit_add_det', {type: 'pc', id: commande.id}) }}">de chambre</a></li>
+          <li><a href="{{ path('aw_plans_edit_add_det', {type: 'pm', id: commande.id}) }}">de masse</a></li>
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if is_granted('RECEIVE', commande) %}
+      <a href="{{ path('aw_plans_edit_receive', {id: commande.id}) }}" class="btn btn-success confirm" data-confirm-message="Tous les plans ont été réceptionnés ?">Réceptionner</a>
+      {% endif %}
+
+      {% if is_granted('REOPEN', commande) %}
+      <a href="{{ path('aw_plans_edit_reopen', {id: commande.id}) }}" class="btn btn-success">Réouvrir</a>
+      {% endif %}
+
+      {% if is_granted('CLONE', commande) %}
+      <a href="{{ path('aw_plans_edit_clone', {id: commande.id}) }}" class="btn btn-primary">Dupliquer</a>
+      {% endif %}
+
+      {% if is_granted('DELETE', commande) %}
+      <a href="{{ path('aw_plans_edit_cancel', {id: commande.id}) }}" class="btn btn-warning confirm" data-confirm-message="Êtes-vous sûr de vouloir annuler cette commande ?">Annuler</a>
+      <a href="{{ path('aw_plans_edit_delete', {id: commande.id}) }}" class="btn btn-danger confirm" data-confirm-message="Êtes-vous sûr de vouloir supprimer cette commande ?">Supprimer</a>
+      {% endif %}
+
+      {% if is_granted('CLOSED', commande) %}
+      <a href="{{ path('aw_plans_edit_closed', {id: commande.id}) }}" class="btn btn-warning confirm" data-confirm-message="Êtes-vous sûr de vouloir clôturer cette commande ?">Clôturer</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% include "AWPlansBundle:Default:plans.html.twig" %}
+
+{% endblock %}

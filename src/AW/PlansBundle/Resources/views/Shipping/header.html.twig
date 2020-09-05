@@ -1,0 +1,55 @@
+<div class="row">
+  <div class="col-md-6"> <!-- infos client -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Client</h3>
+      </div>
+      <div class="panel-body">
+        <address>
+          <strong>
+            {% if not app.user.societe and app.user.rights.societe.lire %}
+            <a href="{{ doli_url }}{{ expedition.commandes[0].societe.linkTo }}" target="_blank">{{ expedition.commandes[0].societe.name }} - {{ expedition.commandes[0].societe.codeClient }}</a>
+            {% else %}
+            {{ expedition.commandes[0].societe.name }}
+            {% endif %}
+          </strong><br>
+          {{ expedition.commandes[0].societe.address1 }}<br>
+          {% if expedition.commandes[0].societe.address2 %}{{ expedition.commandes[0].societe.address2 }}<br>{% endif %}
+          {{ expedition.commandes[0].societe.zip }} {{ expedition.commandes[0].societe.town }}<br>
+          {% if expedition.commandes[0].societe.country %}{{ expedition.commandes[0].societe.country.name }}{% endif %}
+        </address>
+
+        {% if expedition.commandes[0].societe.customerBad is constant('CUSTOMER_BAD_BLUE', expedition.commandes[0].societe) %}
+        <p>
+          <strong>
+            <span class="text-danger">Ce client est en Bleu (Bloqué au niveau des expéditions)</span>
+          </strong>
+        </p>
+        {% elseif expedition.commandes[0].societe.customerBad is constant('CUSTOMER_BAD_PURPLE', expedition.commandes[0].societe) %}
+        <p>
+          <strong>
+            <span class="text-danger">Ce client est en Violet (Bloqué au niveau des expéditions)</span>
+          </strong>
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6"> <!-- adresse de livraison -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Adresse de livraison</h3>
+      </div>
+      <div class="panel-body">
+        <address>
+          <strong>{{ expedition.commandes[0].shippingRecipient }}</strong><br>
+          {{ expedition.commandes[0].shippingAddress1 }}<br>
+          {% if expedition.commandes[0].shippingAddress2 %}{{ expedition.commandes[0].shippingAddress2 }}<br>{% endif %}
+          {{ expedition.commandes[0].shippingZip }} {{ expedition.commandes[0].shippingTown }}<br>
+          {% if expedition.commandes[0].shippingCountry %}{{ expedition.commandes[0].shippingCountry.name }}{% endif %}
+        </address>
+      </div>
+    </div>
+  </div>
+</div>

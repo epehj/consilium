@@ -1,0 +1,58 @@
+<div class="nav-category">
+  <form action="{{ path('aw_shop_homepage') }}" class="search-pf has-button" method="get">
+    <div class="form-group has-clear">
+      <div class="search-pf-input-group">
+        <label for="search1" class="sr-only">Rechercher</label>
+        <input id="search1" type="search" name="search" value="{{ search }}" class="form-control" placeholder="Rechercher...">
+        <button type="button" class="clear" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+      </div>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-default" type="button">
+        <span class="fa fa-search"></span>
+      </button>
+    </div>
+  </form>
+
+  {% if currentCategory is not null %}
+  <h2>{{ currentCategory.name }}</h2>
+  {% else %}
+  <h2>Accueil</h2>
+  {% endif %}
+
+  <ul class="nav nav-pills nav-stacked">
+    <li>
+      {%
+        for category in categories
+        if category.extrafields and category.extrafields.availableOnline and ((currentCategory is null and category.parent.id == 0) or currentCategory is not null)
+      %}
+      <a href="{{ path('aw_shop_list_by_category', {id: category.id}) }}">{{ category.name }}</a>
+      {% endfor %}
+    </li>
+  </ul>
+
+  {% if app.user.societe %}
+  <h2>Mon compte</h2>
+  <ul class="nav nav-pills nav-stacked">
+    <li>
+      <a href="{{ path('aw_user_profile') }}">{{ app.user.fullName }}</a>
+    </li>
+    <li>
+      <a href="{{ path('aw_shop_cart_list') }}">Mon panier</a>
+    </li>
+    <li>
+      <a href="{{ path('aw_shop_commande_list') }}">Mes commandes</a>
+    </li>
+    <li>
+      <a href="{{ path('aw_shop_address_list') }}">Mes adresses</a>
+    </li>
+  </ul>
+  {% else %}
+  <h2>Commandes</h2>
+  <ul class="nav nav-pills nav-stacked">
+    <li><a href="{{ path('aw_shop_commande_list') }}">Liste</a></li>
+  </ul>
+  {% endif %}
+</div>

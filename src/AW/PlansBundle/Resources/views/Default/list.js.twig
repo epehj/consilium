@@ -1,0 +1,245 @@
+$(function(){
+  // init Bootstrap select
+  $('.selectpicker').selectpicker();
+  $('.combobox').combobox();
+
+  var dt = $("#table1").DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ path('aw_plans_list', {_format: 'json'}) }}",
+    columns: [
+      {
+        name: 'ref',
+        data: null,
+        render: function(data, type, row){
+          return '<a href="'+data.url+'">'+data.ref+'</a>';
+        }
+      }, {
+        name: 'refClient',
+        data: 'refClient'
+      }, {
+        name: 'societe',
+        data: 'societe',
+        visible: {% if app.user.societe %}false{% else %}true{% endif %}
+      }, {
+        name: 'site',
+        data: 'site'
+      }, {
+        name: 'address',
+        data: null,
+        render: function(data, type, row){
+          var address = data.address1+'<br>';
+          if(data.address2){
+            address += data.address2+'<br>';
+          }
+          address += data.zip+' '+data.town;
+
+          return address;
+        }
+      }, {
+        name: 'date',
+        data: 'date',
+        className: 'text-center'
+      }, {
+        name: 'dateUpdate',
+        data: 'dateUpdate',
+        className: 'text-center'
+      }, {
+        name: 'userContact',
+        data: 'userContact'
+      }, {
+        name: 'status',
+        data: 'statusLabel',
+        className: 'text-center'
+      }, {
+        name: 'releveStatus',
+        data: 'releveStatusLabel',
+        className: 'text-center',
+        visible: false
+      }, {
+        name: 'releveNote',
+        data: 'releveNote',
+        visible: false
+      }, {
+        name: 'factures',
+        data: 'factures',
+        orderable: false,
+        {% if app.user.societe %}
+        visible: false
+        {% endif %}
+      }, {
+        name: 'urgent',
+        data: null,
+        {% if app.user.societe %}
+        visible: false,
+        {% else %}
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.urgent){
+            return '<img src="{{ asset('img/urgent.png') }}" alt="urgent">';
+          }else{
+            return '';
+          }
+        }
+        {% endif %}
+      }, {
+        name: 'production',
+        data: null,
+        {% if app.user.societe %}
+        visible: false,
+        {% else %}
+        render: function(data, type, row){
+          if(data.production == 1){
+            return 'En attente';
+          }else if(data.production == 2){
+            return 'En cours';
+          }else if(data.production == 3){
+            return 'Terminé';
+          }else{
+            return '';
+          }
+        }
+        {% endif %}
+      }, {
+        name: 'alert',
+        data: null,
+        {% if app.user.societe %}
+        visible: false,
+        {% else %}
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.alert == 1){
+            return '<img src="{{ asset('img/alert-ok.png') }}" alt="Ok">';
+          }else if(data.alert == 2){
+            return '<img src="{{ asset('img/alert-warning.png') }}" alt="Warning">';
+          }else if(data.alert == 3){
+            return '<img src="{{ asset('img/alert-danger.png') }}" alt="Danger">';
+          }else{
+            return '';
+          }
+        }
+        {% endif %}
+      }, {
+        name: 'batfr',
+        data: null,
+        visible: false
+      }, {
+        name: 'userCreation',
+        {% if app.user.societe %}
+        data: null,
+        {% else %}
+        data: 'userCreation',
+        {% endif %}
+        visible: false
+      }, {
+        name: 'releveUser',
+        {% if app.user.societe %}
+        data: null,
+        {% else %}
+        data: 'releveUser',
+        {% endif %}
+        visible: false
+      }, {
+        name: 'billed',
+        data: 'billed',
+        visible: false
+      }
+    ],
+    createdRow: function(row, data, index){
+      $(row).addClass('status-'+data.status);
+    },
+    {% if app.user.societe %}
+    order: [[5, 'desc']],
+    {% else %}
+    order: [[12, 'desc'], [5, 'desc']],
+    {% endif %}
+    dom: "t",
+    language: {
+      zeroRecords: "Aucune commande"
+    },
+    pfConfig: {
+      pageSize: 20,
+      paginationSelector: "#pagination1",
+      toolbarSelector: "#toolbar1"
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+        renderer: function(api, rowIdx, columns){
+          var data = $.map(columns, function(col, i ){
+            if(col.hidden === false){
+              return '';
+            }
+
+            var columnName = api.settings().init().columns[col.columnIndex].name;
+            if(columnName == 'address'){
+              return '<strong>'+col.title+' :</strong><br>'+col.data+'<br>';
+            }
+
+            if(['refClient', 'societe', 'date', 'userContact', 'status', 'urgent'].indexOf(columnName) != -1 && col.data){
+              return '<strong>'+col.title+' :</strong> '+col.data+'<br>';
+            }
+          }).join('');
+
+          return data ? $('<table/>').append(data) : false;
+        }
+      }
+    },
+    filterCol: true,
+    stateSave: true,
+    stateLoadCallback: function(settings, callback){
+      $.ajax({
+        url: "{{ path('aw_user_param_plans_datatables') }}",
+        dataType: "json",
+        success: function(json){
+          delete json.order; // toujours réinitialiser le tri
+
+          $.each(json.columns, function(index, col){
+            var columnName = settings.oInit.columns[index].name;
+
+            // restauration des colonnes
+            col.visible = (col.visible == 'true') ? true : false;
+            var $checkboxSelector = $('.table-view-pf-colvis-menu :checkbox[value="'+columnName+'"]');
+            if($checkboxSelector.length == 1){
+              $checkboxSelector.prop('checked', col.visible);
+            }
+
+            // restauration des filtres
+            var $filterSelector = $('.filter-col[data-filter-col="'+columnName+'"]');
+            if($filterSelector.length == 1){
+              if($filterSelector.data('filter-col-type') == 'text'){
+                $filterSelector.val(col.search.search);
+              }else if($filterSelector.data('filter-col-type') == 'selectpicker'){
+                $filterSelector.selectpicker('val', col.search.search);
+              }else if($filterSelector.data('filter-col-type') == 'combobox'){
+                $filterSelector.val(col.search.search);
+                $filterSelector.data('combobox').refresh();
+              }
+            }
+          });
+
+          callback(json);
+        }
+      });
+    },
+    stateSaveCallback: function(settings, data){
+      $.ajax({
+        url: "{{ path('aw_user_param_plans_datatables') }}",
+        data: data,
+        dataType: "json",
+        type: "POST",
+        success: function(json){}
+      });
+    }
+  });
+
+  $('.table-view-pf-colvis-menu :checkbox').click(function(e){
+    var columnName = $(this).val()+':name';
+    dt.column(columnName).visible($(this).prop('checked'));
+  });
+
+  $('#export-csv').click(function(e){
+    var params = $.param(dt.ajax.params());
+    window.location.href = "{{ path('aw_plans_list', {_format: 'csv'}) }}?" + params;
+  });
+});

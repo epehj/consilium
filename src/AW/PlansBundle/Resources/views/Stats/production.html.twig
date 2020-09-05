@@ -1,0 +1,102 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Statistique de production :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+
+<div class="row">
+  <div class="col-xs-12 col-md-4 col-md-offset-4">
+    <div class="input-daterange input-group">
+      {{ form_widget(form.start) }}
+      <span class="input-group-addon">à</span>
+      {{ form_widget(form.end) }}
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Actualiser</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+{% for group in groups %}
+{% set total_creation_count, total_creation_qty = 0, 0 %}
+{% set total_modification_count, total_modification_qty = 0, 0 %}
+{% set total_validation_count, total_validation_qty = 0, 0 %}
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th colspan="7" class="text-center">{{ group.name }}</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th colspan="2" class="text-center">Création</th>
+      <th colspan="2" class="text-center">Modification</th>
+      <th colspan="2" class="text-center">Validation</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in group.users %}
+    <tr>
+      <td>{{ user.fullName }}</td>
+      <td colspan="2" class="text-center">
+        {% set total_creation_count = total_creation_count + stats[group.id][user.id].creation[0] %}
+        {% set total_creation_qty = total_creation_qty + stats[group.id][user.id].creation[1] %}
+        {{ stats[group.id][user.id].creation[0] ? stats[group.id][user.id].creation[0] : 0 }} |
+        {{ stats[group.id][user.id].creation[1] ? stats[group.id][user.id].creation[1] : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {% set total_modification_count = total_modification_count + stats[group.id][user.id].modification[0] %}
+        {% set total_modification_qty = total_modification_qty + stats[group.id][user.id].modification[1] %}
+        {{ stats[group.id][user.id].modification[0] ? stats[group.id][user.id].modification[0] : 0 }} |
+        {{ stats[group.id][user.id].modification[1] ? stats[group.id][user.id].modification[1] : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {% set total_validation_count = total_validation_count + stats[group.id][user.id].validation[0] %}
+        {% set total_validation_qty = total_validation_qty + stats[group.id][user.id].validation[1] %}
+        {{ stats[group.id][user.id].validation[0] ? stats[group.id][user.id].validation[0] : 0 }} |
+        {{ stats[group.id][user.id].validation[1] ? stats[group.id][user.id].validation[1] : 0 }}
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="7">Aucun utilisateur dans ce groupe</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td><strong>Total</strong></td>
+      <td colspan="2" class="text-center"><strong>{{ total_creation_count }} | {{ total_creation_qty }}</strong></td>
+      <td colspan="2" class="text-center"><strong>{{ total_modification_count }} | {{ total_modification_qty }}</strong></td>
+      <td colspan="2" class="text-center"><strong>{{ total_validation_count }} | {{ total_validation_qty }}</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Totaux</strong></td>
+      <td colspan="6" class="text-center">
+        <strong>
+          {{ total_creation_count + total_modification_count + total_validation_count }} |
+          {{ total_creation_qty + total_modification_qty + total_validation_qty }}
+        </strong>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script>
+$(function(){
+  $('.input-daterange').datepicker({
+    format: 'dd-mm-yyyy',
+    language: 'fr'
+  });
+});
+</script>
+{% endblock %}

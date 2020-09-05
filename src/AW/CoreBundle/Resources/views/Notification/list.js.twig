@@ -1,0 +1,83 @@
+$(function(){
+  // Gestion des notifications
+  $('.drawer-pf-trigger.notifications').click(function(e){
+    e.preventDefault();
+
+    var $drawer = $('.drawer-pf.notifications');
+
+    $(this).toggleClass('open');
+    if($drawer.hasClass('hide')){
+      $drawer.removeClass('hide');
+    }else{
+      $drawer.addClass('hide');
+    }
+  });
+
+  $('.drawer-pf-close').click(function(e){
+    var $drawer = $('.drawer-pf');
+
+    $('.drawer-pf-trigger').removeClass('open');
+    $drawer.addClass('hide');
+  });
+
+  $('.drawer-pf-toggle-expand').click(function(e){
+    var $drawer = $('.drawer-pf');
+    var $drawerNotifications = $drawer.find('.drawer-pf-notification');
+
+    if($drawer.hasClass('drawer-pf-expanded')){
+      $drawer.removeClass('drawer-pf-expanded');
+      $drawerNotifications.removeClass('expanded-notification');
+    }else{
+      $drawer.addClass('drawer-pf-expanded');
+      $drawerNotifications.addClass('expanded-notification');
+    }
+  });
+
+  $.getJSON("{{ path('aw_core_notifications', {_format: 'json'}) }}", function(data){
+    if(data.count > 0){
+      $('#notifications-count').text(data.count);
+    }
+
+    $.each(data.list, function(i, item){
+      var html = '<div class="panel panel-default">';
+      html += '<div class="panel-heading" data-component="collapse-heading">';
+      html += '<h4 class="panel-title">';
+      html += '<a data-toggle="collapse" data-parent="#notification-drawer-accordion" href="#fixedCollapse-'+i+'">'+item.title+'</a>';
+      html += '</h4>';
+      html += '<span class="panel-counter">'+item.countLabel+'</span>';
+      html += '</div>';
+      html += '<div id="fixedCollapse-'+i+'" class="panel-collapse collapse in">';
+      html += '<div class="panel-body">';
+
+      $.each(item.list, function(key, notification){
+        html += '<div class="drawer-pf-notification unread">';
+        html += '<a href="'+notification.deletelink+'" class="btn btn-link pull-right">';
+        html += '<span class="glyphicon glyphicon-trash"></span>';
+        html += '</a>';
+        html += '<span class="fa fa-bell pull-left"></span>';
+        html += '<div class="drawer-pf-notification-content">';
+        html += '<a href="'+notification.linkto+'" class="drawer-pf-notification-message">'+notification.message+'</a>';
+        html += '<div class="drawer-pf-notification-info">';
+        html += '<span class="date">'+notification.date+'</span>';
+        html += '<span class="time">'+notification.time+'</span>';
+        html += '</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+
+      html += '</div>';
+      html += '</div>';
+      html += '</div>';
+
+      $('#notification-drawer-accordion').append(html);
+    });
+  });
+
+  $.ajax({
+    url: "{{ path('aw_core_documents_popup') }}",
+    success: function(data, textStatus, jqXHR){
+      $('.container-fluid').append(data);
+      $('#popupViewer').modal('show');
+    }
+  });
+});

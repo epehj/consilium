@@ -1,0 +1,138 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Modifier l'adresse de livraison de la commande {{ commande.ref }}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="row well-sm">
+          <div class="col-xs-12 col-md-3">
+            <a class="btn btn-default btn-block" id="address-client">Adresse de la société</a>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <a class="btn btn-default btn-block {% if not commande.userContact %}disabled{% endif %}" id="address-contact">Adresse du contact</a>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <a class="btn btn-default btn-block" id="address-site">Adresse du site</a>
+          </div>
+          <div class="col-xs-12 col-md-3">
+            <a class="btn btn-default btn-block" id="address-agence">Adresse de l'agence</a>
+          </div>
+        </div>
+
+        {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        {{ form_row(form.shippingRecipient) }}
+        {{ form_row(form.shippingAddress1, {attr: {autocomplete: 'off'}}) }}
+        {{ form_rest(form) }}
+
+        <div class="row">
+          <a href="{{ path('aw_plans_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </div>
+
+        {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap3-typeahead.min.js') }}"></script>
+<script>
+$(function(){
+  function updateShippingAddress(recipient, address1, address2, zip, town, country){
+    $('#aw_plansbundle_commande_shipping_shippingRecipient').val(recipient);
+    $('#aw_plansbundle_commande_shipping_shippingAddress1').val(address1);
+    $('#aw_plansbundle_commande_shipping_shippingAddress2').val(address2);
+    $('#aw_plansbundle_commande_shipping_shippingZip').val(zip);
+    $('#aw_plansbundle_commande_shipping_shippingTown').val(town);
+    $('#aw_plansbundle_commande_shipping_shippingCountry').val(country);
+  }
+
+  $('#address-client').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress(
+      "{{ commande.societe.name }}",
+      "{{ commande.societe.address1 }}",
+      "{{ commande.societe.address2 }}",
+      "{{ commande.societe.zip }}",
+      "{{ commande.societe.town }}",
+      {% if commande.societe.country %}{{ commande.societe.country.id }}{% else %}1{% endif %}
+    );
+  });
+
+  $('#address-contact').click(function(e){
+    e.preventDefault();
+
+    {% if commande.userContact %}
+    updateShippingAddress(
+      "{{ commande.userContact.fullName }}",
+      "{{ commande.userContact.address1 }}",
+      "{{ commande.userContact.address2 }}",
+      "{{ commande.userContact.zip }}",
+      "{{ commande.userContact.town }}",
+      {% if commande.userContact.country %}{{ commande.userContact.country.id }}{% endif %}
+    );
+    {% endif %}
+  });
+
+  $('#address-site').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress(
+      "{{ commande.site }}",
+      "{{ commande.address1 }}",
+      "{{ commande.address2 }}",
+      "{{ commande.zip }}",
+      "{{ commande.town }}",
+      1
+    );
+  });
+
+  $('#address-agence').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress('CONSILIUM', '', '', '', '', 1);
+  });
+
+  $('#aw_plansbundle_commande_shipping_shippingAddress1').typeahead({
+    minLength: 5,
+    items: 8,
+    fitToElement: true,
+    source: function(query, process){
+      $.getJSON('//api-adresse.data.gouv.fr/search/', {q: query, limit: 8})
+        .done(function(json){
+          var data = [];
+          $.each(json.features, function(key, item){
+            data.push({
+              name    : item.properties.label,
+              address : item.properties.name,
+              zip     : item.properties.postcode,
+              town    : item.properties.city
+            });
+          });
+
+          process(data);
+        })
+      ;
+    },
+    updater: function(item){
+      $('#aw_plansbundle_commande_shipping_shippingZip').val(item.zip);
+      $('#aw_plansbundle_commande_shipping_shippingTown').val(item.town);
+
+      return item.address;
+    }
+  });
+});
+</script>
+{% endblock %}

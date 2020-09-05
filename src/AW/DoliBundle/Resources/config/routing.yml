@@ -1,0 +1,36 @@
+aw_doli_societe_logo:
+    path: /societe/logo/{id}
+    defaults:
+        _controller: AWDoliBundle:Default:societeLogo
+    requirements:
+        id: \d+
+
+aw_doli_propal:
+    path: /devis.{_format}
+    defaults:
+        _controller: AWDoliBundle:Default:propal
+        _format: html
+    requirements:
+        _format: html|json
+
+aw_doli_propal_view:
+    path: /devis/{ref}.{_format}
+    defaults:
+        _controller: AWDoliBundle:Default:propalView
+    requirements:
+        _format: pdf
+
+aw_doli_factures:
+    path: /factures.{_format}
+    defaults:
+        _controller: AWDoliBundle:Default:factures
+        _format: html
+    requirements:
+        _format: html|json
+
+aw_doli_facture_view:
+    path: /factures/{ref}.{_format}
+    defaults:
+        _controller: AWDoliBundle:Default:factureView
+    requirements:
+        _format: pdf

@@ -1,0 +1,140 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Historique de commandes :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awshop/css/shop.css') }}">
+{% endblock %}
+
+{% block shopContent %}
+
+<h2>Historique de commandes</h2>
+
+<table class="table table-striped table-bordered table-hover" id="table1">
+  <thead>
+    <tr>
+      <th class="all">N°</th>
+      <th class="min-tablet-p">Client</th>
+      <th class="min-tablet-l">Date</th>
+      <th class="min-tablet-l">Montant HT</th>
+      <th class="min-tablet-l">Statut</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="content-view-pf-pagination table-view-pf-pagination clearfix" id="pagination1">
+  <div class="form-group">
+    <select class="selectpicker pagination-pf-pagesize">
+      <option value="10">10</option>
+      <option value="20" selected="selected">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <span class="hidden-xs">par page</span>
+  </div>
+
+  <div class="form-group">
+    <span class="hidden-xs"><span class="pagination-pf-items-current">0-0</span> de <span class="pagination-pf-items-total">0</span></span>
+    <ul class="pagination pagination-pf-back">
+      <li class="disabled"><a href="#table1" title="Permière Page"><span class="i fa fa-angle-double-left"></span></a></li>
+      <li class="disabled"><a href="#table1" title="Page Précédente"><span class="i fa fa-angle-left"></span></a></li>
+    </ul>
+    <label for="pagination1-page" class="sr-only">Page en cours</label>
+    <input class="pagination-pf-page" type="text" value="1" id="pagination1-page"/>
+    <span>sur <span class="pagination-pf-pages">1</span></span>
+    <ul class="pagination pagination-pf-forward">
+    <li><a href="#table1" title="Page Suivante"><span class="i fa fa-angle-right"></span></a></li>
+    <li><a href="#table1" title="Dernière Page"><span class="i fa fa-angle-double-right"></span></a></li>
+    </ul>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block jsBeforePatternfly %}
+<script src="{{ asset('libs/dataTables/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('libs/dataTables/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('libs/patternfly/js/patternfly.dataTables.pfPagination.min.js') }}"></script>
+<script src="{{ asset('bundles/awcore/js/dataTables.filterCol.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script>
+$(function(){
+  var dt = $("#table1").DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ path('aw_shop_commande_list', {_format: 'json'}) }}",
+    columns: [
+      {
+        name: 'ref',
+        data: null,
+        render: function(data, type, row){
+          return '<a href="'+data.url+'">'+data.ref+'</a>';
+        }
+      }, {
+        name: 'societe',
+        data: 'societe',
+        {% if app.user.societe and app.user.societe.children is empty %}
+        visible: false,
+        {% endif %}
+      }, {
+        name: 'date',
+        data: 'date',
+        className: 'text-center'
+      }, {
+        name: 'totalht',
+        data: 'totalht',
+        className: 'text-center'
+      }, {
+        name: 'status',
+        data: null,
+        render: function(data, type, row){
+          if(data.status == 1){
+            return '<span class="label label-primary">Validée</span>';
+          }else if(data.status == 2){
+            return '<span class="label label-info">Partiellement expédiée</span>';
+          }else if(data.status == 3){
+            return '<span class="label label-success">Expédiée</span>';
+          }else{
+            return '';
+          }
+        },
+        className: 'text-center'
+      }
+    ],
+    order: [[2, 'desc']],
+    dom: "t",
+    language: {
+      zeroRecords: "Aucune commande"
+    },
+    pfConfig: {
+      pageSize: 20,
+      paginationSelector: "#pagination1",
+      toolbarSelector: "#toolbar1"
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+        renderer: function(api, rowIdx, columns){
+          var data = $.map(columns, function(col, i ){
+            if(col.hidden === false){
+              return '';
+            }
+
+            var columnName = api.settings().init().columns[col.columnIndex].name;
+            return '<strong>'+col.title+' :</strong> '+col.data+'<br>';
+          }).join('');
+
+          return data ? $('<table/>').append(data) : false;
+        }
+      }
+    },
+  });
+});
+</script>
+{% endblock %}

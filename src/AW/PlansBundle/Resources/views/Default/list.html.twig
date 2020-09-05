@@ -1,0 +1,272 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Commandes Plans :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% if is_granted('webappli.showcaplan') %}
+<div id="stats">
+  {{ render(controller("AWPlansBundle:Stats:recap")) }}
+</div>
+{% endif %}
+
+<div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
+  <div class="col-sm-12">
+    <form class="toolbar-pf-actions">
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-ref">N° Commande</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="ref" id="filter-ref" placeholder="Filtrer par numéro de commande...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-ref-client">Ref. Client</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="refClient" id="filter-ref-client" placeholder="Filtrer par référence client...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-client">Client</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="societe" id="filter-client" placeholder="Filtrer par client...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-site">Site</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="site" id="filter-site" placeholder="Filtrer par site...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-address">Adresse du site</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="address" id="filter-address" placeholder="Filtrer par adresse...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-date">Date commande</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="date" id="filter-date" placeholder="Filtrer par date...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-status">Statut</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="status" id="filter-status">
+          <option value="">Tous</option>
+          {% for key, statusName in listStatus %}
+          <option value="{{ key }}">{{ statusName }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-releve-status">Statut Relevé/Pose</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="releveStatus" id="filter-releve-status">
+          <option value="">Tous</option>
+          {% for key, statusName in listReleveStatus %}
+          <option value="{{ key }}">{{ statusName }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-contact">Contact</label>
+        <select class="combobox form-control filter-col" data-filter-col-type="combobox" data-filter-col="userContact" id="filter-contact">
+          <option value="">Tous</option>
+          {% for contact in contacts %}
+          <option value="{{ contact.id }}">{{ contact.fullname }} ({{ contact.societe.name }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if not app.user.societe %}
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-urgent">Urgent</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="urgent" id="filter-urgent">
+          <option value="">Tous</option>
+          <option value="0">Non</option>
+          <option value="1">Oui</option>
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-production">Production</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="production" id="filter-production">
+          <option value="">Tous</option>
+          <option value="1">En attente</option>
+          <option value="2">En cours</option>
+          <option value="3">Terminée</option>
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-alert">Alerte</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="alert" id="filter-alert">
+          <option value="">Tous</option>
+          <option value="1">Vert</option>
+          <option value="2">Orange</option>
+          <option value="3">Rouge</option>
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-bat-fr">Envoi de BAT</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="batfr" id="filter-bat-fr">
+          <option value="">Tous</option>
+          <option value="0">Par tout opérateur</option>
+          <option value="1">Uniquement par un opérateur français</option>
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-user">Créé par</label>
+        <select class="combobox form-control filter-col" data-filter-col-type="combobox" data-filter-col="userCreation" id="filter-user">
+          <option value="">Tous</option>
+          {% for user in users %}
+          <option value="{{ user.id }}">{{ user.fullname }}{% if user.societe %} ({{ user.societe.name }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-releve-user">Relevé/Pose affectée à</label>
+        <select class="combobox form-control filter-col" data-filter-col-type="combobox" data-filter-col="releveUser" id="filter-releve-user">
+          <option value="">Tous</option>
+          {% for user in users %}
+          <option value="{{ user.id }}">{{ user.fullname }}{% if user.societe %} ({{ user.societe.name }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!--<div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-factures">Facture</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="factures" id="filter-factures" placeholder="Filtrer par facture...">
+      </div>-->
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-billed">Facturé ?</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="billed" id="filter-billed">
+          <option value="">Tous</option>
+          <option value="0">Non</option>
+          <option value="1">Oui</option>
+        </select>
+      </div>
+      {% endif %}
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label></label>
+        <div class="dropdown">
+          <button class="btn btn-default dropdown-toggle" type="button" id="colsView" data-toggle="dropdown">
+            Afficher/Masquer les colonnes
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu table-view-pf-colvis-menu" role="menu" aria-labelledby="colsView">
+            <li><input type="checkbox" value="refClient" checked><label>Ref. Client</label></li>
+            <li><input type="checkbox" value="societe"{% if not app.user.societe %} checked{% endif %}><label>Client</label></li>
+            <li><input type="checkbox" value="site" checked><label>Site</label></li>
+            <li><input type="checkbox" value="address" checked><label>Adresse</label></li>
+            <li><input type="checkbox" value="date" checked><label>Date</label></li>
+            <li><input type="checkbox" value="dateUpdate" checked><label>Dernière mise à jour</label></li>
+            <li><input type="checkbox" value="userContact" checked><label>Contact</label></li>
+            <li><input type="checkbox" value="status" checked><label>Statut</label></li>
+            <li><input type="checkbox" value="releveStatus"><label>Statut Relevé/Pose</label></li>
+            <li><input type="checkbox" value="releveNote"><label>Note relevé/pose</label></li>
+          </ul>
+        </div>
+      </div>
+    </form>
+
+    <div class="row toolbar-pf-results">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-default filter-col-apply">
+          <span class="fa fa-filter"></span>
+          Appliquer les filtres
+        </button>
+
+        <button type="button" class="btn btn-default filter-col-reset">
+          <span class="pficon pficon-close"></span>
+          Supprimer les filtres
+        </button>
+
+        <button type="button" class="btn btn-default" id="export-csv">
+          <span class="pficon pficon-export"></span>
+          Exporter
+        </button>
+      </div>
+    </div>
+
+    <div class="row toolbar-pf-actions hidden-xs">
+      <div class="col-sm-12">
+        <strong>Légende :</strong>
+        {% for key, statusName in listStatus %}
+        <span class="label status-{{ key }}">{{ statusName }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped table-bordered table-hover" id="table1">
+  <thead>
+    <tr>
+      <th class="all">N°</th>
+      <th class="min-tablet-l">Ref. Client</th>
+      <th class="all">Client</th>
+      <th class="min-tablet-p">Site</th>
+      <th class="min-tablet-l">Adresse</th>
+      <th class="text-center min-tablet-l">Date</th>
+      <th class="text-center min-tablet-l">Dernière mise à jour</th>
+      <th class="text-center min-tablet-l">Contact</th>
+      <th class="text-center min-tablet-l">Statut</th>
+      <th class="text-center min-tablet-l">Statut Relevé/Pose</th>
+      <th class="min-tablet-l">Note relevé/pose</th>
+      <th class="text-center min-tablet-l">Facture</th>
+      <th class="text-center min-tablet-p">Urgent ?</th>
+      <th class="text-center min-tablet-l">Production</th>
+      <th class="text-center min-tablet-l">Alerte</th>
+      <th class="text-center">Créé par</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="content-view-pf-pagination table-view-pf-pagination clearfix" id="pagination1">
+  <div class="form-group">
+    <select class="selectpicker pagination-pf-pagesize">
+      <option value="10">10</option>
+      <option value="20" selected="selected">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <span class="hidden-xs">par page</span>
+  </div>
+
+  <div class="form-group">
+    <span class="hidden-xs"><span class="pagination-pf-items-current">0-0</span> de <span class="pagination-pf-items-total">0</span></span>
+    <ul class="pagination pagination-pf-back">
+      <li class="disabled"><a href="#table1" title="Permière Page"><span class="i fa fa-angle-double-left"></span></a></li>
+      <li class="disabled"><a href="#table1" title="Page Précédente"><span class="i fa fa-angle-left"></span></a></li>
+    </ul>
+    <label for="pagination1-page" class="sr-only">Page en cours</label>
+    <input class="pagination-pf-page" type="text" value="1" id="pagination1-page"/>
+    <span>sur <span class="pagination-pf-pages">1</span></span>
+    <ul class="pagination pagination-pf-forward">
+    <li><a href="#table1" title="Page Suivante"><span class="i fa fa-angle-right"></span></a></li>
+    <li><a href="#table1" title="Dernière Page"><span class="i fa fa-angle-double-right"></span></a></li>
+    </ul>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block jsBeforePatternfly %}
+<script src="{{ asset('libs/dataTables/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('libs/dataTables/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('libs/patternfly/js/patternfly.dataTables.pfPagination.min.js') }}"></script>
+<script src="{{ asset('bundles/awcore/js/dataTables.filterCol.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
+<script src="{{ path('aw_plans_list', {_format: 'js'}) }}"></script>
+{% endblock %}

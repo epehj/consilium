@@ -1,0 +1,37 @@
+aw_plans_notes:
+    path: /{type}/{id}
+    defaults:
+        _controller: AWPlansBundle:Notes:list
+        type: private
+    requirements:
+        id: \d+
+        type: public|private
+
+aw_plans_notes_add:
+    path: /add/{type}/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Notes:add
+        _format: json
+        type: private
+    requirements:
+        id: \d+
+        _format: json
+        type: public|private
+
+aw_plans_notes_last:
+    path: /last/{type}/{id}.{_format}
+    defaults:
+        _controller: AWPlansBundle:Notes:last
+        _format: json
+        type: private
+    requirements:
+        id: \d+
+        _format: json
+        type: public|private
+
+aw_plans_notes_marked_seen:
+    path: /marked/seen/{id}
+    defaults:
+        _controller: AWPlansBundle:Notes:markedSeen
+    requirements:
+        id: \d+

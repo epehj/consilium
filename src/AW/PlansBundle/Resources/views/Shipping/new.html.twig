@@ -1,0 +1,40 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Nouvelle expédition de plans :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include('AWPlansBundle:Shipping:header.html.twig') %}
+
+{% include('AWPlansBundle:Shipping:plans.html.twig') %}
+
+{% if
+  not expedition.commandes[0].societe.customerBad is constant('CUSTOMER_BAD_BLUE', expedition.commandes[0].societe) and
+  not expedition.commandes[0].societe.customerBad is constant('CUSTOMER_BAD_PURPLE', expedition.commandes[0].societe)
+%}
+  {% if form is not null %}
+  {{ form(form) }}
+  {% else %}
+  <div class="row toolbar-pf">
+    <div class="col-sm-12">
+      <div class="toolbar-pf-actions">
+        <a
+          href="{{ path('aw_plans_shipping_new', {ids: ids, method: 'none'}) }}"
+          class="btn btn-primary confirm"
+          data-confirm-message="Les plans sont récupérés par le client ?"
+        >Récupérer par le client</a>
+
+        <a href="{{ path('aw_plans_shipping_new', {ids: ids, method: 'chronopost'}) }}" class="btn btn-primary">Expédier par Chronopost</a>
+
+        <a href="{{ path('aw_plans_shipping_new', {ids: ids, method: 'tnt'}) }}" class="btn btn-primary">Expédier par TNT</a>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

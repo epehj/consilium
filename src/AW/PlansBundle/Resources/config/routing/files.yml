@@ -1,0 +1,29 @@
+aw_plans_files:
+    path: /{id}
+    defaults:
+        _controller: AWPlansBundle:Files:list
+    requirements:
+        id: \d+
+
+aw_plans_files_view:
+    path: /view/{id}/{dir}/{subdir}/{file}
+    defaults:
+        _controller: AWPlansBundle:Files:view
+    requirements:
+        id: \d+
+
+aw_plans_files_generate:
+    path: /generate/pdf/{id}
+    defaults:
+        _controller: AWPlansBundle:Files:generate
+    requirements:
+        id: \d+
+
+aw_plans_files_upload:
+    path: /upload/{id}/{dirName}/{_format}/{file}
+    defaults:
+        _controller: AWPlansBundle:Files:upload
+        _format: html
+        file:
+    requirements:
+        _format: html|json

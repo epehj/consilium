@@ -1,0 +1,60 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Bon de Fabrication Plans :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Bon de fabrication Plans</h3>
+      </div>
+
+      <div class="panel-body">
+        <div class="row toolbar-pf">
+          <div class="col-sm-12">
+            <div class="toolbar-pf-actions">
+              <a class="btn btn-success" href="{{ path('aw_plans_ofs_new') }}">
+                <span class="glyphicon glyphicon-tasks"></span>
+                Générer un nouveau bon
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12 list-group">
+            {% for file in finder %}
+            <a href="{{ path('aw_plans_ofs_view', {file: file.filename}) }}" class="list-group-item">
+              <span class="glyphicon glyphicon-file"></span>
+              <span class="truncate">{{ file.filename }}</span>
+              <span class="pull-right">
+                <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_ofs_delete', {file: file.filename}) }}">
+                  <span class="glyphicon glyphicon-trash"></span>
+                  <span class="hidden-xs">Supprimer</span>
+                </button>
+              </span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+$('.delete-file').click(function(e){
+  e.preventDefault();
+
+  var r = confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')
+  if(r == true){
+    window.location.href = $(this).data('link');
+  }
+});
+</script>
+{% endblock %}

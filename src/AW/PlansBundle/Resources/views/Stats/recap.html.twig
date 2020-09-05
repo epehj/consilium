@@ -1,0 +1,30 @@
+<div class="row row-cards-pf">
+  {% for s in stats %}
+  <div class="col-xs-12 col-sm-6 col-md-3">
+    <div class="card-pf card-pf-accented card-pf-aggregate-status">
+      <h2 class="card-pf-title">
+        <span class="pficon pficon-trend-up"></span> {{ s.label }}
+      </h2>
+      <div class="card-pf-body">
+        <p class="card-pf-aggregate-status-notifications">
+          {% if s.data | length == 1 %}
+          {{ s.data[0] }}
+          {% else %}
+            {% for value in s.data %}
+            <span class="card-pf-aggregate-status-notification">
+              {{ value ? value : 0 }}
+            </span>
+            {% endfor %}
+          {% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<blockquote class="blockquote-reverse">
+  <footer>
+    <cite>* Mise à jour : {% if lastupdate %}{{ lastupdate | date('d/m/Y H:i:s') }}{% else %}nc{% endif %}</cite>
+  </footer>
+</blockquote>

@@ -1,0 +1,25 @@
+<div class="modal fade" id="popupViewer" tabindex="-1" role="dialog" aria-labelledby="popupViewerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <h4 class="modal-title" id="popupViewerLabel">Informations</h4>
+      </div>
+      <div class="modal-body">
+        <div class="embed-responsive embed-responsive-4by3">
+          <object class="embed-responsive-item" type="application/pdf" data="{{ path('aw_core_documents_view', {subdir: 'popup', file: 'popup.pdf'}) }}">Pas de support PDF.</object>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <span class="pficon pficon-close"></span> Fermer
+        </button>
+        <a href="#" class="btn btn-default" id="popupViewerLink">
+          <span class="glyphicon glyphicon-download"></span> Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<div class="row">
+  <div class="col-md-12">
+    {% for commande in expedition.commandes %}
+    <table class="table table-bordered">
+      <tbody>
+        <tr class="active">
+          <td>
+            <strong>N° de commande</strong>
+          </td>
+          <td>
+            {% if is_granted('VIEW', commande) %}
+            <a href="{{ path('aw_plans_view', {id: commande.id}) }}">{{ commande.ref }}</a>
+            {% else %}
+            {{ commande.ref }}
+            {% endif %}
+          </td>
+          <td><strong>Site</strong></td><td>{{ commande.site }}</td>
+          <td><strong>Remarques</strong><td colspan="2"><strong><span style="color: red;">{{ commande.remarques | nl2br }}</span></strong></td></td>
+        </tr>
+
+    {% set cType = '' %}
+    {% for det in commande.listDet %}
+    {% if cType != det.type %}
+      <tr class="plan-{{ det.type | lower }}">
+        <td colspan="8" class="text-center"><strong>{{ det.getTypeName }}</strong></td>
+      </tr>
+      <tr class="active">
+        <td colspan="2" class="text-center"><strong>Quantité</strong></td>
+        <td colspan="2" class="text-center"><strong>Format</strong></td>
+        <td colspan="2" class="text-center"><strong>Matière</strong></td>
+        <td colspan="2" class="text-center"><strong>Finition</strong></td>
+      </tr>
+    {% endif %}
+
+    <tr>
+      <td colspan="2" class="text-center">{{ det.qty }}</td>
+      <td colspan="2" class="text-center">{{ det.getFormatName }}</td>
+      <td colspan="2" class="text-center">{{ det.matiereName }}</td>
+      <td colspan="2" class="text-center">{{ det.getFinitionName }}</td>
+    </tr>
+    {% endfor %}
+
+      </tbody>
+    </table>
+    {% endfor %}
+  </div>
+</div>

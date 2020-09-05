@@ -1,0 +1,63 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Mon compte :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Mon compte</h3>
+      </div>
+      <div class="panel-body">
+        <ul class="list-group">
+          <li class="list-group-item"><strong>Nom</strong> : {{ app.user.fullName }}</li>
+          <li class="list-group-item"><strong>Identifiant</strong> : {{ app.user.login }}</li>
+          <li class="list-group-item"><strong>E-mail</strong> : {{ app.user.email }}</li>
+          <li class="list-group-item">
+            <a href="{{ path('aw_user_reset_password') }}" class="btn btn-warning">Réinitialiser mon mot de passe</a>
+          </li>
+          {% if app.user.societe %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-xs-12 col-md-3">
+                  <div class="thumbnail">
+                    <img src="{{ path('aw_doli_societe_logo', {id: app.user.societe.id}) }}" width="100%" alt="Logo">
+                  </div>
+                </div>
+                <div class="col-xs-12 col-md-9">
+                  <address>
+                    <strong>{{ app.user.societe.name }}</strong> {% if app.user.societe.children %}(par défaut){% endif %}<br>
+                    {{ app.user.societe.address1 }}<br>
+                    {% if app.user.societe.address2 %}{{ app.user.societe.address2 }}<br>{% endif %}
+                    {{ app.user.societe.zip }} {{ app.user.societe.town }}<br>
+                    {{ app.user.societe.country.name }}
+                  </address>
+                </div>
+              </div>
+            </li>
+            {% for societe in app.user.societe.children %}
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-xs-12 col-md-3">
+                  <img src="{{ path('aw_doli_societe_logo', {id: societe.id}) }}" width="100%" alt="Logo">
+                </div>
+                <div class="col-xs-12 col-md-9">
+                  <address>
+                    <strong>{{ societe.name }}</strong><br>
+                    {{ societe.address1 }}<br>
+                    {% if societe.address2 %}{{ societe.address2 }}<br>{% endif %}
+                    {{ societe.zip }} {{ societe.town }}<br>
+                    {{ app.user.societe.country.name }}
+                  </address>
+                </div>
+              </div>
+            </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

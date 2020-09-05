@@ -1,0 +1,89 @@
+{
+    "name": "ggs/appliweb",
+    "license": "proprietary",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "AW\\UserBundle\\": "src/AW/UserBundle",
+            "AW\\CoreBundle\\": "src/AW/CoreBundle",
+            "AW\\DoliBundle\\": "src/AW/DoliBundle",
+            "AW\\PlansBundle\\": "src/AW/PlansBundle",
+            "AW\\ShopBundle\\": "src/AW/ShopBundle",
+            "AW\\ChronopostBundle\\": "src/AW/ChronopostBundle",
+            "AW\\TNTBundle\\": "src/AW/TNTBundle"
+        },
+        "classmap": [
+            "app/AppKernel.php",
+            "app/AppCache.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        },
+        "files": [
+            "vendor/symfony/symfony/src/Symfony/Component/VarDumper/Resources/functions/dump.php"
+        ]
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "beberlei/DoctrineExtensions": "^1.0",
+        "chadyred/easy-pdf-bundle": "^2.1",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-migrations-bundle": "^1.3",
+        "doctrine/orm": "^2.5",
+        "egeloen/ckeditor-bundle": "^6.0",
+        "friendsofsymfony/user-bundle": "~2.0",
+        "incenteev/composer-parameter-handler": "^2.0",
+        "php-ews/php-ews": "^1.0",
+        "sensio/distribution-bundle": "^5.0.19",
+        "sensio/framework-extra-bundle": "^3.0.2",
+        "symfony/monolog-bundle": "^3.1.0",
+        "symfony/polyfill-apcu": "^1.0",
+        "symfony/swiftmailer-bundle": "^2.3.10",
+        "symfony/symfony": "3.4.*",
+        "twig/twig": "^1.0||^2.0"
+    },
+    "require-dev": {
+        "sensio/generator-bundle": "^3.0",
+        "symfony/phpunit-bridge": "^3.0"
+    },
+    "scripts": {
+        "symfony-scripts": [
+            "Incenteev\\ParameterHandler\\ScriptHandler::buildParameters",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Ivory\\CKEditorBundle\\Composer\\CKEditorScriptHandler::install",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+        ],
+        "post-install-cmd": [
+            "@symfony-scripts"
+        ],
+        "post-update-cmd": [
+            "@symfony-scripts"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "symfony-app-dir": "app",
+        "symfony-bin-dir": "bin",
+        "symfony-var-dir": "var",
+        "symfony-web-dir": "web",
+        "symfony-tests-dir": "tests",
+        "symfony-assets-install": "relative",
+        "incenteev-parameters": {
+            "file": "app/config/parameters.yml"
+        },
+        "ckeditor-tag": "4.7.3",
+        "ckeditor-clear": "drop",
+        "ckeditor-exclude": [
+          "samples",
+          "adapters"
+        ],
+        "branch-alias": null
+    }
+}

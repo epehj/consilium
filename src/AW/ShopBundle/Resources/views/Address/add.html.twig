@@ -1,0 +1,43 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Ajout d'adresse :: {{ parent() }}{% endblock %}
+
+{% block shopContent %}
+
+<h2>Nouvelle adresse de livraison</h2>
+
+{{ form_start(form) }}
+
+{% if not form.vars.valid %}
+  <div class="alert alert-danger">
+    <ul class="list-unstyled">
+      <li>
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        Certains champs sont incorrects. Merci de corriger.
+      </li>
+    </ul>
+  </div>
+  {{ form_errors(form) }}
+{% endif %}
+
+{{ form_rest(form) }}
+
+<div class="row">
+  <div class="col-xs-12 col-sm-10 col-md-offset-2">
+    <button type="submit" class="btn btn-primary btn-submit">Ajouter</button>
+  </div>
+</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  // ajout des étoiles rouges pour tous les champs obligatoires
+  $('label.required').addClass('required-pf');
+});
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Documents :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Cliquez sur l'icône <span class="fa fa-angle-right"></span> à gauche du nom de dossier pour voir son contenu. Cliquez sur le nom du fichier pour le télécharger.
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div id="treeview1"></div>
+  </div>
+</div>
+
+<div class="modal fade" id="fileViewer" tabindex="-1" role="dialog" aria-labelledby="fileViewerLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <h4 class="modal-title" id="fileViewerLabel">File Viewer</h4>
+      </div>
+      <div class="modal-body" id="fileViewerBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          <span class="pficon pficon-close"></span> Fermer
+        </button>
+        <a href="#" class="btn btn-default" id="fileViewerLink">
+          <span class="glyphicon glyphicon-download"></span> Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/patternfly-bootstrap-treeview/bootstrap-treeview.min.js') }}"></script>
+<script>
+$(function(){
+  $('#treeview1').treeview({
+    collapseIcon: "fa fa-angle-down",
+    expandIcon: "fa fa-angle-right",
+    levels: 1,
+    data: {{ tree | json_encode(constant('JSON_PRETTY_PRINT')) | raw }},
+    onNodeSelected: function(e, data){
+      if(data.hasOwnProperty('dataAttr') && data.dataAttr.hasOwnProperty('link')){
+        $('#fileViewerLabel').text(data.text);
+        $('#fileViewerLink').attr('href', data.dataAttr.link);
+
+        if(['png', 'jpeg', 'jpg', 'gif'].indexOf(data.dataAttr.ext) != -1){
+          $('#fileViewerBody').html('<a href="'+data.dataAttr.link+'" class="thumbnail"><img src="'+data.dataAttr.link+'" alt="'+data.text+'"></a>');
+        }else if(['pdf', 'ai'].indexOf(data.dataAttr.ext) != -1){
+          var height = ($(document).height() * 70) / 100;
+          $('#fileViewerBody').html('<div class="embed-responsive embed-responsive-16by9"><object class="embed-responsive-item" type="application/pdf" data="'+data.dataAttr.link+'">Pas de support PDF.</object></div>');
+        }else{
+          $('#fileViewerBody').html('<p>Ce fichier ne peut être directement affiché ici. Cliquez sur le bouton télécharger si le téléchargement ne se lance pas automatiquement.</p>');
+          window.location.href = data.dataAttr.link;
+        }
+
+        $('#fileViewer').modal('show');
+      }
+    }
+  });
+});
+</script>
+{% endblock %}

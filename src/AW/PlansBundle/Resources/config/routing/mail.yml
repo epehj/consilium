@@ -1,0 +1,6 @@
+aw_plans_mail_action:
+    path: /{action}/{id}
+    defaults:
+        _controller: AWPlansBundle:Mail:send
+    requirements:
+        id: \d+

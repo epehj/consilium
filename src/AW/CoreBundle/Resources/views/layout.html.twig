@@ -1,0 +1,45 @@
+{% extends "::base.html.twig" %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" type="text/css" href="{{ asset('bundles/awcore/css/core.css') }}">
+{% endblock %}
+
+{% block body %}
+  {% include "AWCoreBundle::navbar.html.twig" %}
+
+  {% for label, messages in app.flashes %}
+    {% if label == 'success' %}
+      {% for message in messages %}
+      <div class="toast-pf toast-pf-max-width toast-pf-top-right alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-ok"></span>
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% elseif label == 'error' %}
+      {% for message in messages %}
+      <div class="toast-pf toast-pf-max-width toast-pf-top-right alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+          <span class="pficon pficon-close"></span>
+        </button>
+        <span class="pficon pficon-error-circle-o"></span>
+        {{ message }}
+      </div>
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+
+  <div class="container-fluid">
+    {% block content %}{% endblock %}
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('bundles/awcore/js/core.js') }}"></script>
+<script src="{{ path('aw_core_notifications', {_format: 'js'}) }}"></script>
+{% endblock %}

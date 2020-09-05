@@ -1,0 +1,82 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Identification :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+	body {
+		background: url("{{ asset('img/bg.jpg') }}") 50% 0 repeat-x;
+	}
+
+  .container {
+    bottom: 13%;
+    position: absolute;
+    background-color: rgba(0,0,0,.6);
+    width: 100%;
+    padding: 20px 80px;
+    color: #FFF;
+  }
+
+  .form-horizontal .control-label {
+    text-align: left;
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <form action="{{ path('fos_user_security_check') }}" method="post" class="form-horizontal" role="form">
+        {% if error %}
+        <div class="col-md-offset-4 col-md-8">
+          <div class="alert alert-danger alert-dismissable">
+            <span class="pficon pficon-error-circle-o"></span>
+            {{ error.message|trans }}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if csrf_token %}
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}">
+        {% endif %}
+
+        {% if app.request.get('referer') %}
+        <input type="hidden" name="_target_path" value="{{ app.request.get('referer') }}">
+        {% endif %}
+
+        <div class="form-group">
+          <label for="username" class="col-md-4 control-label">Identifiant:</label>
+          <div class="col-md-8">
+            <input type="text" class="form-control" id="username" name="_username" placeholder="identifiant" value="{{ last_username }}" {% if last_username is empty %}autofocus{% endif %} required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password" class="col-md-4 control-label">Mot de passe:</label>
+          <div class="col-md-8">
+            <input type="password" class="form-control" id="password" name="_password" placeholder="mot de passe" {% if last_username is not empty %}autofocus{% endif %} required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-4">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="_remember_me" value="on"> Se souvenir de moi
+              </label>
+            </div>
+            <!--<span class="help-block"><a>Mot de passe oublié ?</a></span>-->
+          </div>
+
+          <div class="col-md-4">
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Connexion</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

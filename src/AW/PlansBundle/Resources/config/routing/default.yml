@@ -1,0 +1,36 @@
+aw_plans_list:
+    path: /list.{_format}
+    defaults:
+        _controller: AWPlansBundle:Default:list
+        _format: html
+    requirements:
+        _format: html|js|json|csv
+
+aw_plans_view:
+    path: /view/{id}
+    defaults:
+        _controller: AWPlansBundle:Default:view
+    requirements:
+        id: \d+
+
+aw_plans_view_mail:
+    path: /mail/{id}
+    defaults:
+        _controller: AWPlansBundle:Default:mail
+    requirements:
+        id: \d+
+
+aw_plans_view_suivi:
+    path: /suivi/{id}
+    defaults:
+        _controller: AWPlansBundle:Default:suivi
+    requirements:
+        id: \d+
+
+aw_plans_billing:
+    path: /billing.{_format}
+    defaults:
+        _controller: AWPlansBundle:Default:billing
+        _format: html
+    requirements:
+        _format: html|json

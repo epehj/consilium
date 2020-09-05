@@ -1,0 +1,186 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('libs/jquery-file-upload/css/jquery.fileupload.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Terminer la production</h3>
+      </div>
+      <div class="panel-body">
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Merci de joindre obligatoirement les fichiers AI et PDF.
+        </div>
+
+        <div class="row toolbar-pf">
+          <div class="col-sm-12">
+            <div class="toolbar-pf-actions">
+              <span class="btn btn-primary fileinput-button">
+                <span class="glyphicon glyphicon-cloud-upload"></span>
+                <span>Ajouter les fichiers</span>
+                <input type="file" name="form[files][]" accept=".pdf,.ai" id="fileupload" multiple>
+              </span>
+
+              <button class="btn btn-success" id="finish">
+                <span class="glyphicon glyphicon-tasks"></span>
+                Terminer
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="progressbar" class="row hidden">
+          <div class="col-sm-12">
+            <div class="progress">
+              <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                <span class="progress-label">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12 list-group" id="filelist"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
+<script>
+$(function(){
+  $('#fileupload').fileupload({
+    url: "{{ path('aw_plans_production_upload', {dirName: dirName}) }}",
+    dataType: 'json',
+    sequentialUploads: true,
+    acceptFileTypes: /\.(pdf|ai)$/i,
+    add: function(e, data){
+      data.context = [];
+      $.each(data.files, function(index, file){
+        item = $('<a/>')
+          .addClass('list-group-item')
+          .append('<span class="glyphicon glyphicon-file"></span> <span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+        item.appendTo('#filelist');
+        data.context.push(item);
+      });
+
+      data.submit();
+    },
+    progress: function(e, data){
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      html = '<div class="progress progress-label-left" style="min-width: 4em;">';
+      html+= '<div class="progress-bar" role="progressbar" aria-valuenow="'+progress+'" aria-valuemin="0" aria-valuemax="100" style="width: '+progress+'%;">';
+      html+= '<span>'+progress+' %</span>';
+      html+= '</div>';
+      html+= '</div>';
+
+      $.each(data.files, function(index, file){
+        var $item = data.context[index];
+        $item.find('.pull-right').html(html);
+      });
+    },
+    progressall: function(e, data){
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      $('.progress-bar')
+        .css('width', progress+'%')
+        .attr('aria-valuenow', progress)
+      ;
+      $('.progress-label').text(progress+'%');
+    },
+    done: function(e, data){
+      $.each(data.result, function (index, file){
+        var $item = data.context[index];
+
+        $item.attr('href', file.url);
+        $item.attr('target', '_blank');
+        $item.find('.filename').text(file.name);
+        $item.find('.pull-right').html('');
+
+        var $deleteBtn = $('<button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer</button>');
+        data.context[index].find('.pull-right').append($deleteBtn);
+
+        $deleteBtn.click(function(e){
+          e.preventDefault();
+
+          var r = confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?');
+          if(r !== true){
+            return;
+          }
+
+          $.ajax({
+            url: file.url,
+            method: 'DELETE'
+          })
+            .done(function(data, textStatus, jqXHR){
+              $item.remove();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown){
+              alert('Échec de suppression du fichier !');
+            })
+          ;
+        });
+      });
+    },
+    fail: function(e, data){
+      $.each(data.files, function(index, file){
+        var $item = data.context[index];
+
+        $item.find('.pull-right').html('<span class="pficon-warning-triangle-o"></span><strong>Échec</strong>');
+
+        var $deleteBtn = $('<button class="btn btn-default"><span class="glyphicon glyphicon-trash"></span> Supprimer</button>');
+        data.context[index].find('.pull-right').append($deleteBtn);
+
+        $deleteBtn.click(function(e){
+          e.preventDefault();
+          $item.remove();
+        });
+      });
+    },
+    start: function(e){
+      $('#progressbar').removeClass('hidden');
+      $('#finish').prop('disabled', true);
+    },
+    stop: function(e){
+      $('#progressbar').addClass('hidden');
+      $('#finish').prop('disabled', false);
+    }
+  });
+
+  $('#finish').click(function(e){
+    e.preventDefault();
+
+    $(this).prop('disabled', true);
+    $('.fileinput-button').addClass('disabled');
+
+    $.ajax({
+      url: "{{ path('aw_plans_production_finish', {id: commande.id, dirName: dirName}) }}",
+      method: 'GET'
+    })
+      .done(function(data, textStatus, jqXHR){
+        window.location.href = "{{ path('aw_plans_production_view', {id: commande.id}) }}";
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("Impossible de terminer la production ! Avez-vous ajouter les fichiers AI et PDF ?");
+      })
+      .always(function(){
+        $('#finish').prop('disabled', false);
+        $('.fileinput-button').removeClass('disabled');
+      })
+  });
+});
+</script>
+{% endblock %}

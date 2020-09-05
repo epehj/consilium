@@ -1,0 +1,88 @@
+services:
+    aw_plans.security.voter:
+        class: AW\PlansBundle\Security\Voter
+        arguments:
+            - "@security.access.decision_manager"
+        tags:
+            - { name: security.voter }
+
+    aw_plans.form.commande_type:
+        class: AW\PlansBundle\Form\CommandeType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
+    aw_plans.form.commande_edit_type:
+        class: AW\PlansBundle\Form\CommandeEditType
+        arguments:
+            - "@security.token_storage"
+            - "@security.authorization_checker"
+        tags:
+            - { name: form.type }
+
+    aw_plans.form.commandedet_type:
+        class: AW\PlansBundle\Form\CommandeDetType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
+    aw_plans.form.mail_type:
+        class: AW\PlansBundle\Form\MailType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
+    aw_plans.eventlistener.commande:
+        class: AW\PlansBundle\EventListener\CommandeListener
+        arguments:
+            - "@security.token_storage"
+            - "@aw_plans.eventlistener.doli_commande"
+            - "@aw.core.service.utils"
+            - "@aw_plans.pdf.generator"
+            - "%documents_dir%"
+            - "%doli_documents_dir%"
+        tags:
+            - { name: doctrine.event_listener, event: prePersist }
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }
+
+    aw_plans.eventlistener.commandedet:
+        class: AW\PlansBundle\EventListener\CommandeDetListener
+        arguments:
+            - "@aw_plans.eventlistener.doli_commande"
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }
+
+    aw_plans.eventlistener.doli_commande:
+        class: AW\PlansBundle\EventListener\DoliCommandeListener
+        arguments:
+            - "@doctrine.orm.entity_manager"
+            - "@aw.doli.service.pricelist_utils"
+            - "@aw_plans.pdf.generator"
+#
+#    aw_plans.eventlistener.expedition:
+#        class: AW\PlansBundle\EventListener\ExpeditionListener
+#        arguments:
+#            - "@aw_plans.pdf.generator"
+#            - "@mailer"
+#            - "@aw.doli.service.pricelist_utils"
+#            - "@aw_chronopost.webservice"
+#            - "%documents_dir%"
+#            - "%email_plans%"
+#            - "%email_expedition%"
+#        tags:
+#            - { name: doctrine.event_listener, event: prePersist }
+#            - { name: doctrine.event_listener, event: postPersist }
+
+    aw_plans.pdf.generator:
+        class: AW\PlansBundle\PDF\Generator
+        arguments:
+            - "%documents_dir%"
+            - "%doli_documents_dir%"

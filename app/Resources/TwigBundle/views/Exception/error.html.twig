@@ -1,0 +1,49 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Erreur {{ status_code }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+body {
+  background-color: #eeeeec;
+}
+
+.card-pf {
+  border-radius: 25px;
+  margin-top: 25%;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+  <div class="row">
+    <div class="hidden-xs col-sm-3 col-md-4"></div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="card-pf card-pf-view">
+        <div class="card-pf-body">
+          <div class="card-pf-top-element">
+            <span class="fa fa-exclamation-triangle card-pf-icon-circle"></span>
+          </div>
+          <h2 class="card-pf-title text-center">Erreur {{ status_code }}</h2>
+          <div class="card-pf-items text-center">
+            <div class="card-pf-item">
+              {% if status_code == 403 %}
+                Accès refusé
+              {% elseif status_code == 404 %}
+                Page introuvable
+              {% else %}
+                {{ status_text }}
+              {% endif %}
+            </div>
+          </div>
+          <p class="card-pf-info text-center"><a href="javascript:history.back()">Retourner à la page précédente</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="hidden-xs col-sm-3 col-md-4"></div>
+  </div>
+</div>
+{% endblock %}

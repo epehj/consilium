@@ -1,0 +1,3 @@
+services:
+#    aw_chronopost.webservice:
+#        class: AW\ChronopostBundle\Shipping\WebService

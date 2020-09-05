@@ -1,0 +1,95 @@
+<div class="row"> <!-- info commande -->
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading clearfix">
+        <h3 class="panel-title pull-left">Commande plans</h3>
+        {% if is_granted('EDIT', commande) %}
+        <div class="btn-group pull-right">
+          <a href="{{ path('aw_plans_edit', {element: 'commande', id: commande.id}) }}" class="btn btn-default">
+            <span class="glyphicon glyphicon-edit"></span>
+            <span class="hidden-xs">Modifier</span>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped table-condensed">
+          <tr>
+            <td class="col-md-5"><strong>Ref.</strong></td>
+            <td>
+              {% if not app.user.societe and app.user.rights.commande.lire and commande.doliCommande %}
+              <a href="{{ doli_url }}{{ commande.doliCommande.linkTo }}" target="_blank">{{ commande.ref }}</a>
+              {% else %}
+              {{ commande.ref }}
+              {% endif %}
+            </td>
+          </tr>
+          <tr><td><strong>Ref. client</strong></td><td>{{ commande.refClient }}</td></tr>
+          <tr><td><strong>Date</strong></td><td>{{ commande.dateCreation | date('d/m/Y') }}</td></tr>
+          {% if not app.user.societe %}
+          <tr>
+            <td><strong>Urgent ?</strong></td>
+            <td>{% if commande.urgent %}Oui{% else %}Non{% endif %}</td>
+          </tr>
+          <tr>
+            <td><strong>BAT client uniquement par un opérateur français</strong></td>
+            <td>{% if commande.batOnlyByFr %}Oui{% else %}Non{% endif %}</td>
+          </tr>
+          <tr>
+            <td><strong>Nombre de déclinaisons</strong></td>
+            <td>{{ commande.qtyDeclination }}</td>
+          </tr>
+          <tr>
+            <td><strong>Facture(s)</strong></td>
+            <td>
+            {% if commande.doliCommande %}
+              {% for coFacture in commande.doliCommande.coFactures %}
+              <a href="{{ doli_url }}{{ coFacture.facture.linkTo }}" target="_blank">{{ coFacture.facture.ref }}</a><br>
+              {% endfor %}
+            {% endif %}
+            </td>
+          </tr>
+          {% endif %}
+          <tr class="status-{{ commande.status }}">
+            <td><strong>Statut</strong></td>
+            <td>
+              {{ commande.statusLabel }}
+              {% if commande.releve and not commande.isWaiting %}
+                / {{ commande.releveStatusLabel }}
+              {% endif %}
+              {% if not app.user.societe %}
+                {% if commande.production == 1 %}
+                  / En attente de production
+                {% elseif commande.production == 2 %}
+                  / En cours de production
+                {% elseif commande.production == 3 %}
+                  / Production terminée
+                {% endif %}
+
+                {% if commande.expedition %}
+                <a class="btn btn-primary" href="{{ path('aw_plans_shipping_view', {id: commande.expedition.id}) }}">Bon de livraison</a>
+                {% endif %}
+              {% endif %}
+
+              {% if commande.expedition and commande.expedition.method is not constant('AW\\PlansBundle\\Entity\\Expedition::METHOD_NONE') %}
+              <a class="btn btn-primary" href="{{ commande.expedition.getSuiviURL }}" target="_blank">Suivi des colis</a>
+              {% endif %}
+            </td>
+          </tr>
+          {% if not app.user.societe %}
+          <tr>
+            <td><strong>Production affectée à</strong></td>
+            <td>{% if commande.userProduction %}{{ commande.userProduction.fullName }}{% else %}-{% endif %}</td>
+          </tr>
+          {% endif %}
+          {% if not app.user.societe and (commande.releve or commande.pose) %}
+          <tr>
+            <td><strong>Relevé/Pose affectée à</strong></td>
+            <td>{% if commande.releveUser %}{{ commande.releveUser.fullName }}{% else %}-{% endif %}</td>
+          </tr>
+          {% endif %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

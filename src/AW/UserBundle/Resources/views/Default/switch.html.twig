@@ -1,0 +1,39 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Switcher d'utilisateur :: {{ parent() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Se connecter à un autre compte d'utilisateur</h3>
+      </div>
+      <div class="panel-body">
+        <select class="combobox form-control">
+          <option value="" selected="selected">Choisir un utilisateur</option>
+          {% for user in users %}
+          <option value="{{ user.login }}">{{ user.login }} - {{ user.fullName }}{% if user.societe %} ({{ user.societe.name }}){% endif %}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
+<script>
+$(function(){
+  $('.combobox').combobox();
+  $('.combobox').attr('autocomplete', 'off');
+  $('select.combobox').change(function(){
+    if($(this).val()){
+      window.location.href = "{{ path('aw_core_homepage', {_switch_user: ''}) }}"+$(this).val();
+    }
+  });
+});
+</script>
+{% endblock %}

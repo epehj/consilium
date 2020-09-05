@@ -1,0 +1,110 @@
+$(function(){
+  // init Bootstrap select
+  $('.selectpicker').selectpicker();
+  $('.combobox').combobox();
+
+  var dt = $("#table1").DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: "{{ path('aw_plans_production_list', {_format: 'json'}) }}",
+    columns: [
+      {
+        name: 'ref',
+        data: null,
+        render: function(data, type, row){
+          return '<a href="'+data.url+'">'+data.ref+'</a>';
+        }
+      }, {
+        name: 'refClient',
+        data: 'refClient'
+      }, {
+        name: 'societe',
+        data: 'societe'
+      }, {
+        name: 'site',
+        data: 'site'
+      }, {
+        name: 'date',
+        data: 'date',
+        className: 'text-center'
+      }, {
+        name: 'dateUpdate',
+        data: 'dateUpdate',
+        className: 'text-center'
+      }, {
+        name: 'status',
+        data: 'statusLabel',
+        className: 'text-center'
+      }, {
+        name: 'operateur',
+        data: 'operateur'
+      }, {
+        name: 'production',
+        data: null,
+        render: function(data, type, row){
+          if(data.production == 1){
+            return 'En attente';
+          }else if(data.production == 2){
+            return 'En cours';
+          }else if(data.production == 3){
+            return 'Terminé';
+          }else{
+            return '';
+          }
+        }
+      }, {
+        name: 'alert',
+        data: null,
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.alert == 1){
+            return '<img src="{{ asset('img/alert-ok.png') }}" alt="Ok">';
+          }else if(data.alert == 2){
+            return '<img src="{{ asset('img/alert-warning.png') }}" alt="Warning">';
+          }else if(data.alert == 3){
+            return '<img src="{{ asset('img/alert-danger.png') }}" alt="Danger">';
+          }else{
+            return '';
+          }
+        }
+      }, {
+        name: 'urgent',
+        data: null,
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.urgent){
+            return '<img src="{{ asset('img/urgent.png') }}" alt="urgent">';
+          }else{
+            return '';
+          }
+        }
+      }
+    ],
+    createdRow: function(row, data, index){
+      $(row).addClass('status-'+data.status);
+    },
+    order: [[10, 'desc'], [4, 'desc']],
+    dom: "t",
+    language: {
+      zeroRecords: "Aucune commande"
+    },
+    pfConfig: {
+      pageSize: 20,
+      paginationSelector: "#pagination1",
+      toolbarSelector: "#toolbar1"
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+        renderer: function(api, rowIdx, columns){
+          var data = $.map(columns, function(col, i ){
+            return col.hidden ? '<strong>'+col.title+'</strong> : '+col.data+'<br>' : '';
+          }).join('');
+
+          return data ? $('<table/>').append(data) : false;
+        }
+      }
+    },
+    filterCol: true
+  });
+});

@@ -1,0 +1,119 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Ajout de documents :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('libs/jquery-file-upload/css/jquery.fileupload.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Ajout de fichiers dans le dossier <strong>{{ dirName }}</strong></h3>
+      </div>
+      <div class="panel-body">
+        <div class="row toolbar-pf">
+          <div class="col-sm-12">
+            <div class="toolbar-pf-actions">
+              <a href="{{ path('aw_core_documents_manage') }}" class="btn btn-default">
+                <span class="fa fa-angle-left"></span> Retour
+              </a>
+
+              <span class="btn btn-primary fileinput-button">
+                <span class="glyphicon glyphicon-cloud-upload"></span>
+                <span>Ajouter les fichiers</span>
+                <input type="file" name="form[files][]" id="fileupload" multiple>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-12 list-group" id="filelist"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
+<script>
+$(function(){
+  $('#fileupload').fileupload({
+    url: "{{ path('aw_core_documents_upload', {dirName: dirName, _format: 'json'}) }}",
+    dataType: 'json',
+    add: function(e, data){
+      data.context = [];
+      $.each(data.files, function(index, file){
+        item = $('<a/>')
+          .addClass('list-group-item')
+          .append('<span class="glyphicon glyphicon-file"></span> <span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+        item.appendTo('#filelist');
+        data.context.push(item);
+      });
+
+      data.submit();
+    },
+    done: function(e, data){
+      $.each(data.result, function (index, file){
+        var $item = data.context[index];
+
+        $item.attr('href', file.url);
+        $item.attr('target', '_blank');
+        $item.find('.filename').text(file.name);
+        $item.find('.pull-right').html('');
+
+        var $deleteBtn = $('<button class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Supprimer</button>');
+        data.context[index].find('.pull-right').append($deleteBtn);
+
+        $deleteBtn.click(function(e){
+          e.preventDefault();
+
+          var r = confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?');
+          if(r !== true){
+            return;
+          }
+
+          $.ajax({
+            url: file.delete_url,
+            method: 'DELETE'
+          })
+            .done(function(data, textStatus, jqXHR){
+              $item.remove();
+            })
+            .fail(function(jqXHR, textStatus, errorThrown){
+              alert('Échec de suppression du fichier !');
+            })
+          ;
+        });
+      });
+    },
+    fail: function(e, data){
+      $.each(data.files, function(index, file){
+        var $item = data.context[index];
+
+        $item.find('.pull-right').html('<span class="pficon-warning-triangle-o"></span><strong>Échec</strong>');
+
+        var $deleteBtn = $('<button class="btn btn-default"><span class="glyphicon glyphicon-trash"></span> Supprimer</button>');
+        data.context[index].find('.pull-right').append($deleteBtn);
+
+        $deleteBtn.click(function(e){
+          e.preventDefault();
+          $item.remove();
+        });
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

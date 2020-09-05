@@ -1,0 +1,205 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Relevé/Pose de plans :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+<div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
+  <div class="col-sm-12">
+    <form class="toolbar-pf-actions">
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-ref">N° Commande</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="ref" id="filter-ref" placeholder="Filtrer par numéro de commande...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-client">Client</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="societe" id="filter-client" placeholder="Filtrer par client...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-site">Site</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="site" id="filter-site" placeholder="Filtrer par site...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-address">Adresse</label>
+        <input type="text" class="form-control filter-col" data-filter-col-type="text" data-filter-col="address" id="filter-address" placeholder="Filtrer par adresse...">
+      </div>
+
+      <div class="form-group col-xs-12 col-sm-4 col-md-2">
+        <label for="filter-urgent">Urgent</label>
+        <select class="selectpicker form-control filter-col" data-filter-col-type="selectpicker" data-filter-col="urgent" id="filter-urgent">
+          <option value="">Tous</option>
+          <option value="0">Non</option>
+          <option value="1">Oui</option>
+        </select>
+      </div>
+    </form>
+
+    <div class="row toolbar-pf-results">
+      <div class="col-sm-12">
+        <button type="button" class="btn btn-default filter-col-apply">
+          <span class="fa fa-filter"></span>
+          Appliquer les filtres
+        </button>
+
+        <button type="button" class="btn btn-default filter-col-reset">
+          <span class="pficon pficon-close"></span>
+          Supprimer les filtres
+        </button>
+
+        <a class="btn btn-default" href="{{ path('aw_plans_releves_maps') }}">
+          <span class="i fa fa-map-marker"></span>
+          Voir sur une carte
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<table class="table table-striped table-bordered table-hover" id="table1">
+  <thead>
+    <tr>
+      <th class="all">N°<span class="hidden-xs"> Commande</span></th>
+      <th class="all">Client</th>
+      <th class="min-tablet-p">Site</th>
+      <th class="min-tablet-l">Adresse</th>
+      <th class="text-center min-tablet-l">Date</th>
+      <th class="text-center min-tablet-l">Urgent ?</th>
+      <th class="text-center min-tablet-l">Statut</th>
+    </tr>
+  </thead>
+</table>
+
+<form class="content-view-pf-pagination table-view-pf-pagination clearfix" id="pagination1">
+  <div class="form-group">
+    <select class="selectpicker pagination-pf-pagesize">
+      <option value="10">10</option>
+      <option value="20" selected="selected">20</option>
+      <option value="50">50</option>
+      <option value="100">100</option>
+    </select>
+    <span class="hidden-xs">par page</span>
+  </div>
+
+  <div class="form-group">
+    <span class="hidden-xs"><span class="pagination-pf-items-current">0-0</span> de <span class="pagination-pf-items-total">0</span></span>
+    <ul class="pagination pagination-pf-back">
+      <li class="disabled"><a href="#" title="Permière Page"><span class="i fa fa-angle-double-left"></span></a></li>
+      <li class="disabled"><a href="#" title="Page Précédente"><span class="i fa fa-angle-left"></span></a></li>
+    </ul>
+    <label for="pagination1-page" class="sr-only">Page en cours</label>
+    <input class="pagination-pf-page" type="text" value="1" id="pagination1-page"/>
+    <span>sur <span class="pagination-pf-pages">1</span></span>
+    <ul class="pagination pagination-pf-forward">
+    <li><a href="#" title="Page Suivante"><span class="i fa fa-angle-right"></span></a></li>
+    <li><a href="#" title="Dernière Page"><span class="i fa fa-angle-double-right"></span></a></li>
+    </ul>
+  </div>
+</form>
+
+{% endblock %}
+
+{% block jsBeforePatternfly %}
+<script src="{{ asset('libs/dataTables/jquery.dataTables.js') }}"></script>
+<script src="{{ asset('libs/dataTables/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('libs/patternfly/js/patternfly.dataTables.pfPagination.min.js') }}"></script>
+<script src="{{ asset('bundles/awcore/js/dataTables.filterCol.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+<script>
+$(function(){
+  // init Bootstrap select
+  $('.selectpicker').selectpicker();
+
+  var dt = $("#table1").DataTable({
+    processing: true,
+    serverSide: true,
+    columns: [
+      {
+        name: 'ref',
+        data: null,
+        render: function(data, type, row){
+          return '<a href="'+data.url+'">'+data.ref+'</a>';
+        }
+      }, {
+        name: 'societe',
+        data: 'societe'
+      }, {
+        name: 'site',
+        data: 'site'
+      }, {
+        name: 'address',
+        data: null,
+        render: function(data, type, row){
+          var address = data.address1+'<br>';
+          if(data.address2){
+            address += data.address2+'<br>';
+          }
+          address += data.zip+' '+data.town;
+
+          return address;
+        }
+      }, {
+        name: 'date',
+        data: 'date',
+        className: 'text-center',
+      }, {
+        name: 'urgent',
+        data: null,
+        className: 'text-center',
+        render: function(data, type, row){
+          if(data.urgent){
+            return '<img src="{{ asset('/img/urgent.png') }}" alt="urgent">';
+          }else{
+            return '';
+          }
+        }
+      }, {
+        name: 'status',
+        data: 'statusLabel',
+        className: 'text-center'
+      }
+    ],
+    ajax: "{{ path('aw_plans_releves', {_format: 'json'}) }}",
+    order: [[5, 'desc'], [4, 'desc']],
+    dom: "t",
+    language: {
+      zeroRecords: "Aucune commande"
+    },
+    pfConfig: {
+      pageSize: 20,
+      paginationSelector: "#pagination1",
+      toolbarSelector: "#toolbar1"
+    },
+    responsive: {
+      details: {
+        display: $.fn.dataTable.Responsive.display.childRowImmediate,
+        renderer: function(api, rowIdx, columns){
+          var data = $.map(columns, function(col, i ){
+            if(col.hidden === false){
+              return '';
+            }
+
+            if(col.columnIndex == 2){
+              return '<strong>'+col.data+'</strong><br>';
+            }
+
+            if([3, 4, 5].indexOf(col.columnIndex) != -1){
+              return col.data+'<br>';
+            }
+          }).join('');
+
+          return data ? $('<table/>').append(data) : false;
+        }
+      }
+    },
+    filterCol: true
+  });
+});
+</script>
+{% endblock %}

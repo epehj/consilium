@@ -1,0 +1,90 @@
+aw_shop_homepage:
+    path: /{page}
+    defaults:
+        _controller: AWShopBundle:Default:index
+        page: 1
+    requirements:
+        page: \d+
+
+aw_shop_list_by_category:
+    path: /category/{id}/{page}
+    defaults:
+        _controller: AWShopBundle:Default:index
+        page: 1
+    requirements:
+        id: \d+
+        page: \d+
+
+aw_shop_product_view:
+    path: /product/{id}
+    defaults:
+        _controller: AWShopBundle:Product:view
+    requirements:
+        id: \d+
+
+aw_shop_product_image:
+    path: /product/image/{version}/{id}
+    defaults:
+        _controller: AWShopBundle:Product:image
+        version: orignal
+    requirements:
+        id: \d+
+        version: orignal|thumbnail
+
+aw_shop_address_list:
+    path: /address/list
+    defaults:
+        _controller: AWShopBundle:Address:list
+
+aw_shop_address_add:
+    path: /address/add
+    defaults:
+        _controller: AWShopBundle:Address:add
+
+aw_shop_address_edit:
+    path: /address/edit/{id}
+    defaults:
+        _controller: AWShopBundle:Address:edit
+    requirements:
+        id: \d+
+
+aw_shop_cart_add:
+    path: /cart/add/product/{id}.{_format}
+    defaults:
+        _controller: AWShopBundle:Cart:add
+        _format: json
+    requirements:
+        id: \d+
+    methods: [POST]
+
+aw_shop_cart_delete:
+    path: /cart/delete/{id}
+    defaults:
+        _controller: AWShopBundle:Cart:delete
+    requirements:
+        id: \d+
+
+aw_shop_cart_list:
+    path: /cart/list
+    defaults:
+        _controller: AWShopBundle:Cart:list
+
+aw_shop_cart_confirm_order:
+    path: /cart/confirm/order
+    defaults:
+        _controller: AWShopBundle:Cart:confirmOrder
+
+aw_shop_commande_list:
+    path: /commande/list.{_format}
+    defaults:
+        _controller: AWShopBundle:Commande:list
+        _format: html
+    requirements:
+        _format: html|json
+
+aw_shop_commande_view:
+    path: /commande/view/{id}
+    defaults:
+        _controller: AWShopBundle:Commande:view
+    requirements:
+        id: \d+

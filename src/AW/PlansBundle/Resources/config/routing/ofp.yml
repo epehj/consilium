@@ -1,0 +1,19 @@
+aw_plans_ofs:
+    path: /
+    defaults:
+        _controller: AWPlansBundle:Ofp:list
+
+aw_plans_ofs_new:
+    path: /new
+    defaults:
+        _controller: AWPlansBundle:Ofp:new
+
+aw_plans_ofs_view:
+    path: /view/{file}
+    defaults:
+        _controller: AWPlansBundle:Ofp:view
+
+aw_plans_ofs_delete:
+    path: /delete/{file}
+    defaults:
+        _controller: AWPlansBundle:Ofp:delete

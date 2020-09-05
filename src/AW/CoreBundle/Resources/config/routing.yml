@@ -1,0 +1,56 @@
+aw_core_homepage:
+    path: /
+    defaults:
+        _controller: AWCoreBundle:Default:index
+
+aw_core_notifications:
+    path: /notifications.{_format}
+    defaults:
+        _controller: AWCoreBundle:Notification:list
+    requirements:
+        _format: js|json
+
+aw_core_config_mails:
+    path: /config/mails
+    defaults:
+        _controller: AWCoreBundle:Admin:mails
+
+aw_core_config_mail:
+    path: /config/mail/{id}
+    defaults:
+        _controller: AWCoreBundle:Admin:mail
+        id: \d+
+
+aw_core_documents_list:
+    path: /documents
+    defaults:
+        _controller: AWCoreBundle:Document:list
+
+aw_core_documents_view:
+    path: /documents/view/{subdir}/{file}
+    defaults:
+        _controller: AWCoreBundle:Document:view
+
+aw_core_documents_manage:
+    path: /documents/manage
+    defaults:
+        _controller: AWCoreBundle:Document:manage
+
+aw_core_documents_upload:
+    path: /documents/upload/{dirName}/{_format}/{file}
+    defaults:
+        _controller: AWCoreBundle:Document:upload
+        _format: html
+        file:
+    requirements:
+        _format: html|json
+
+aw_core_documents_delete:
+    path: /documents/delete/{subdir}/{file}
+    defaults:
+        _controller: AWCoreBundle:Document:delete
+
+aw_core_documents_popup:
+    path: /documents/popup
+    defaults:
+        _controller: AWCoreBundle:Document:popup

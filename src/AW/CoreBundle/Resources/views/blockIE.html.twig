@@ -1,0 +1,51 @@
+{% extends "::base.html.twig" %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+	body {
+		background: url("{{ asset('img/bg.jpg') }}") 50% 0 repeat-x;
+	}
+
+  .container {
+    bottom: 13%;
+    position: absolute;
+    width: 100%;
+    padding: 20px 80px;
+    color: #FFF;
+  }
+
+  .card-pf {
+    background-color: rgba(239,41,41,.8);
+  }
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <div class="row">
+    <div class="hidden-xs col-sm-3 col-md-4"></div>
+    <div class="col-xs-12 col-sm-6 col-md-4">
+      <div class="card-pf card-pf-view">
+        <div class="card-pf-body">
+          <div class="card-pf-top-element">
+            <span class="fa fa-exclamation-triangle card-pf-icon-circle"></span>
+          </div>
+          <h2 class="card-pf-title text-center">Navigateur incompatible</h2>
+          <div class="card-pf-items text-center">
+            <div class="card-pf-item">
+              <p>Nous vous recommandons un des navigateurs suivants :
+              <ul>
+                <li><a href="https://www.google.com/chrome">Google Chrome</a></li>
+                <li><a href="https://www.mozilla.org/fr/firefox">Mozilla Firefox</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hidden-xs col-sm-3 col-md-4"></div>
+  </div>
+</div>
+{% endblock %}

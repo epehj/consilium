@@ -1,0 +1,50 @@
+aw_plans_default:
+    resource: "@AWPlansBundle/Resources/config/routing/default.yml"
+
+aw_plans_new:
+    resource: "@AWPlansBundle/Resources/config/routing/new.yml"
+    prefix: /new
+
+aw_plans_files:
+    resource: "@AWPlansBundle/Resources/config/routing/files.yml"
+    prefix: /files
+
+aw_plans_edit:
+    resource: "@AWPlansBundle/Resources/config/routing/edit.yml"
+    prefix: /edit
+
+aw_plans_mail:
+    resource: "@AWPlansBundle/Resources/config/routing/mail.yml"
+    prefix: /mail
+
+aw_plans_production:
+    resource: "@AWPlansBundle/Resources/config/routing/production.yml"
+    prefix: /production
+
+aw_plans_releves:
+    resource: "@AWPlansBundle/Resources/config/routing/releves.yml"
+    prefix: /releves
+
+aw_plans_notes:
+    resource: "@AWPlansBundle/Resources/config/routing/notes.yml"
+    prefix: /notes
+
+aw_plans_config:
+    resource: "@AWPlansBundle/Resources/config/routing/config.yml"
+    prefix: /config
+
+aw_plans_stats:
+    resource: "@AWPlansBundle/Resources/config/routing/stats.yml"
+    prefix: /stats
+
+aw_plans_print:
+    resource: "@AWPlansBundle/Resources/config/routing/print.yml"
+    prefix: /print
+
+aw_plans_shipping:
+    resource: "@AWPlansBundle/Resources/config/routing/shipping.yml"
+    prefix: /shipping
+
+aw_plans_ofs:
+    resource: "@AWPlansBundle/Resources/config/routing/ofp.yml"
+    prefix: /ofp

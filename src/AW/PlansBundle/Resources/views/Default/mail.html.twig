@@ -1,0 +1,27 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+<div class="panel-group" id="accordion">
+{% for mail in commande.mails %}
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#mail-{{ mail.id }}" class="collapsed">{{ mail.subject }}</a>
+        <small>Envoyé le {{ mail.date | date('d/m/Y') }} à {{ mail.addressTo }}</small>
+      </h4>
+    </div>
+    <div id="mail-{{ mail.id }}" class="panel-collapse collapse">
+      <div class="panel-body">
+        {{ mail.message | raw }}
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+{% endblock %}

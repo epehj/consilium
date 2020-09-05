@@ -1,0 +1,130 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Commande {{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awshop/css/shop.css') }}">
+{% endblock %}
+
+{% block shopContent %}
+
+<div class="row">
+  <div class="card-pf card-pf-view">
+    <div class="card-pf-body">
+      <h2 class="card-pf-title">
+        Commande n°
+        {% if not app.user.societe and app.user.rights.commande.lire %}
+          <a href="{{ doli_url }}{{ commande.linkTo }}" target="_blank">{{ commande.ref }}</a>
+        {% else %}
+          {{ commande.ref }}
+        {% endif %}
+
+        {% if commande.status == 0 %}
+        <span class="label label-default">En attente de validation</span>
+        {% elseif commande.status == 1 %}
+        <span class="label label-primary">Validée</span>
+        {% elseif commande.status == 2 %}
+        <span class="label label-info">Partiellement expédiée</span>
+        {% elseif commande.status == 3 %}
+        <span class="label label-success">Expédiée</span>
+        {% endif %}
+      </h2>
+      <p class="card-pf-info">
+        <strong>Votre référence:</strong> {{ commande.refClient }}<br>
+        <strong>Date:</strong> {{ commande.dateCreation | date('d/m/Y H:i') }}
+        {% if commande.shippingMethod == constant('SHIPMENT_MODE_AGENCE', commande) %}
+        <br><strong>Commande à récupérer à l'agence</strong>
+        {% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4"> <!-- infos client -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Client</h3>
+      </div>
+      <div class="panel-body">
+        <address>
+          <strong>
+            {% if not app.user.societe and app.user.rights.societe.lire %}
+            <a href="{{ doli_url }}{{ commande.societe.linkTo }}" target="_blank">{{ commande.societe.name }} - {{ commande.societe.codeClient }}</a>
+            {% else %}
+            {{ commande.societe.name }}
+            {% endif %}
+          </strong><br>
+          {{ commande.societe.address1 }}<br>
+          {% if commande.societe.address2 %}{{ commande.societe.address2 }}<br>{% endif %}
+          {{ commande.societe.zip }} {{ commande.societe.town }}<br>
+          {% if commande.societe.country %}{{ commande.societe.country.name }}{% endif %}
+        </address>
+      </div>
+    </div>
+  </div>
+
+  {% if contact %}
+  <div class="col-md-offset-4 col-md-4"> <!-- adresse de livraison -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Adresse de livraison</h3>
+      </div>
+      <div class="panel-body">
+        <address>
+          <strong>{{ contact.fullName }}</strong><br>
+          {{ contact.address1 }}<br>
+          {% if contact.address2 %}{{ contact.address2 }}<br>{% endif %}
+          {{ contact.zip }} {{ contact.town }}<br>
+          {% if contact.country %}{{ contact.country.name }}{% endif %}
+        </address>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="row hidden-xs hidden-sm list-header">
+  <div class="col-md-5"><strong>Désignation</strong></div>
+  <div class="col-md-1 text-right"><strong>Quantité</strong></div>
+  <div class="col-md-2 text-right"><strong>P.U. HT</strong></div>
+  <div class="col-md-2 text-right"><strong>Réduc.</strong></div>
+  <div class="col-md-2 text-right"><strong>Total HT</strong></div>
+</div>
+
+<div class="list-item">
+  {% for det in commande.listDet %}
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-5"><strong>{{ det.product.ref }} - {{ det.product.name }}</strong></div>
+
+    <div class="visible-xs visible-sm col-xs-4">Quantité</div>
+    <div class="col-xs-8 col-md-1 text-right">{{ det.qty }}</div>
+
+    <div class="visible-xs visible-sm col-xs-4">P.U. HT</div>
+    <div class="col-xs-8 col-md-2 text-right">{{ det.subprice | number_format(2, ',', ' ') }}</div>
+
+    <div class="visible-xs visible-sm col-xs-4">Réduc.</div>
+    <div class="col-xs-8 col-md-2 text-right">
+      {% if det.remisePercent == 100 %}OFFERT
+      {% elseif det.remisePercent > 0 %}{{ det.remisePercent | number_format(2, ',', ' ') }} %
+      {% else %}-
+      {% endif %}
+    </div>
+
+    <div class="visible-xs visible-sm col-xs-4">Total HT</div>
+    <div class="col-xs-8 col-md-2 text-right">{{ det.totalHT | number_format(2, ',', ' ') }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="row">
+<p class="text-right">
+  Total HT : <strong>{{ commande.totalHt | number_format(2, ',', ' ') }} €</strong><br>
+  TVA : <strong>{{ commande.tva | number_format(2, ',', ' ') }} €</strong><br>
+  Total TTC : <strong>{{ commande.totalTtc | number_format(2, ',', ' ') }} €</strong>
+</p>
+</div>
+
+{% endblock %}

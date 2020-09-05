@@ -1,0 +1,6 @@
+services:
+    aw_tnt.webservice:
+        class: AW\TNTBundle\Service\WebService
+        arguments:
+            - "%tnt.username%"
+            - "%tnt.password%"

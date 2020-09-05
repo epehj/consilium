@@ -1,0 +1,95 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Relevés en attente :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+#map {
+  height: 400px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<ul class="nav nav-tabs">
+  <li {% if markers == 'rp' %}class="active"{% endif %}><a href="{{ path('aw_plans_releves_maps') }}">Relevés et posés</a></li>
+  <li {% if markers == 'r' %}class="active"{% endif %}><a href="{{ path('aw_plans_releves_maps', {markers: 'r'}) }}">Relevés</a></li>
+  <li {% if markers == 'p' %}class="active"{% endif %}><a href="{{ path('aw_plans_releves_maps', {markers: 'p'}) }}">Posés</a></li>
+</ul>
+
+<div id="map"></div>
+
+<div class="alert alert-danger">
+  <span class="glyphicon glyphicon-exclamation-sign"></span>
+  Liste des sites qui n'ont pas pu être localisés (pour les nouvelles commandes, les coordonnées des sites sont mises à jour toutes les 5 minutes) :
+  <ul class="list">
+    {% for commande in commandes if not commande.geoCode %}
+    <li><a href="{{ path('aw_plans_view', {id: commande.id}) }}">{{ commande.ref }}</a> : {{ commande.address1 }}, {{ commande.zip }} {{ commande.town }}, France</li>
+    {% else %}
+    <li>vide</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+function initMap(){
+  var soc = {lat: 45.730949, lng: 4.985993000000008};
+
+  var map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 5,
+    center: soc
+  });
+
+  var infoWindow = new google.maps.InfoWindow;
+
+  var sites = [
+  {% for commande in commandes if commande.geoCode %}
+    {
+      ref: '{{ commande.ref }}',
+      name: '{{ commande.site }}',
+      address: '{{ commande.address1 }} {{ commande.address2 }}, {{ commande.zip }} {{ commande.town }}',
+      url: '{{ path('aw_plans_view', {id: commande.id}) }}',
+      status: {{ commande.releveStatus }},
+      position: {{ commande.geoCode | json_encode(constant('JSON_PRETTY_PRINT')) | raw }}
+    },
+  {% endfor %}
+  ];
+
+  var markers = sites.map(function(site, i){
+    var marker = new google.maps.Marker({
+      position: site.position,
+      title: site.name,
+      label: site.status == 0 ? 'R' : 'P' // R = Relevé ou P = Pose
+    });
+
+    marker.addListener('click', function(){
+      var content = '<div id="content">'
+        + '<div id="siteNotice"></div>'
+        + '<h1 id="firstHeading" class="firstHeading">' + site.name + '</h1>'
+        + '<div id="bodyContent">'
+        + '<p>' + site.address + '</p>'
+        + '<p> Commande : <a href="' + site.url + '">' + site.ref + '</a></p>'
+        + '</div>'
+        + '</div>'
+      ;
+
+      infoWindow.setContent(content);
+      infoWindow.open(map, this);
+    });
+
+    return marker;
+  });
+
+  var markerCluster = new MarkerClusterer(map, markers,
+    {imagePath: "{{ asset('libs/markerclusterer/images/m') }}"}
+  );
+}
+</script>
+<script src="{{ asset('libs/markerclusterer/markerclusterer.js') }}"></script>
+<script async defer src="//maps.googleapis.com/maps/api/js?key={{ google_api_key }}&callback=initMap"></script>
+{% endblock %}

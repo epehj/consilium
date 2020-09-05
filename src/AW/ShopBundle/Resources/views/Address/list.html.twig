@@ -1,0 +1,36 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Mes adresses :: {{ parent() }}{% endblock %}
+
+{% block shopContent %}
+
+<h2>Mes adresses de livraison</h2>
+
+<a href="{{ path('aw_shop_address_add') }}" class="btn btn-primary">Ajouter une nouvelle adresse</a>
+
+<div class="list-group list-view-pf">
+  {% for contact in contacts %}
+  <div class="list-group-item list-view-pf-stacked list-view-pf-top-align">
+    <div class="list-view-pf-actions">
+      {# À mettre en place plus tard #}
+      <!-- <a href="{{ path('aw_shop_address_edit', {id: contact.id}) }}" class="btn btn-default">Modifier</a> -->
+    </div>
+    <div class="list-view-pf-main-info">
+      <div class="list-view-pf-body">
+        <div class="list-view-pf-description">
+          <div class="list-group-item-heading">
+            {{ contact.fullName }}
+          </div>
+          <div class="list-group-item-text">
+            {{ contact.address | nl2br }}<br>
+            {{ contact.zip }} {{ contact.town }}<br>
+            {{ contact.country.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

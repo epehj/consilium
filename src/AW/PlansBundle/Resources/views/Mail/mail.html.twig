@@ -1,0 +1,68 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:header.html.twig" %}
+
+{{ form_start(form) }}
+
+{% if not app.user.societe %}
+<div class="form-group">
+  {{ form_label(form.addressTo) }}
+  <div class="col-sm-7">
+    {{ form_widget(form.addressTo) }}
+  </div>
+  <div class="col-sm-3">
+    {{ form_widget(form.contact) }}
+  </div>
+</div>
+  {{ form_row(form.subject) }}
+{% endif %}
+
+{{ form_row(form.message) }}
+{{ form_row(form.attachments) }}
+
+{% if form.attachments2 is defined %}
+  {{ form_widget(form.attachments2) }}
+{% endif %}
+
+{{ form_rest(form) }}
+
+<div class="row">
+  <div class="col-xs-12 col-md-10 col-md-offset-2">
+    <a href="{{ path('aw_plans_view', {id: commande.id}) }}" class="btn btn-default">
+      <span class="i fa fa-angle-left"></span>
+      Annuler
+    </a>
+    <button type="submit" class="btn btn-primary btn-submit">
+      <span class="glyphicon glyphicon-send"></span>
+      Envoyer
+    </button>
+  </div>
+</div>
+
+{{ form_end(form) }}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+$(function(){
+  $('#aw_plansbundle_mail_contact').change(function(e){
+    if($(this).val() != '') {
+      if($('#aw_plansbundle_mail_addressTo').val() == ''){
+        var address = $('#aw_plansbundle_mail_contact :selected').data('email');
+      }else{
+        var address = $('#aw_plansbundle_mail_addressTo').val()+', '+$('#aw_plansbundle_mail_contact :selected').data('email');
+      }
+
+      $('#aw_plansbundle_mail_addressTo').val(address);
+      $(this).val('').change();
+    }
+  });
+});
+</script>
+{% endblock %}

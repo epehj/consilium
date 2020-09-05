@@ -1,0 +1,5 @@
+{% set route = app.request.attributes.get('_route') %}
+<ul class="nav nav-tabs">
+  <li {% if route == 'aw_core_config_mails' or route == 'aw_core_config_mail' %}class="active"{% endif %}><a href="{{ path('aw_core_config_mails') }}">Modèles mail</a></li>
+  <li {% if route == 'aw_plans_config_consigne' %}class="active"{% endif %}><a href="{{ path('aw_plans_config_consigne') }}">Consigne</a></li>
+</ul>

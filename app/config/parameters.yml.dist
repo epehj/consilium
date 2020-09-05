@@ -1,0 +1,49 @@
+# This file is a "template" of what your parameters.yml file should look like
+# Set parameters here that may be different on each deployment target of the app, e.g. development, staging, production.
+# https://symfony.com/doc/current/best_practices/configuration.html#infrastructure-related-configuration
+parameters:
+    database_host: 127.0.0.1
+    database_port: ~
+    database_name: symfony
+    database_user: root
+    database_password: ~
+    # You should uncomment this if you want to use pdo_sqlite
+    #database_path: '%kernel.project_dir%/var/data/data.sqlite'
+
+    mailer_transport: smtp
+    mailer_host: mailer
+    mailer_port: 1025
+    mailer_user: ~
+    mailer_password: ~
+    mailer_encryption: ~
+
+    documents_dir: /var/www/documents
+    doli_url: http://0.0.0.0
+    doli_documents_dir: /var/www/doli
+    doli_api_url: http://dolibarr/api/index.php
+
+    email_plans: plan@consilium-plan.fr
+    email_bcc: plan@consilium-plan.fr
+
+    email_service_plans: plan@consilium-plan.fr
+
+    email_expedition: plan@consilium-plan.fr
+
+    operateurs_ts_groups_id: [4, 29, 30, 32, 31]
+
+    google_public_api_key: ThisIsNotAnApiKey
+    google_private_api_key: ThisIsNotAnApiKey
+
+    exchange_host: ~
+    exchange_plans_username: ~
+    exchange_plans_password: ~
+
+    chronopost.account: 19869502
+    chronopost.password: 255562
+
+    tnt.username: webservices@tnt.fr
+    tnt.password: test
+    tnt.account: '06324676'
+
+    # A secret key that's used to generate certain security-related tokens
+    secret: ThisTokenIsNotSoSecretChangeIt

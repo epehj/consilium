@@ -1,0 +1,15 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Liste modèle de mail :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{% include "AWCoreBundle:Admin:tab.html.twig" %}
+
+<div class="list-group">
+  {% for mail in mails %}
+  <a href="{{ path('aw_core_config_mail', {id: mail.id}) }}" class="list-group-item">{{ mail.type }}</a>
+  {% endfor %}
+</div>
+
+{% endblock %}

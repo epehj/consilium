@@ -1,0 +1,107 @@
+{% extends "AWShopBundle::layout.html.twig" %}
+
+{% block title %}Mon panier :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<style>
+.list-group-item, .product-image{
+  min-height: 100px;
+}
+</style>
+{% endblock %}
+
+{% block shopContent %}
+
+{% if carts is not empty %}
+  {% set total = 0 %}
+  <div class="list-group list-view-pf list-view-pf-view">
+  {% for cart in carts %}
+    {% set subprice = app.user.societe ? getCustomPrice(cart.qty, cart.product, app.user.societe) : product.price %}
+    {% set price = subprice*cart.qty %}
+    {% set total = total + price %}
+    <div class="list-group-item">
+      <div class="hidden-xs hidden-sm col-md-2 product-image">
+        <img src="{{ path('aw_shop_product_image', {id: cart.product.id}) }}" alt="{{ cart.product.name }}" width="100%">
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <p><a href="{{ path('aw_shop_product_view', {id: cart.product.id }) }}" target="_blank">{{ cart.product.name }}</a></p>
+        <p><span id="subprice_{{ cart.id }}">{{ subprice | number_format(2, ',', ' ') }}</span> € HT</p>
+      </div>
+      <div class="col-xs-6 col-md-2">
+        <input type="number" name="qty_{{ cart.id }}" value="{{ cart.qty }}" min="1" id="qty_{{ cart.id }}" class="inputQty" data-url="{{ path('aw_shop_cart_add', {id: cart.product.id}) }}" data-id="{{ cart.id }}">
+        <div class="spinner spinner-sm spinner-inline hidden" id="spinner_{{ cart.id }}"></div>
+      </div>
+      <div class="col-xs-6 col-md-2">
+        <p class="text-right">
+          <strong><span id="price_{{ cart.id }}">{{ price | number_format(2, ',', ' ') }}</span> € HT</strong>
+          <a href="{{ path('aw_shop_cart_delete', {id: cart.id}) }}" class="btn btn-danger confirm" data-confirm-message="Êtes-vous sûr de vouloir supprimer cet article ?">
+            <span class="glyphicon glyphicon-trash"></span>
+          </a>
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 col-md-10">
+      <p><strong>Total (hors frais de livraison) : <span id="totalprice">{{ total | number_format(2, ',', ' ') }}</span> € HT</strong></p>
+    </div>
+    <div class="col-xs-12 col-md-2">
+      <a href="{{ path('aw_shop_cart_confirm_order') }}" class="btn btn-primary" id="btnOrder">Commander</a>
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-info">
+    <span class="pficon pficon-info"></span>
+    <strong>Votre panier est vide.</strong>
+  </div>
+{% endif %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+$(function(){
+  $('.inputQty').change(function(){
+    var qty = $(this).val();
+    var id = $(this).data('id');
+    var url = $(this).data('url');
+
+    $('#spinner_'+id).removeClass('hidden');
+    $('#btnOrder').addClass('disabled');
+
+    window.setTimeout(function(){
+      if(qty != $('#qty_'+id).val()){
+        return;
+      }
+
+      $.ajax({
+        url: url,
+        method: 'POST',
+        data: {
+          qty: qty,
+          update: 1
+        },
+        success: function(data, textStatus, jqXHR){
+          $('#subprice_'+id).text(data.subprice);
+          $('#price_'+id).text(data.price);
+          $('#totalprice').text(data.totalPrice);
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          alert('Échec de mise à jour de la quantité.');
+        },
+        complete: function(jqXHR, textStatus){
+          $('#spinner_'+id).addClass('hidden');
+          $('#btnOrder').removeClass('disabled');
+        }
+      });
+    }, 3000);
+  });
+});
+</script>
+{% endblock %}

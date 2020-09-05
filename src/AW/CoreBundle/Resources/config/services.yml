@@ -1,0 +1,12 @@
+services:
+    aw.core.service.device_detect:
+        class: AW\CoreBundle\Service\DeviceDetect
+        arguments:
+            - '@request_stack'
+            - '@templating'
+        tags:
+#            - { name: kernel.event_listener, event: kernel.request, method: blockIE }
+            - { name: kernel.event_listener, event: kernel.response, method: infosIE }
+
+    aw.core.service.utils:
+        class: AW\CoreBundle\Service\Utils

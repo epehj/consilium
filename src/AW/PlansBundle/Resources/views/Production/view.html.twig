@@ -1,0 +1,85 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% include "AWPlansBundle:Default:tab.html.twig" %}
+
+{% include "AWPlansBundle:Default:header.html.twig" %}
+
+{% include "AWPlansBundle:Default:info.html.twig" %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="toolbar-pf-actions">
+      {% if is_granted('START_PRODUCTION', commande) %}
+      <a
+        href="{{ path('aw_plans_production_start', {id: commande.id}) }}"
+        class="btn btn-success confirm"
+        data-confirm-message="Êtes-vous sûr de vouloir commencer la production de cette commande ?"
+      >Commencer la production</a>
+      {% endif %}
+
+      {% if is_granted('CANCEL_PRODUCTION', commande) %}
+      <a
+        href="{{ path('aw_plans_production_cancel', {id: commande.id}) }}"
+        class="btn btn-danger confirm"
+        data-confirm-message="Êtes-vous sûr de vouloir annuler la production de cette commande ?"
+      >Annuler la production</a>
+      {% endif %}
+
+      {% if is_granted('END_PRODUCTION', commande) %}
+      <a href="{{ path('aw_plans_production_download', {id: commande.id}) }}" class="btn btn-default">Télécharger les fichiers</a>
+      <a href="{{ path('aw_plans_production_end', {id: commande.id}) }}" class="btn btn-success">Terminer la production</a>
+      {% endif %}
+
+      {% if is_granted('RETURN_PRODUCTION', commande) %}
+      <a
+        href="{{ path('aw_plans_production_return', {id: commande.id}) }}"
+        class="btn btn-warning confirm"
+        data-confirm-message="Êtes-vous sûr de vouloir renvoyer cette commande en production ?"
+      >Renvoyer en production</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if commande.productions | length %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Productions</h3>
+      </div>
+      <div class="panel-body">
+        <table class="table table-striped table-condensed">
+          {% for production in commande.productions %}
+          <tr>
+            <td><strong>{{ production.user.fullName }}</strong></td>
+            <td>
+              de {{ production.dateStart | date('d/m/Y H:i') }}
+              {% if production.dateEnd %}
+              au {{ production.dateEnd | date('d/m/Y H:i') }}
+              {% else %}
+              jusqu'à maintenant
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% include "AWPlansBundle:Default:plans.html.twig" %}
+
+{% endblock %}
