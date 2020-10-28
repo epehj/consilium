@@ -22,6 +22,10 @@
 {{ form_rest(form) }}
 {{ form_end(form) }}
 
+<pre>
+    {{ dump(stats) }}
+</pre>
+
 {% for group in groups %}
 {% set total_creation_count, total_creation_qty = 0, 0 %}
 {% set total_modification_count, total_modification_qty = 0, 0 %}
@@ -46,7 +50,10 @@
         {% set total_creation_count = total_creation_count + stats[group.id][user.id].creation[0] %}
         {% set total_creation_qty = total_creation_qty + stats[group.id][user.id].creation[1] %}
         {{ stats[group.id][user.id].creation[0] ? stats[group.id][user.id].creation[0] : 0 }} |
-        {{ stats[group.id][user.id].creation[1] ? stats[group.id][user.id].creation[1] : 0 }}
+        {{ stats[group.id][user.id].creation[1] ? stats[group.id][user.id].creation[1] : 0 }} |
+        {{ stats[group.id][user.id].creation[2] ? stats[group.id][user.id].creation[2] //total_creation_count : 'TM/AW' }} |
+        {{ stats[group.id][user.id].creation[2] ? (stats[group.id][user.id].creation[2] //total_creation_qty)//total_creation_count : 'IM/AW' }}  |
+        %RENVOI
       </td>
       <td colspan="2" class="text-center">
         {% set total_modification_count = total_modification_count + stats[group.id][user.id].modification[0] %}

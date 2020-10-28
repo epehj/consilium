@@ -4,6 +4,8 @@ namespace AW\PlansBundle\Repository;
 
 use AW\PlansBundle\Entity\Commande;
 use AW\DoliBundle\Entity\User;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\NoResultException;
 
 class ProductionRepository extends \Doctrine\ORM\EntityRepository
 {
@@ -87,5 +89,13 @@ class ProductionRepository extends \Doctrine\ORM\EntityRepository
       ->getQuery()
       ->getSingleScalarResult()
     ;
+  }
+
+  public function sumByTimeSpend(User $user, $status, \DateTime $start, \DateTime $end){
+          return $this
+              ->getByUserAndStatusBetweenDateQueryBuilder($user, $status, $start, $end)
+              ->select('SUM(TIMESTAMPDIFF(MINUTE, p.dateStart, p.dateEnd))')
+              ->getQuery()
+              ->getSingleScalarResult();
   }
 }

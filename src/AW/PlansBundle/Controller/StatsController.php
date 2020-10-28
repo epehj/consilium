@@ -226,7 +226,8 @@ class StatsController extends Controller
         $stats[$group->getId()][$user->getId()] = array(
           'creation' => array(
             $er->countByUserAndStatusBetweenDate($user, Commande::STATUS_VALIDATED, $start, $end),
-            $er->sumByUserAndStatusBetweenDate($user, Commande::STATUS_VALIDATED, $start, $end)
+            $er->sumByUserAndStatusBetweenDate($user, Commande::STATUS_VALIDATED, $start, $end),
+            $er->sumByTimeSpend($user, Commande::STATUS_VALIDATED, $start, $end)
           ),
           'modification' => array(
             $er->countByUserAndStatusBetweenDate($user, Commande::STATUS_BAT_MODIF, $start, $end),
