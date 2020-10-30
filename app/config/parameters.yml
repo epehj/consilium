@@ -30,6 +30,8 @@ parameters:
     exchange_host: null
     exchange_plans_username: null
     exchange_plans_password: null
+    #chronopost account : 32364503
+    #chronopost pwd :
     chronopost.account: 19869502
     chronopost.password: 255562
     tnt.username: webservices@tnt.fr

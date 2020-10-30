@@ -48,7 +48,7 @@ class CommandeDetType extends AbstractType
         'choices' => array_flip(CommandeDet::$formatName)
       ))
       ->add('matiere', ChoiceType::class, array(
-        'label' => 'Matière',
+        'label' => 'Matière CommandeDetType.php',
         'choices' => array_flip(CommandeDet::$matiereName)
       ))
       ->add('hole', ChoiceType::class, array(

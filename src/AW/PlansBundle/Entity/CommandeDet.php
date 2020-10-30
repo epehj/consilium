@@ -138,7 +138,7 @@ class CommandeDet
       'PX'  => "Plexy",
       'AL'  => "Altu",
       'PL'  => "Photoluminescent",
-      'PR'  => "Plastification Rigide - PVC",
+      'PR'  => "Plastification Rigide - PVC aouéé",
     ];
 
     public static $designName = [
