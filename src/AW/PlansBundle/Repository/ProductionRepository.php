@@ -98,4 +98,14 @@ class ProductionRepository extends \Doctrine\ORM\EntityRepository
               ->getQuery()
               ->getSingleScalarResult();
   }
+
+  public function getSumRenvoiByUser(User $user, $status, \DateTime $start, \DateTime $end){
+      return $this
+          ->getByUserAndStatusBetweenDateQueryBuilder($user, $status, $start, $end)
+          ->select('COUNT(c)')
+          ->andWhere('c.renvoi = :renvoi')
+            ->setParameter('renvoi', '1')
+          ->getQuery()
+          ->getSingleScalarResult();
+  }
 }

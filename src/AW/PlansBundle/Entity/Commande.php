@@ -564,6 +564,12 @@ class Commande
      */
     private $productions;
 
+    /**
+     * @var bool
+     * @ORM\Column(name="renvoi", type="boolean", nullable=true)
+     */
+    private $renvoi;
+
     const STATUS_ATTENTE_VALIDATION	= 0;
     const STATUS_VALIDATED					= 10;
     const STATUS_BAT								= 20;
@@ -625,6 +631,7 @@ class Commande
         $this->mails = new ArrayCollection();
         $this->bats = new ArrayCollection();
         $this->productions = new ArrayCollection();
+        $this->renvoi = false;
     }
 
     public function __clone()
@@ -649,6 +656,7 @@ class Commande
         $this->mails = new ArrayCollection();
         $this->bats = new ArrayCollection();
         $this->productions = new ArrayCollection();
+        $this->renvoi = false;
 
         $this->dateValidation = null;
         $this->dateModification = null;
@@ -2590,5 +2598,21 @@ class Commande
     public function getProductions()
     {
         return $this->productions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRenvoi()
+    {
+        return $this->renvoi;
+    }
+
+    /**
+     * @param bool $renvoi
+     */
+    public function setRenvoi($renvoi)
+    {
+        $this->renvoi = $renvoi;
     }
 }

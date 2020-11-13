@@ -361,13 +361,15 @@ class ProductionController extends Controller
       ->getLast($commande)
     ;
 
-    if($production !== null){
-      $em->remove($production);
-    }
+    // pour compter le nombre de renvoi, on enleve juste pas la production associée si on renvoi une commande : question a poser a quentin
+//    if($production !== null){
+//      $em->remove($production);
+//    }
 
     $commande
       ->setProduction(1)
     ;
+    $commande->setRenvoi(true);
 
     $em->flush();
 
