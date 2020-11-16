@@ -1,0 +1,29 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Productions :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+
+  <link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="row row-cards-pf">
+  afficher les releves
+  </div>
+{% endblock %}
+
+{% block jsBeforePatternfly %}
+  <script src="{{ asset('libs/dataTables/jquery.dataTables.js') }}"></script>
+  <script src="{{ asset('libs/dataTables/dataTables.responsive.min.js') }}"></script>
+  <script src="{{ asset('libs/patternfly/js/patternfly.dataTables.pfPagination.min.js') }}"></script>
+  <script src="{{ asset('bundles/awcore/js/dataTables.filterCol.js') }}"></script>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
+  <script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
+  <script src="{{ path('aw_plans_production_list', {_format: 'js'}) }}"></script>
+{% endblock %}

@@ -1,6 +1,6 @@
 Mise à jour
 ===========
-
+bien penser à utiliser www-data comme user, et que les permissions de tous les dossier soient à ww-data
 Après l'envoi automatique des fichiers sur le serveur de production, lancer les commandes suivantes :
 
 ```bash

@@ -10,7 +10,8 @@
 
 {% block content %}
 
-{{ render(controller("AWPlansBundle:Stats:recapProduction")) }}
+
+  {{ render(controller("AWPlansBundle:Stats:recap")) }}
 
 <div class="row toolbar-pf table-view-pf-toolbar" id="toolbar1">
   <div class="col-sm-12">
@@ -159,5 +160,5 @@
 {{ parent() }}
 <script src="{{ asset('libs/bootstrap-select/js/bootstrap-select.min.js') }}"></script>
 <script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
-{#<script src="{{ path('aw_plans_production_list', {_format: 'js'}) }}"></script>#}
+<script src="{{ path('aw_plans_production_list', {_format: 'js'}) }}"></script>
 {% endblock %}

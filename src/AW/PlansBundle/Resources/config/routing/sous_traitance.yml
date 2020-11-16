@@ -1,0 +1,14 @@
+aw_plans_sous_traitance:
+    path: /index
+    defaults:
+        _controller: AWPlansBundle:SousTraitance:index
+
+aw_plan_sous_traitance_stats:
+    path: /stats
+    defaults:
+        _controller: AWPlansBundle:SousTraitance:stats
+
+aw_plans_sous_traitance_releve:
+    path: /releve
+    defaults:
+        _controller: AWPlansBundle:SousTraitance:releve

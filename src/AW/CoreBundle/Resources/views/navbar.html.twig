@@ -168,6 +168,24 @@
       </li>
       {% endif %}
 
+      {% if is_granted('webappli.cmdplan.see') %}
+        <li class="dropdown{% if route == 'aw_plan_sous_traitance' %} active{% endif %}">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Sous traitance
+            <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li>
+              <a href="{{ path('aw_plan_sous_traitance_stats') }}">Stats sous traitance</a>
+            </li>
+
+            <li>
+              <a href="{{ path('aw_plans_sous_traitance_releve') }}">Relevé pose plan</a>
+            </li>
+          </ul>
+        </li>
+      {% endif %}
+
       {% if is_granted('webappli.devis') %}
       <li>
         <a href="{{ path('aw_doli_propal') }}">Devis</a>

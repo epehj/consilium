@@ -48,3 +48,6 @@ aw_plans_shipping:
 aw_plans_ofs:
     resource: "@AWPlansBundle/Resources/config/routing/ofp.yml"
     prefix: /ofp
+aw_plans_sous_traitance:
+    resource: "@AWPlansBundle/Resources/config/routing/sous_traitance.yml"
+    prefix: /st
