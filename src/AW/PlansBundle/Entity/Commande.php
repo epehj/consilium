@@ -570,6 +570,15 @@ class Commande
      */
     private $renvoi;
 
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User")
+     * @ORM\JoinColumn(name="fk_user_releveur", referencedColumnName="rowid")
+     * @Assert\Valid()
+     */
+    protected $releveur;
+
     const STATUS_ATTENTE_VALIDATION	= 0;
     const STATUS_VALIDATED					= 10;
     const STATUS_BAT								= 20;
@@ -607,6 +616,22 @@ class Commande
       self::POSE_STATUS_TERMINE       => 'Pose terminé',
       self::RELEVE_ANOMALIE           => 'Anomalie'
     );
+
+    /**
+     * @return User
+     */
+    public function getReleveur()
+    {
+        return $this->releveur;
+    }
+
+    /**
+     * @param User $releveur
+     */
+    public function setReleveur($releveur)
+    {
+        $this->releveur = $releveur;
+    }
 
     /**
      * Constructor

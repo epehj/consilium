@@ -28,6 +28,8 @@
         <input type="file" name="form[files][]" id="fileupload" multiple>
       </span>
 
+      <a href="{{ path('aw_plans_releves_add_releveur', {id: commande.id}) }}" class="btn btn-success">Affecter un releveur</a>
+
       <a
         href="{{ path('aw_plans_releves_update', {status: constant('RELEVE_STATUS_TERMINE', commande), id: commande.id}) }}"
         class="btn btn-warning visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"

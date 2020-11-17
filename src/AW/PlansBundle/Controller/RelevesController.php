@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Form\AddReleveurType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -519,5 +520,20 @@ class RelevesController extends Controller
       'commande' => $commande,
       'form' => $form->createView()
     ));
+  }
+
+  public function addReleveurAction(Request $request, Commande $commande) {
+
+      $form = $this->get('form.factory')->create(AddReleveurType::class, $commande);
+      $form->handleRequest($request);
+        if($request->isMethod('POST') and $form->isValid()){
+            die("form has been submitted");
+            // TODO affecter le releveur du form à la commande
+        }
+      return $this->render('AWPlansBundle:Releves:addReleveur.html.twig',
+          array(
+              'commande' => $commande,
+              'form' => $form->createView()
+          ));
   }
 }
