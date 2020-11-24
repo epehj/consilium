@@ -160,6 +160,7 @@
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu table-view-pf-colvis-menu" role="menu" aria-labelledby="colsView">
+            <li><input type="checkbox" value="listDet" checked><label>Nb Plans</label></li>
             <li><input type="checkbox" value="refClient" checked><label>Ref. Client</label></li>
             <li><input type="checkbox" value="societe"{% if not app.user.societe %} checked{% endif %}><label>Client</label></li>
             <li><input type="checkbox" value="site" checked><label>Site</label></li>
