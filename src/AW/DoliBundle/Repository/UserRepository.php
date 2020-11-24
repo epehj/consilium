@@ -126,7 +126,7 @@ class UserRepository extends EntityRepository implements UserLoaderInterface
             ->createQueryBuilder('u')
             ->leftJoin('u.groups', 'g')
             ->where('g.name = :releveurs')
-            ->setParameter('releveurs', 'Releveur') // FIXME virer la partie en dur et faire �a via un class::name
+            ->setParameter('releveurs', 'Releveur Poseur') // FIXME virer la partie en dur et faire �a via un class::name
             ;
     }
 }
