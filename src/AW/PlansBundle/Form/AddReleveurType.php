@@ -33,16 +33,16 @@ class AddReleveurType extends AbstractType
     ;
   }
 
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function configureOptions(OptionsResolver $resolver)
-//  {
-//    $resolver->setDefaults(array(
-//      'data_class' => 'AW\PlansBundle\Entity\Commande',
-//      'translation_domain' => false
-//    ));
-//  }
+  /**
+   * {@inheritdoc}
+   */
+  public function configureOptions(OptionsResolver $resolver)
+  {
+    $resolver->setDefaults(array(
+      'data_class' => 'AW\PlansBundle\Entity\Commande',
+      'translation_domain' => false
+    ));
+  }
 
 //  /**
 //   * {@inheritdoc}
