@@ -46,6 +46,10 @@ class DefaultController extends Controller
           'id' => $commande->getId(),
           'url' => $this->generateUrl('aw_plans_view', array('id' => $commande->getId())),
           'ref' => $commande->getRef(),
+          'listDet' => $this
+              ->getDoctrine()
+              ->getManager()
+              ->getRepository('AWPlansBundle:Commande')->getSumPlans($commande->getRef()),
           'refClient' => $commande->getRefClient(),
           'societe' => $commande->getSociete()->getName(),
           'userContact' => $commande->getUserContact() ? $commande->getUserContact()->getFullname() : '',

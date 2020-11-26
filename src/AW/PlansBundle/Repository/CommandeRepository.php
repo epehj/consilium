@@ -1020,4 +1020,16 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
       ->getResult()
     ;
   }
+
+    public function getSumPlans($reference){
+        return $this
+            ->createQueryBuilder('c')
+            ->leftJoin('c.listDet', 'det')
+            ->select('sum(det.qty)')
+            ->where('c.ref  = :ref')
+            ->setParameter('ref', $reference)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
 }

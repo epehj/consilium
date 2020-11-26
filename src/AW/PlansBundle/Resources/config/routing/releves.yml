@@ -77,3 +77,10 @@ aw_plans_releves_add_rdv:
         _controller: AWPlansBundle:Releves:addRDV
     requirements:
         id: \d+
+
+aw_plans_releves_add_releveur:
+    path: /add/releveur/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:addReleveur
+    requirements:
+        id: \d+
