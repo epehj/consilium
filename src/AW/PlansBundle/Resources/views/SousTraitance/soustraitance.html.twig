@@ -1,0 +1,99 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Statistique de production :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+{{ form_start(form) }}
+
+<div class="row">
+  <div class="col-xs-12 col-md-4 col-md-offset-4">
+    <div class="input-daterange input-group">
+      {{ form_widget(form.start) }}
+      <span class="input-group-addon">à</span>
+      {{ form_widget(form.end) }}
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">Actualiser</button>
+      </span>
+    </div>
+  </div>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+<pre>
+ {{ dump(stats) }}
+</pre>
+
+{% for group in groups %}
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th colspan="14" class="text-center">{{ group.name }}</th>
+    </tr>
+    <tr>
+      <th colspan="7">&nbsp;</th>
+      <th colspan="7" class="text-center">Délai moyen</th>
+    </tr>
+    <tr>
+      <th></th>
+      <th colspan="2" class="text-center">Relevé</th>
+      <th colspan="2" class="text-center">Pose</th>
+      <th colspan="2" class="text-center">Inax</th>
+      <th colspan="2" class="text-center">Délai Total</th>
+      <th colspan="2" class="text-center">Délai Relevé</th>
+      <th colspan="2" class="text-center">Délai Dessin</th>
+      <th colspan="2" class="text-center">Délai Pose</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in group.users %}
+    <tr>
+      <td>{{ user.fullName }}</td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].releve ? stats[group.id][user.id].releve : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].pose ? stats[group.id][user.id].pose : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].inax ? stats[group.id][user.id].inax : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].delai_total ? stats[group.id][user.id].delai_total : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].delai_releve ? stats[group.id][user.id].delai_releve : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].delai_dessin ? stats[group.id][user.id].delai_dessin : 0 }}
+      </td>
+      <td colspan="2" class="text-center">
+        {{ stats[group.id][user.id].delai_pose ? stats[group.id][user.id].delai_pose : 0 }}
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="7">Aucun utilisateur dans ce groupe</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script>
+$(function(){
+  $('.input-daterange').datepicker({
+    format: 'dd-mm-yyyy',
+    language: 'fr'
+  });
+});
+</script>
+{% endblock %}

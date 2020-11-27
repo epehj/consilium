@@ -19,6 +19,7 @@ parameters:
     email_bcc: plan@consilium-plan.fr
     email_service_plans: plan@consilium-plan.fr
     email_expedition: plan@consilium-plan.fr
+    releveurs_group_id: 6
     operateurs_ts_groups_id:
         - 4
         - 29
@@ -30,8 +31,6 @@ parameters:
     exchange_host: null
     exchange_plans_username: null
     exchange_plans_password: null
-    #chronopost account : 32364503
-    #chronopost pwd :
     chronopost.account: 19869502
     chronopost.password: 255562
     tnt.username: webservices@tnt.fr
