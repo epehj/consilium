@@ -828,6 +828,22 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
     ;
   }
 
+    public function averagePoseTimeBetweenDate(\DateTime $start, \DateTime $end)
+    {
+       return $this->getAverageTimePoseQueryBuilder($start, $end)
+        ->getQuery()
+        ->getSingleScalarResult();
+    }
+
+    public function averagePoseTimeBetweenDateByUser($user, \DateTime $start, \DateTime $end)
+    {
+        return $this->getAverageTimePoseQueryBuilder($start, $end)
+            ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
   public function sumQtyBetweenDate(\DateTime $start, \DateTime $end)
   {
     return $this
@@ -1110,5 +1126,40 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getSingleScalarResult()
             ;
+    }
+
+    /**
+     * @param \DateTime $start
+     * @param \DateTime $end
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getByAveragePoseTimeBetweenDateBuilder(\DateTime $start, \DateTime $end)
+    {
+        return $this->getByStatusQueryBuilder(':status')
+            ->setParameter('status', Commande::STATUS_CLOSED)
+            ->select('SUM(TIMESTAMPDIFF(DAY, c.dateValidation, c.dateClose))')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere('c.pose = true')
+            ->andWhere('c.dateClose != null');
+    }
+
+    /**
+     * @param \Doctrine\ORM\QueryBuilder $qb
+     * @param \DateTime $start
+     * @param \DateTime $end
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getAverageTimePoseQueryBuilder(\DateTime $start, \DateTime $end)
+    {
+        $qb =  $this->getByStatusQueryBuilder(Commande::STATUS_CLOSED);
+        return $qb
+            ->select('AVG(TIMESTAMPDIFF(DAY, c.dateValidation, c.dateClose))')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere('c.pose = true')
+            ->andWhere($qb->expr()->isNotNull('c.dateClose'));
     }
 }
