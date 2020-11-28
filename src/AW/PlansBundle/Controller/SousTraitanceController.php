@@ -59,7 +59,7 @@ class SousTraitanceController extends Controller
       $er = $this
           ->getDoctrine()
           ->getManager()
-          ->getRepository('AWPlansBundle:Production')
+          ->getRepository('AWPlansBundle:Commande')
       ;
 
       $monthStart = (new \DateTime('first day of this month'))
@@ -73,8 +73,8 @@ class SousTraitanceController extends Controller
       foreach($groups as $group){
           foreach($group->getUsers() as $user){
               $stats[$group->getId()][$user->getId()] = array(
-                  'releve' => 0,//$er->getDatas(),
-                  'pose' => 0,
+                  'releve' => $er->countByStatusBetweenDateAndByUser($user, Commande::RELEVE_STATUS_TERMINE, $monthStart, $monthEnd),
+                  'pose' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CLOSED, $monthStart, $monthEnd),
                   'inax' => 0,
                   'delai_total'=> 0,
                   'delai_releve'=> 0,
@@ -107,7 +107,7 @@ class SousTraitanceController extends Controller
         $er = $this
             ->getDoctrine()
             ->getManager()
-            ->getRepository('AWPlansBundle:Production')
+            ->getRepository('AWPlansBundle:Commande')
         ;
 
         $monthStart = (new \DateTime('first day of this month'))
@@ -122,30 +122,28 @@ class SousTraitanceController extends Controller
             array(
                 'label' => 'Saisie',
                 'data' => array(
-                    'Commandes',
-                    'Plans'
-//                    $er->countByUserAndStatusBetweenDate($this->getUser(), Commande::STATUS_VALIDATED, $monthStart, $monthEnd),
-//                    $er->sumByUserAndStatusBetweenDate($this->getUser(), Commande::STATUS_VALIDATED, $monthStart, $monthEnd)
+                    $er->countCommandeSaisie($monthStart, $monthEnd),
+                    'Nombre de plan'
                 )
             ),
             array(
                 'label' => 'Relevés',
                 'data' => array(
-                    'Commandes',
-                    'Plans'
+                    $er->countByStatusBetweenDateAndReleve(Commande::RELEVE_STATUS_TERMINE, $monthStart, $monthEnd),
+                   'Nombre de plan'
                 )
             ),
             array(
                 'label' => 'Posés',
                 'data' => array(
-                    'Commandes',
+                    $er->countByStatusBetweenDateAndPose(Commande::STATUS_CLOSED, $monthStart, $monthEnd), //$er->countBetweenDateWithStatus(Commande::, $monthStart, $monthend),
                     'Plans'
                 )
             ),
             array(
                 'label' => 'Annulés',
                 'data' => array(
-                    'Commandes',
+                    $er->countByStatusBetweenDate(Commande::STATUS_CANCELED, $monthStart, $monthEnd),
                     'Plans'
                 )
             ),

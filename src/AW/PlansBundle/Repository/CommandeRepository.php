@@ -929,6 +929,75 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
     ;
   }
 
+  public function countByStatusBetweenDate($status, \DateTime $start, \DateTime $end)
+  {
+    return $this
+      ->getByStatusQueryBuilder($status)
+        ->select('COUNT(c)')
+        ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+      ->getQuery()
+      ->getSingleScalarResult()
+    ;
+  }
+
+  public function countByStatusBetweenDateAndReleve($status, \DateTime $start, \DateTime $end)
+  {
+      return $this
+          ->getByStatusQueryBuilder($status)
+          ->select('COUNT(c)')
+          ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+          ->andWhere('c.releve = true')
+          ->getQuery()
+          ->getSingleScalarResult();
+  }
+  public function countByStatusBetweenDateAndPose($status, \DateTime $start, \DateTime $end)
+  {
+      return $this
+          ->getByStatusQueryBuilder($status)
+          ->select('COUNT(c)')
+          ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+          ->andWhere('c.pose = true')
+          ->getQuery()
+          ->getSingleScalarResult();
+  }
+
+  /** si un releveur est associé, alors la commande est forcément en releve  = true */
+  public function countByStatusBetweenDateAndByUser($user, $status, \DateTime $start, \DateTime $end)
+  {
+    return $this
+      ->getByStatusQueryBuilder($status)
+        ->select('COUNT(c)')
+        ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+        ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+      ->getQuery()
+      ->getSingleScalarResult()
+    ;
+  }
+
+  public function countByStatusBetweenDateAndPoseByUser($user, $status, \DateTime $start, \DateTime $end)
+  {
+    return $this
+      ->getByStatusQueryBuilder($status)
+        ->select('COUNT(c)')
+        ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+        ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+      ->getQuery()
+      ->getSingleScalarResult()
+    ;
+  }
+
   public function sumQtyByStatus($status)
   {
     return $this
@@ -980,6 +1049,16 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
       ->getQuery()
       ->getResult()
     ;
+  }
+
+  public function countCommandeSaisie(\DateTime $start, \DateTime $end){
+      return $this
+          ->getBetweenDateQueryBuilder($start, $end)
+          ->andWhere('c.releve = true')
+          ->select('count(c)')
+          ->getQuery()
+          ->getSingleScalarResult();
+      ;
   }
 
   public function findWaitingRelevePose($releve, $pose)
