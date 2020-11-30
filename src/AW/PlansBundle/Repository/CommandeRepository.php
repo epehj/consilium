@@ -1026,6 +1026,40 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
             ->getSingleScalarResult();
 
     }
+      public function getCountByPoseBetweenDateQueryBuilder(\DateTime $start, \DateTime $end){
+      $qb = $this->createQueryBuilder('c');
+      $qb->andWhere($qb->expr()->orX(
+          $qb->expr()->isNotNull('c.releveStatus'),
+          $qb->expr()->notIn('c.releveStatus', array(
+              Commande::RELEVE_STATUS_EN_ATTENTE,
+              Commande::POSE_STATUS_EN_ATTENTE,
+              Commande::RELEVE_ANOMALIE
+          ))
+      ))
+          ->andWhere($qb->expr()->isNotNull('c.datePose'))
+          ->select('COUNT(c)')
+          ->andWhere('c.dateCreation between :start and :end')
+          ->setParameter('start', $start)
+          ->setParameter('end', $end)
+          ->andWhere('c.pose = true');
+      return $qb;
+  }
+    public function countByPoseBetweenDate(\DateTime $start, \DateTime $end)
+    {
+      return $this->getCountByPoseBetweenDateQueryBuilder($start, $end)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function countByPoseBetweenDateAndByUser($user, \DateTime $start, \DateTime $end){
+        return $this->getCountByPoseBetweenDateQueryBuilder($start, $end)
+            ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+    }
+
   /** si un releveur est associé, alors la commande est forcément en releve  = true */
   public function countByStatusBetweenDateAndByUser($user, $status, \DateTime $start, \DateTime $end)
   {

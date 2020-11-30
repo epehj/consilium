@@ -74,7 +74,7 @@ class SousTraitanceController extends Controller
           foreach($group->getUsers() as $user){
               $stats[$group->getId()][$user->getId()] = array(
                   'releve' => $er->countByReleveBetweenDateAndByUser($user,  $monthStart, $monthEnd),
-                  'pose' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CLOSED, $monthStart, $monthEnd),
+                  'pose' => $er->countByPoseBetweenDateAndByUser($user, $monthStart, $monthEnd),
                   'inax' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CANCELED, $monthStart, $monthEnd),
                   'delai_total'=> $er->averagePoseTimeBetweenDateByUser($user, $monthStart, $monthEnd),
                   'delai_releve'=> $er->averageReleveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
@@ -136,7 +136,7 @@ class SousTraitanceController extends Controller
             array(
                 'label' => 'Posés',
                 'data' => array(
-                    $er->countByStatusBetweenDateAndPose(Commande::STATUS_CLOSED, $monthStart, $monthEnd), //$er->countBetweenDateWithStatus(Commande::, $monthStart, $monthend),
+                    $er->countByPoseBetweenDate($monthStart, $monthEnd), //$er->countBetweenDateWithStatus(Commande::, $monthStart, $monthend),
                     'Plans'
                 )
             ),
