@@ -226,6 +226,7 @@ class RelevesController extends Controller
           ->setDateProduction(
             new \DateTime()
           )
+            ->setDateReleve(new \DateTime())
         ;
         break;
 

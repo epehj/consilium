@@ -160,10 +160,11 @@ class Commande
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="releve_date", type="datetime", nullable=true)
+     * @ORM\Column(name="date_releve", type="datetime", nullable=true)
      * @Assert\DateTime()
      */
-    private $releveDate;
+    private $dateReleve;
+
 
     /**
      * @var User
@@ -193,10 +194,10 @@ class Commande
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="pose_date", type="datetime", nullable=true)
+     * @ORM\Column(name="date_pose", type="datetime", nullable=true)
      * @Assert\DateTime()
      */
-    private $poseDate;
+    private $datePose;
 
     /**
      * @var int
@@ -686,6 +687,7 @@ class Commande
         $this->dateValidation = null;
         $this->dateModification = null;
         $this->dateFabrication = null;
+        $this->dateReleve = null;
         $this->dateReceive = null;
         $this->dateExpedition = null;
         $this->dateClose = null;
@@ -2408,30 +2410,6 @@ class Commande
     }
 
     /**
-     * Set poseDate
-     *
-     * @param \DateTime $poseDate
-     *
-     * @return Commande
-     */
-    public function setPoseDate($poseDate)
-    {
-        $this->poseDate = $poseDate;
-
-        return $this;
-    }
-
-    /**
-     * Get poseDate
-     *
-     * @return \DateTime
-     */
-    public function getPoseDate()
-    {
-        return $this->poseDate;
-    }
-
-    /**
      * Set qtyDeclination
      *
      * @param integer $qtyDeclination
@@ -2639,5 +2617,37 @@ class Commande
     public function setRenvoi($renvoi)
     {
         $this->renvoi = $renvoi;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDateReleve()
+    {
+        return $this->dateReleve;
+    }
+
+    /**
+     * @param \DateTime $dateReleve
+     */
+    public function setDateReleve($dateReleve)
+    {
+        $this->dateReleve = $dateReleve;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getDatePose()
+    {
+        return $this->datePose;
+    }
+
+    /**
+     * @param \DateTime $datePose
+     */
+    public function setDatePose($datePose)
+    {
+        $this->datePose = $datePose;
     }
 }

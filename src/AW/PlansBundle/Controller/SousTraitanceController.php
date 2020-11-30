@@ -73,11 +73,11 @@ class SousTraitanceController extends Controller
       foreach($groups as $group){
           foreach($group->getUsers() as $user){
               $stats[$group->getId()][$user->getId()] = array(
-                  'releve' => $er->countByStatusBetweenDateAndByUser($user, Commande::RELEVE_STATUS_TERMINE, $monthStart, $monthEnd),
+                  'releve' => $er->countByReleveBetweenDateAndByUser($user,  $monthStart, $monthEnd),
                   'pose' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CLOSED, $monthStart, $monthEnd),
-                  'inax' => 0,
-                  'delai_total'=> 0,
-                  'delai_releve'=> 0,
+                  'inax' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CANCELED, $monthStart, $monthEnd),
+                  'delai_total'=> $er->averagePoseTimeBetweenDateByUser($user, $monthStart, $monthEnd),
+                  'delai_releve'=> $er->averageReleveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
                   'delai_dessin'=> 0,
                   'delai_pose'=> 0
               );
@@ -123,13 +123,13 @@ class SousTraitanceController extends Controller
                 'label' => 'Saisie',
                 'data' => array(
                     $er->countCommandeSaisie($monthStart, $monthEnd),
-                    'Nombre de plan'
+                    $er->countPlanSaisi($monthStart, $monthEnd),
                 )
             ),
             array(
                 'label' => 'Relevés',
                 'data' => array(
-                    $er->countByStatusBetweenDateAndReleve(Commande::RELEVE_STATUS_TERMINE, $monthStart, $monthEnd),
+                    $er->countByReleveBetweenDate( $monthStart, $monthEnd),
                    'Nombre de plan'
                 )
             ),
@@ -150,13 +150,13 @@ class SousTraitanceController extends Controller
             array(
                 'label' => 'Délai Moyen Commande saisie->pose terminée',
                 'data' => array(
-                    'delai moyen en jour'
+                    $er->averagePoseTimeBetweenDate($monthStart, $monthEnd),
                 )
             ),
             array(
                 'label' => 'Délai Moyen Commande saisie->relevé terminé',
                 'data' => array(
-                    'delai moyen en jour'
+                    $er->averageReleveTimeBetweenDate($monthStart, $monthEnd)
                 )
             ),
             array(
