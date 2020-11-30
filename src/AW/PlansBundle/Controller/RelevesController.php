@@ -299,7 +299,6 @@ class RelevesController extends Controller
         $commande
           ->setReleveStatus(Commande::POSE_STATUS_TERMINE)
           ->updateStatus($this->getUser(), Commande::STATUS_CLOSED)
-          ->setPoseDate(new \DateTime())
         ;
 
         $em = $this

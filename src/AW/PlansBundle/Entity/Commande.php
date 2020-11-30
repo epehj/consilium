@@ -955,6 +955,7 @@ class Commande
         case self::STATUS_CLOSED:
           $this->userClose = $user;
           $this->dateClose = $now;
+          $this->datePose = $now;
           $this->production = 0;
           $this->urgent = false;
           $this->alert = 0;
