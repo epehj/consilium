@@ -1,0 +1,57 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Affecter un releveur à la commande {{ commande.ref }}</h3>
+      </div>
+      <div class="panel-body">
+      {{ form_start(form) }}
+
+      {{ form_rest(form) }}
+
+      <div class="row">
+        <a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+      </div>
+
+      {{ form_end(form) }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script>
+$(function(){
+  $('#aw_plansbundle_commande_releve_note_date_date').datepicker({
+    autoclose: true,
+    calendarWeeks: true,
+    format: 'dd-mm-yyyy',
+    language: 'fr'
+  })
+    .on('changeDate', function(e){
+      var d = e.date;
+      var DoW = d.getDay();
+      d.setDate(d.getDate() - (DoW + 6) % 7 + 3); // Nearest Thu
+      var ms = d.valueOf(); // GMT
+      d.setMonth(0);
+      d.setDate(4); // Thu in Week 1
+      DoW = Math.round((ms - d.valueOf()) / (7 * 864e5)) + 1;
+
+      $('#aw_plansbundle_commande_releve_note_releveNote').val('RDV semaine '+DoW);
+    })
+  ;
+});
+</script>
+{% endblock %}

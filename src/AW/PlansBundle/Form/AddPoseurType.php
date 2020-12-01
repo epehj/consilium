@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use AW\DoliBundle\Repository\UserRepository;
 
-class AddReleveurType extends AbstractType
+class AddPoseurType extends AbstractType
 {
   /**
    * {@inheritdoc}
@@ -20,8 +20,8 @@ class AddReleveurType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $builder
-      ->add('releveur', EntityType::class, array(
-        'label' => 'Releveur',
+      ->add('poseur', EntityType::class, array(
+        'label' => 'Poseur',
         'class' => 'AWDoliBundle:User',
         'query_builder' => function(UserRepository $er) {
           return $er->getUsersInReleveurGroupQueryBuilder();
@@ -44,11 +44,11 @@ class AddReleveurType extends AbstractType
     ));
   }
 
-//  /**
-//   * {@inheritdoc}
-//   */
-//  public function getBlockPrefix()
-//  {
-//    return 'aw_plansbundle_commande_releve_note';
-//  }
+  /**
+   * {@inheritdoc}
+   */
+  public function getBlockPrefix()
+  {
+    return 'aw_plansbundle_commande_poseur';
+  }
 }

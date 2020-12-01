@@ -84,3 +84,10 @@ aw_plans_releves_add_releveur:
         _controller: AWPlansBundle:Releves:addReleveur
     requirements:
         id: \d+
+
+aw_plans_pose_add_poseur:
+    path: /add/poseur/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:addPoseur
+    requirements:
+        id: \d+

@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Form\AddPoseurType;
 use AW\PlansBundle\Form\AddReleveurType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -532,6 +533,21 @@ class RelevesController extends Controller
             return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
       return $this->render('AWPlansBundle:Releves:addReleveur.html.twig',
+          array(
+              'commande' => $commande,
+              'form' => $form->createView()
+          ));
+  }
+
+  public function addPoseurAction(Request $request, Commande $commande) {
+
+      $form = $this->get('form.factory')->create(AddPoseurType::class, $commande);
+      $form->handleRequest($request);
+        if($request->isMethod('POST') and $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('aw_plans_pose_end', array('id' => $commande->getId()));
+        }
+      return $this->render('AWPlansBundle:Releves:addPoseur.html.twig',
           array(
               'commande' => $commande,
               'form' => $form->createView()

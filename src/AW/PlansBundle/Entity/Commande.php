@@ -579,6 +579,15 @@ class Commande
      * @Assert\Valid()
      */
     protected $releveur;
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User")
+     * @ORM\JoinColumn(name="fk_user_poseur", referencedColumnName="rowid")
+     * @Assert\Valid()
+     */
+    protected $poseur;
+
 
     const STATUS_ATTENTE_VALIDATION	= 0;
     const STATUS_VALIDATED					= 10;
@@ -2651,4 +2660,22 @@ class Commande
     {
         $this->datePose = $datePose;
     }
+
+
+    /**
+     * @return User
+     */
+    public function getPoseur()
+    {
+        return $this->poseur;
+    }
+
+    /**
+     * @param User $poseur
+     */
+    public function setPoseur($poseur)
+    {
+        $this->poseur = $poseur;
+    }
+
 }
