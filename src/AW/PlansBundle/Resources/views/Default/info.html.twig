@@ -85,7 +85,9 @@
           {% if not app.user.societe and (commande.releve or commande.pose) %}
           <tr>
             <td><strong>Relevé/Pose affectée à</strong></td>
-            <td>{% if commande.releveur %}{{ commande.releveur.fullName }}{% else %}-{% endif %}</td>
+            <td>{% if commande.releveur %}{{ commande.releveur.fullName }}{% else %}-{% endif %}
+              /
+              {% if commande.poseur %}{{ commande.poseur.fullName }}{% else %}-{% endif %}</td>
           </tr>
           {% endif %}
         </table>
