@@ -51,13 +51,16 @@
     <tr>
       <td>{{ user.fullName }}</td>
       <td colspan="2" class="text-center">
-        {{ stats[group.id][user.id].releve ? stats[group.id][user.id].releve : 0 }}
+        {{ stats[group.id][user.id].releve['commande'] ? stats[group.id][user.id].releve['commande'] : 0 }} |
+        {{ stats[group.id][user.id].releve['plan'] ? stats[group.id][user.id].releve['plan'] : 0 }}
       </td>
       <td colspan="2" class="text-center">
-        {{ stats[group.id][user.id].pose ? stats[group.id][user.id].pose : 0 }}
+        {{ stats[group.id][user.id].pose['commande'] ? stats[group.id][user.id].pose['commande'] : 0 }} |
+        {{ stats[group.id][user.id].pose['plan'] ? stats[group.id][user.id].pose['plan'] : 0 }}
       </td>
       <td colspan="2" class="text-center">
-        {{ stats[group.id][user.id].inax ? stats[group.id][user.id].inax : 0 }}
+        {{ stats[group.id][user.id].inax['commande'] ? stats[group.id][user.id].inax['commande'] : 0 }} |
+        {{ stats[group.id][user.id].inax['plan'] ? stats[group.id][user.id].inax['plan'] : 0 }}
       </td>
       <td colspan="2" class="text-center">
         {{ stats[group.id][user.id].delai_total ? stats[group.id][user.id].delai_total : 0 }}

@@ -73,13 +73,19 @@ class SousTraitanceController extends Controller
       foreach($groups as $group){
           foreach($group->getUsers() as $user){
               $stats[$group->getId()][$user->getId()] = array(
-                  'releve' => $er->countByReleveBetweenDateAndByUser($user,  $start, $end),
-                  'pose' => $er->countByPoseBetweenDateAndByUser($user, $monthStart, $monthEnd),
-                  'inax' => $er->countByStatusBetweenDateByUser($user, Commande::STATUS_CANCELED, $monthStart, $monthEnd),
-                  'delai_total'=> $er->averagePoseTimeBetweenDateByUser($user, $monthStart, $monthEnd),
-                  'delai_releve'=> $er->averageReleveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
-                  'delai_dessin'=> $er->averageReleveToReceiveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
-                  'delai_pose'=> $er->averageReceiveToPoseTimeBetweenDateByUser($user, $monthStart, $monthEnd)
+                  'releve' => array(
+                      'commande' => $er->countByReleveBetweenDateAndByUser($user,  $start, $end),
+                      'plan' => $er->countPlansByReleveBetweenDateAndByUser($user,  $start, $end)),
+                  'pose' => array(
+                      'commande' => $er->countByPoseBetweenDateAndByUser($user, $start, $end),
+                      'plan' => $er->countPlansByPoseBetweenDateAndByUser($user, $start, $end),),
+                  'inax' => array (
+                      'commande' => $er->countByStatusBetweenDateByUser($user, Commande::STATUS_CANCELED, $start, $end),
+                      'plan' => $er->countPlansByStatusBetweenDateByUser($user, Commande::STATUS_CANCELED, $start, $end)),
+                  'delai_total'=> $er->averagePoseTimeBetweenDateByUser($user, $start, $end),
+                  'delai_releve'=> $er->averageReleveTimeBetweenDateByUser($user, $start, $end),
+                  'delai_dessin'=> $er->averageReleveToReceiveTimeBetweenDateByUser($user, $start, $end),
+                  'delai_pose'=> $er->averageReceiveToPoseTimeBetweenDateByUser($user, $start, $end)
               );
           }
       }
