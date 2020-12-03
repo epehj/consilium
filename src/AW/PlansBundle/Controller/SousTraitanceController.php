@@ -73,13 +73,13 @@ class SousTraitanceController extends Controller
       foreach($groups as $group){
           foreach($group->getUsers() as $user){
               $stats[$group->getId()][$user->getId()] = array(
-                  'releve' => $er->countByReleveBetweenDateAndByUser($user,  $monthStart, $monthEnd),
+                  'releve' => $er->countByReleveBetweenDateAndByUser($user,  $start, $end),
                   'pose' => $er->countByPoseBetweenDateAndByUser($user, $monthStart, $monthEnd),
-                  'inax' => $er->countByStatusBetweenDateAndByUser($user, Commande::STATUS_CANCELED, $monthStart, $monthEnd),
+                  'inax' => $er->countByStatusBetweenDateByUser($user, Commande::STATUS_CANCELED, $monthStart, $monthEnd),
                   'delai_total'=> $er->averagePoseTimeBetweenDateByUser($user, $monthStart, $monthEnd),
                   'delai_releve'=> $er->averageReleveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
-                  'delai_dessin'=> 0,
-                  'delai_pose'=> 0
+                  'delai_dessin'=> $er->averageReleveToReceiveTimeBetweenDateByUser($user, $monthStart, $monthEnd),
+                  'delai_pose'=> $er->averageReceiveToPoseTimeBetweenDateByUser($user, $monthStart, $monthEnd)
               );
           }
       }
@@ -130,21 +130,21 @@ class SousTraitanceController extends Controller
                 'label' => 'Relevés',
                 'data' => array(
                     $er->countByReleveBetweenDate( $monthStart, $monthEnd),
-                   'Nombre de plan'
+                    $er->countPlansReleveBetweenDate($monthStart, $monthEnd)
                 )
             ),
             array(
                 'label' => 'Posés',
                 'data' => array(
                     $er->countByPoseBetweenDate($monthStart, $monthEnd), //$er->countBetweenDateWithStatus(Commande::, $monthStart, $monthend),
-                    'Plans'
+                    $er->countPlansPoseBetweenDate($monthStart, $monthEnd)
                 )
             ),
             array(
                 'label' => 'Annulés',
                 'data' => array(
                     $er->countByStatusBetweenDate(Commande::STATUS_CANCELED, $monthStart, $monthEnd),
-                    'Plans'
+                    $er->countPlansByStatusBetweenDate(Commande::STATUS_CANCELED, $monthStart, $monthEnd)
                 )
             ),
             array(
@@ -162,13 +162,13 @@ class SousTraitanceController extends Controller
             array(
                 'label' => 'Délai Moyen relevé terminé->recept atelier',
                 'data' => array(
-                    'delai moyen en jour'
+                    $er->averageReleveToReceiveTimeBetweenDate($monthStart, $monthEnd)
                 )
             ),
             array(
                 'label' => 'Délai Moyen recept atelier->pose term',
                 'data' => array(
-                    'delai moyen en jour'
+                    $er->averageReceiveToPoseTimeBetweenDate($monthStart, $monthEnd)
                 )
             )
         );

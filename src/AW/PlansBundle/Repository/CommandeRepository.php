@@ -980,6 +980,36 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
     ;
   }
 
+    public function countPlansByStatusBetweenDate($status, \DateTime $start, \DateTime $end)
+    {
+        return $this
+            ->getByStatusQueryBuilder($status)
+            ->leftJoin('c.listDet', 'det')
+            ->select('SUM(det.qty)')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+    public function countByStatusBetweenDateByUser($user, $status, \DateTime $start, \DateTime $end)
+    {
+        $qb = $this->getByStatusQueryBuilder($status);
+        return $qb
+//            ->leftJoin('c.listDet', 'det') // nombre de plan
+//            ->select('SUM(det.qty)')          //
+                ->select('count(c)')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere($qb->expr()->orX('c.releveur = :releveur', 'c.poseur = :releveur'))
+            ->setParameter('releveur', $user)
+            ->getQuery()
+            ->getSingleScalarResult()
+            ;
+    }
+
   public function countByStatusBetweenDateAndPose($status, \DateTime $start, \DateTime $end)
   {
       return $this
@@ -1004,7 +1034,6 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
           ))
       ))
           ->andWhere($qb->expr()->isNotNull('c.dateReleve'))
-          ->select('COUNT(c)')
           ->andWhere('c.dateCreation between :start and :end')
           ->setParameter('start', $start)
           ->setParameter('end', $end)
@@ -1014,17 +1043,27 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
     public function countByReleveBetweenDate(\DateTime $start, \DateTime $end)
     {
       return $this->getCountByReleveBetweenDateQueryBuilder($start, $end)
+          ->select('COUNT(c)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     public function countByReleveBetweenDateAndByUser($user, \DateTime $start, \DateTime $end){
         return $this->getCountByReleveBetweenDateQueryBuilder($start, $end)
+            ->select('COUNT(c)')
             ->andWhere('c.releveur = :user')
             ->setParameter('user', $user)
             ->getQuery()
             ->getSingleScalarResult();
 
+    }
+    public function countPlansReleveBetweenDate(\DateTime $start, \DateTime $end){
+        return $this->getCountByReleveBetweenDateQueryBuilder($start, $end)
+            ->leftJoin('c.listDet', 'det')
+            ->select('SUM(det.qty)')
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
     }
       public function getCountByPoseBetweenDateQueryBuilder(\DateTime $start, \DateTime $end){
       $qb = $this->createQueryBuilder('c');
@@ -1037,7 +1076,6 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
           ))
       ))
           ->andWhere($qb->expr()->isNotNull('c.datePose'))
-          ->select('COUNT(c)')
           ->andWhere('c.dateCreation between :start and :end')
           ->setParameter('start', $start)
           ->setParameter('end', $end)
@@ -1047,13 +1085,23 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
     public function countByPoseBetweenDate(\DateTime $start, \DateTime $end)
     {
       return $this->getCountByPoseBetweenDateQueryBuilder($start, $end)
+          ->select('COUNT(c)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+    public function countPlansPoseBetweenDate(\DateTime $start, \DateTime $end)
+    {
+      return $this->getCountByPoseBetweenDateQueryBuilder($start, $end)
+          ->leftJoin('c.listDet', 'det')
+          ->select('SUM(det.qty)')
             ->getQuery()
             ->getSingleScalarResult();
     }
 
     public function countByPoseBetweenDateAndByUser($user, \DateTime $start, \DateTime $end){
         return $this->getCountByPoseBetweenDateQueryBuilder($start, $end)
-            ->andWhere('c.releveur = :user')
+            ->select('COUNT(c)')
+            ->andWhere('c.poseur = :user')
             ->setParameter('user', $user)
             ->getQuery()
             ->getSingleScalarResult();
@@ -1244,32 +1292,34 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere($qb->expr()->isNotNull('c.dateClose'));
     }
 
-    public function getAverageTimeReleveQueryBuilder(\DateTime $start, \DateTime $end)
+    public function getAverageReleveTimeQueryBuilder(\DateTime $start, \DateTime $end)
     {
         $qb =  $this
         ->createQueryBuilder('c');
-        $qb->where('c.releveStatus = :status')
-            ->setParameter('status', Commande::RELEVE_STATUS_TERMINE)
-        ->andWhere($qb->expr()->orX(
-            $qb->expr()->isNull('c.releveStatus'),
+//        $qb->where('c.releveStatus = :status')
+//            ->setParameter('status', Commande::RELEVE_STATUS_TERMINE)
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNotNull('c.dateReleve'),
             $qb->expr()->notIn('c.releveStatus', array(
                     Commande::RELEVE_STATUS_EN_ATTENTE,
                     Commande::POSE_STATUS_EN_ATTENTE,
                     Commande::RELEVE_ANOMALIE
                 ))
             ))
-            ->select('AVG(TIMESTAMPDIFF(DAY, c.dateValidation, c.dateProduction))')
+            ->select('AVG(TIMESTAMPDIFF(DAY, c.dateValidation, c.dateReleve))')
             ->andWhere('c.dateCreation between :start and :end')
             ->setParameter('start', $start)
             ->setParameter('end', $end)
+        ->andWhere('c.status != :status')
+        ->setParameter('status', Commande::STATUS_CANCELED);
 //            ->andWhere('c.releve = true')
-            ->andWhere($qb->expr()->isNotNull('c.dateModification'));
+//            ->andWhere($qb->expr()->isNotNull('c.dateModification'));
         return $qb;
     }
 
     public function averageReleveTimeBetweenDateByUser($user, \DateTime $start, \DateTime $end)
     {
-        return $this->getAverageTimeReleveQueryBuilder($start, $end)
+        return $this->getAverageReleveTimeQueryBuilder($start, $end)
             ->andWhere('c.releveur = :user')
             ->setParameter('user', $user)
             ->getQuery()
@@ -1278,8 +1328,92 @@ class CommandeRepository extends \Doctrine\ORM\EntityRepository
 
     public function averageReleveTimeBetweenDate(\DateTime $start, \DateTime $end)
     {
-        return $this->getAverageTimeReleveQueryBuilder($start, $end)
+        return $this->getAverageReleveTimeQueryBuilder($start, $end)
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * Delai d'une commande entre date de reception et passage en statut releve
+     * Toutes les commandes créées entre start et end,
+     * qui n'ont pas le statut annulé,
+     * et qui ont été receptionnées,
+     * et qui ne sont pas en attente releve/pose ou anomalie
+     */
+    public function getAverageReleveToReceiveTimeQueryBuilder(\DateTime $start, \DateTime $end)
+    {
+        $qb =  $this
+            ->createQueryBuilder('c');
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNotNull('c.dateReceive'),
+            $qb->expr()->isNotNull('c.dateReleve'),
+            $qb->expr()->notIn('c.releveStatus', array(
+                Commande::RELEVE_STATUS_EN_ATTENTE,
+                Commande::POSE_STATUS_EN_ATTENTE,
+                Commande::RELEVE_ANOMALIE
+            ))
+        ))
+            ->select('AVG(TIMESTAMPDIFF(DAY, c.dateReleve, c.dateReceive))')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere('c.status != :status')
+            ->setParameter('status', Commande::STATUS_CANCELED);
+        return $qb;
+    }
+
+    public function averageReleveToReceiveTimeBetweenDateByUser($user, \DateTime $start, \DateTime $end)
+    {
+        return $this->getAverageReleveToReceiveTimeQueryBuilder($start, $end)
+            ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function averageReleveToReceiveTimeBetweenDate(\DateTime $start, \DateTime $end)
+    {
+        return $this->getAverageReleveToReceiveTimeQueryBuilder($start, $end)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getAverageReceiveToPoseTimeQueryBuilder(\DateTime $start, \DateTime $end)
+    {
+        $qb =  $this
+            ->createQueryBuilder('c');
+        $qb->andWhere($qb->expr()->orX(
+            $qb->expr()->isNotNull('c.dateReceive'),
+            $qb->expr()->isNotNull('c.datePose'),
+            $qb->expr()->notIn('c.releveStatus', array(
+                Commande::RELEVE_STATUS_EN_ATTENTE,
+                Commande::POSE_STATUS_EN_ATTENTE,
+                Commande::RELEVE_ANOMALIE
+            ))
+        ))
+            ->select('AVG(TIMESTAMPDIFF(DAY, c.dateReceive, c.datePose))')
+            ->andWhere('c.dateCreation between :start and :end')
+            ->setParameter('start', $start)
+            ->setParameter('end', $end)
+            ->andWhere('c.status != :status')
+            ->setParameter('status', Commande::STATUS_CANCELED);
+        return $qb;
+    }
+
+    public function averageReceiveToPoseTimeBetweenDateByUser($user, \DateTime $start, \DateTime $end)
+    {
+        return $this->getAverageReceiveToPoseTimeQueryBuilder($start, $end)
+            ->andWhere('c.releveur = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function averageReceiveToPoseTimeBetweenDate(\DateTime $start, \DateTime $end)
+    {
+        return $this->getAverageReceiveToPoseTimeQueryBuilder($start, $end)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }
