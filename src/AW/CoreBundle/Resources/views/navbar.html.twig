@@ -176,12 +176,17 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a href="{{ path('aw_plan_sous_traitance_stats') }}">Stats sous traitance</a>
+              <a href="{{ path('aw_plan_sous_traitance_stats') }}">Stats</a>
             </li>
+            {% if is_granted('webappli.cmdplan.new') %}
+              <li>
+                <a href="{{ path('aw_plans_new') }}">Nouvelle commande</a>
+              </li>
+            {% endif %}
 
-            <li>
-              <a href="{{ path('aw_plans_sous_traitance_releve') }}">Relevé pose plan</a>
-            </li>
+{#            <li>#}
+{#              <a href="{{ path('aw_plans_sous_traitance_releve') }}">Relevé pose plan</a>#}
+{#            </li>#}
           </ul>
         </li>
       {% endif %}
