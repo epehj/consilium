@@ -5,6 +5,10 @@ aw_plans_new:
     resource: "@AWPlansBundle/Resources/config/routing/new.yml"
     prefix: /new
 
+aw_plans_new_st:
+    resource: "@AWPlansBundle/Resources/config/routing/newST.yml"
+    prefix: /newST
+
 aw_plans_files:
     resource: "@AWPlansBundle/Resources/config/routing/files.yml"
     prefix: /files

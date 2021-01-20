@@ -1,0 +1,618 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}Nouvelle commande Plans :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" href="{{ asset('libs/jquery-file-upload/css/jquery.fileupload.css') }}">
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% if consigne %}
+{{ consigne.content | raw }}
+{% endif %}
+
+<p class="fields-status-pf">Tous les champs suivi d'un <span class="required-pf">*</span> sont obligatoires.</p>
+
+{{ form_start(form) }}
+
+{% if not form.vars.valid %}
+  <div class="alert alert-danger">
+    <ul class="list-unstyled">
+      <li>
+        <span class="glyphicon glyphicon-exclamation-sign"></span>
+        Certains champs sont incorrects. Merci de corriger.
+      </li>
+    </ul>
+  </div>
+  {{ form_errors(form) }}
+{% endif %}
+
+<div class="panel panel-info"> <!-- client -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Client</h3>
+  </div>
+  <div class="panel-body">
+    {{ form_row(form.societe) }}
+    {% if form.vars.value.societe %}{{ form_row(form.userContact) }}{% endif %}
+    {{ form_row(form.refClient) }}
+
+    {% if form.vars.value.societe and form.vars.value.societe.infosPlans and form.vars.value.societe.infosPlans.allowContactBat %}
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Si vous souhaitez que les BATs soient envoyés à une tierce personne, veuillez indiquer ci-dessous ses coordonnées.
+    </div>
+
+    {{ form_row(form.contactBATName) }}
+    {{ form_row(form.contactBATPhone) }}
+    {{ form_row(form.contactBATEmail) }}
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- site -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Information du site</h3>
+  </div>
+  <div class="panel-body">
+    {{ form_row(form.site) }}
+    {{ form_row(form.address1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
+    {{ form_row(form.address2) }}
+    {{ form_row(form.zip) }}
+    {{ form_row(form.town) }}
+
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Cliquez sur l'image ci-dessous pour ajouter un logo du site.
+    </div>
+    <div class="alert alert-danger hidden logo-error">
+      <span class="pficon pficon-error-circle-o"></span>
+      Échec d'envoi du logo. Merci de bien sélectionner une image.
+    </div>
+    <div class="row">
+      <div class="col-xs-6 col-xs-offset-2 col-md-6 col-md-offset-3">
+        <a class="thumbnail" id="addlogo">
+          <img
+            src="{% if logo %}{{ path('aw_plans_new_upload_view', {dir: form.children.dir.vars.value, file: logo.filename}) }}{% else %}{{ asset('img/nophoto.png') }}{% endif %}"
+            alt="Logo"
+            title="Cliquez ici pour ajouter ou modifier le logo"
+          >
+        </a>
+      </div>
+    </div>
+
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Notez dans le champ <strong>Remarques</strong> tous renseignements complémentaires nécessaires au bon traitement de la commande.
+    </div>
+    {{ form_row(form.remarques) }}
+  </div>
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- relves/pose -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Relevés/Pose</h3>
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Si vous souhaitez qu'un technicien CONSILIUM effectue les relevés de plans sur site, mettre à <strong>Oui</strong> le champ ci-dessous. Dans ce cas, joindre des fichiers de relevés est facultatif.
+    </div>
+    {{ form_row(form.releve) }}
+
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Si vous souhaitez qu'un technicien CONSILIUM effectue la pose des plans sur site, mettre à <strong>Oui</strong> le champ ci-dessous.
+    </div>
+    {{ form_row(form.pose) }}
+
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Cliquez sur le bouton ci-dessous pour ajouter un ou plusieurs relevés à votre commande.
+    </div>
+    <div class="row">
+      <div class="col-sm-2 col-sm-offset-5">
+        <button type="button" class="btn btn-primary" id="addfile">
+          <span class="glyphicon glyphicon-plus"></span>
+          Joindre un ou plusieurs relevés
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="list-group" id="filelist">
+        {% if finder %}
+        {% for file in finder %}
+          <a class="list-group-item">
+            <span class="glyphicon glyphicon-file"></span>
+            <span class="filename">{{ file.filename }}</span>
+            <span class="pull-right">
+              <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_new_upload_delete', {dir: form.children.dir.vars.value, file: file.filename}) }}">
+                <span class="glyphicon glyphicon-trash"></span>
+                <span class="hidden-xs">Supprimer</span>
+              </button>
+            </span>
+          </a>
+        {% endfor %}
+        {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- plans -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Ajout de plans</h3>
+  </div>
+  <div class="panel-body">
+    <div class="alert alert-info">
+      <span class="pficon pficon-info"></span>
+      Cliquez sur un des types de plans ci-dessous puis choisissez la composition. Vous pouvez ajouter autant de type de plans que nécessaire.
+    </div>
+
+    <div class="row well-sm">
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block addplan pe">Plans d'Évacuation</a>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block addplan pi">Plans d'Intervention</a>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block addplan pc">Plans de Chambre</a>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block addplan pm">Plans de Masse</a>
+      </div>
+    </div>
+
+    <div id="listDet" data-prototype="{{ form_row(form.listDet.vars.prototype)|e }}">
+      {% for i,formChild in form.listDet %}
+      <div class="panel" data-index="{{ i }}">
+        <div class="panel-heading clearfix plan-{{ formChild.vars.value.type | lower }}">
+          <h3 class="panel-title pull-left">{{ formChild.vars.value.typeName }}</h3>
+        </div>
+        <div class="panel-body">
+          {{ form_widget(formChild) }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- adresse de livraison -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Adresse de livraison</h3>
+  </div>
+  <div class="panel-body">
+    {% if form.vars.data.societe %}
+    <div class="row well-sm">
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block" id="address-client">Adresse de la société</a>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        {% if app.user.societe %}
+        <a class="btn btn-default btn-block" id="address-contact">Mon adresse</a>
+        {% else %}
+        <a class="btn btn-default btn-block" id="address-contact">Adresse du contact</a>
+        {% endif %}
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block" id="address-site">Adresse du site</a>
+      </div>
+      <div class="col-xs-12 col-md-3">
+        <a class="btn btn-default btn-block" id="address-agence">Adresse de l'agence</a>
+      </div>
+    </div>
+
+    {{ form_row(form.shippingRecipient) }}
+    {{ form_row(form.shippingAddress1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
+    {{ form_row(form.shippingAddress2) }}
+    {{ form_row(form.shippingZip) }}
+    {{ form_row(form.shippingTown) }}
+    {{ form_row(form.shippingCountry) }}
+  {% endif %}
+  </div>
+</div>
+
+<div class="row {% if not form.vars.value.societe %}hidden{% endif %}">
+  <div class="col-xs-12 col-md-6 col-md-offset-3">
+    <p><a href="{{ asset('public/CGV.pdf') }}" target="_blank">Télécharger et lire les conditions générales de vente</a>.</p>
+    {{ form_widget(form.cgv) }}
+
+    <a class="btn btn-default btn-cancel" href="{{ path('aw_plans_list') }}">
+      <span class="i fa fa-angle-left"></span>
+      Annuler
+    </a>
+
+    <button type="button" class="btn btn-primary btn-submit" name="action" value="add" disabled="disabled">
+      <span class="glyphicon glyphicon-send"></span>
+      Commander
+    </button>
+  </div>
+</div>
+
+{{ form_rest(form) }}
+{{ form_end(form) }}
+
+<div class="hidden">
+  <input type="file" name="form[logo]" id="logoupload">
+  <input type="file" name="form[files][]" id="relevesupload" multiple>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
+<script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
+<script src="{{ asset('libs/bootstrap3-typeahead.min.js') }}"></script>
+<script>
+$(function(){
+  // ajout des étoiles rouges pour tous les champs obligatoires
+  $('label.required').addClass('required-pf');
+
+  // gestion de choix des clients
+  $('#aw_plansbundle_commande_societe').combobox();
+  $('#aw_plansbundle_commande_societeundefined').attr('autocomplete', 'off'); {# BugFix https://github.com/danielfarrell/bootstrap-combobox/issues/227 #}
+  $('#aw_plansbundle_commande_societe').change(function(){
+    if($(this).val()){
+      window.location.href = "{{ path('aw_plans_new_st') }}"+"/"+$(this).val();
+    }else{
+      self.updateView();
+    }
+  });
+
+  // auto complete pour les adresses
+  $('.typeahead').typeahead({
+    minLength: 5,
+    items: 8,
+    fitToElement: true,
+    source: function(query, process){
+      $.getJSON('//api-adresse.data.gouv.fr/search/', {q: query, limit: 8})
+        .done(function(json){
+          var data = [];
+          $.each(json.features, function(key, item){
+            data.push({
+              name    : item.properties.label,
+              address : item.properties.name,
+              zip     : item.properties.postcode,
+              town    : item.properties.city
+            });
+          });
+
+          process(data);
+        })
+      ;
+    },
+    updater: function(item){
+      if($(this.$element[0]).attr('id') == 'aw_plansbundle_commande_address1'){
+        $('#aw_plansbundle_commande_zip').val(item.zip);
+        $('#aw_plansbundle_commande_town').val(item.town);
+      }else{
+        $('#aw_plansbundle_commande_shippingZip').val(item.zip);
+        $('#aw_plansbundle_commande_shippingTown').val(item.town);
+      }
+
+      return item.address;
+    }
+  });
+
+  /*
+   * Gestion upload de fichiers
+   */
+  $('#addlogo').click(function(){
+    $('#logoupload').trigger('click');
+  });
+
+  $('#addfile').click(function(){
+    $('#relevesupload').trigger('click');
+  });
+
+  $('#logoupload').fileupload({
+    url: "{{ path('aw_plans_new_upload', {type: 'logo'}) }}",
+    dataType: 'json',
+    formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
+    add: function(e, data){
+      $('#addlogo img').attr('src', '{{ asset('img/ajax-loader.gif') }}');
+      $('.logo-error').addClass('hidden');
+      data.submit();
+    },
+    done: function(e, data){
+      $('#addlogo img').attr('src', data.result[0].url);
+    },
+    fail: function(e, data){
+      $('#addlogo img').attr('src', '{{ asset('img/nophoto.png') }}');
+      $('.logo-error').removeClass('hidden');
+    }
+  });
+
+  $('#relevesupload').fileupload({
+    url: "{{ path('aw_plans_new_upload', {type: 'releves'}) }}",
+    dataType: 'json',
+    formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
+    add: function(e, data){
+      data.context = [];
+      $.each(data.files, function(index, file){
+        var item = $('<a/>')
+          .addClass('list-group-item')
+          .append('<span class="glyphicon glyphicon-file"></span><span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+        item.appendTo('#filelist');
+        data.context.push(item);
+      });
+      data.submit();
+    },
+    done: function(e, data){
+      $.each(data.result, function (index, file){
+        data.context[index].find('.filename').text(file.name);
+
+        var deleteBtn = $('<button class="btn btn-danger delete-file" data-link="'+file.delete_url+'"><span class="glyphicon glyphicon-trash"></span><span class="hidden-xs">Supprimer</span></button>');
+        data.context[index].find('.pull-right').html('');
+        data.context[index].find('.pull-right').append(deleteBtn);
+      });
+    },
+    fail: function(e, data){
+      $.each(data.files, function(index, file){
+        data.context[index].find('.pull-right').html('<strong>Échec</strong>');
+      });
+    }
+  });
+
+  $('#filelist').delegate('.delete-file', 'click', function(e){
+    e.preventDefault();
+
+    var item = $(this).parent().parent();
+    $.ajax({
+      dataType: 'json',
+      method: 'DELETE',
+      url: $(this).data('link'),
+      success: function(data){
+        item.remove();
+      }
+    });
+    return false;
+  });
+
+  /*
+   * Gestion des ajouts/suppressions de plans
+   */
+  var plans = new function(){
+    var self = this;
+    this.container = $('div#listDet');
+    this.index = this.container.children().length;
+
+    this.init = function(){
+      if(self.index > 0){
+        self.container.children('div.panel').each(function(key, value){
+          self.updateView($(this), key);
+          if(self.index < $(this).data('index')+1){
+            self.index = $(this).data('index')+1;
+          }
+        });
+      }
+
+      self.addBtnClicked();
+    };
+
+    this.addBtnClicked = function(){
+      $('.addplan').click(function(e){
+        e.preventDefault();
+
+        if($(this).hasClass('pe')){
+          var type = 'PE';
+        }else if($(this).hasClass('pi')){
+          var type = 'PI';
+        }else if($(this).hasClass('pc')){
+          var type = 'PC';
+        }else if($(this).hasClass('pm')){
+          var type = 'PM';
+        }else{
+          return;
+        }
+
+        self.add(type);
+
+        return false;
+      });
+    };
+
+    this.add = function(type){
+      var template = self.container.data('prototype')
+        .replace(/__name__label__/g, 'Plans n°'+(self.index+1))
+        .replace(/__name__/g, self.index)
+      ;
+
+      switch(type){
+        case 'PE':
+          var title = "Plan d'Évacuation";
+          var format = 'A3';
+          break;
+        case 'PI':
+          var title = "Plan d'Intervention";
+          var format = 'A2';
+          break;
+        case 'PC':
+          var title = "Plan de Chambre";
+          var format = 'A4';
+          break;
+        case 'PM':
+          var title = "Plan de Masse";
+          var format = 'A3';
+          break;
+        default:
+          return;
+          break;
+      }
+
+      var panel = $('<div class="panel"><div class="panel-heading clearfix plan-'+type.toLowerCase()+'"><h3 class="panel-title pull-left">'+title+'</h3></div><div class="panel-body"></div></div>');
+
+      var panelBody = $(template).find('#aw_plansbundle_commande_listDet_'+self.index);
+      // valeur par défaut d'un plan
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_type').val(type);
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_qty').val(1);
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_format').val(format);
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_matiere').val('PR');
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_design').val('2D');
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_vue').val('A');
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_finition').val('CT');
+      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_remise').val(0);
+
+      panel.find('.panel-body').append(panelBody);
+
+      self.updateView(panel, self.index);
+      self.container.append(panel);
+      self.index++;
+
+      // scroll sur le nouveau plan
+      $('html, body').animate({
+        scrollTop: (panel.offset().top)
+      }, 500);
+    };
+
+    this.updateView = function(prototype, index){
+      prototype.find('.control-label').addClass('required-pf');
+
+      // Button supprimer
+      var deleteLink = $('<div class="btn-group pull-right"><a href="#" class="btn btn-danger">Supprimer</a></div>');
+      prototype.find('.panel-heading').append(deleteLink);
+      deleteLink.click(function(e){
+        e.preventDefault();
+        prototype.remove();
+        return false;
+      });
+
+      // Masquer le champ design pour les plans de masse
+      if(prototype.find('#aw_plansbundle_commande_listDet_'+index+'_type').val() == 'PM'){
+        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_design').val('');
+        prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_design"]').parent().addClass('hidden');
+      }else{
+        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_design option[value=""]').remove();
+      }
+
+      // Masquer les champs trou et fond
+      prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
+      prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
+      prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background option[value=""]').addClass('hidden');
+
+      prototype.find('#aw_plansbundle_commande_listDet_'+self.index+'_matiere').change(function(e){
+        // Gestion de trou
+        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_hole').val(0);
+        if(['DB', 'DAB'].indexOf($(this).val()) != -1){
+          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().removeClass('hidden');
+        }else{
+          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
+        }
+
+        // Gestion de fond
+        if(['PX', 'AL'].indexOf($(this).val()) != -1){
+          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().removeClass('hidden');
+          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background').val('T');
+        }else{
+          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
+          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background').val('');
+        }
+      });
+
+      prototype.find('#aw_plansbundle_commande_listDet_'+index+'_hole').change(function(e){
+        if($(this).val() == 1){
+          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_finition').val('EN');
+        }else{
+          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_finition').val('CT');
+        }
+      });
+    };
+  }();
+  plans.init();
+
+  function updateShippingAddress(recipient, address1, address2, zip, town, country){
+    $('#aw_plansbundle_commande_shippingRecipient').val(recipient);
+    $('#aw_plansbundle_commande_shippingAddress1').val(address1);
+    $('#aw_plansbundle_commande_shippingAddress2').val(address2);
+    $('#aw_plansbundle_commande_shippingZip').val(zip);
+    $('#aw_plansbundle_commande_shippingTown').val(town);
+    $('#aw_plansbundle_commande_shippingCountry').val(country);
+  }
+
+  {% if form.vars.value.societe %}
+  $('#address-client').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress(
+      "{{ form.vars.value.societe.name }}",
+      "{{ form.vars.value.societe.address1 }}",
+      "{{ form.vars.value.societe.address2 }}",
+      "{{ form.vars.value.societe.zip }}",
+      "{{ form.vars.value.town }}",
+      {% if form.vars.value.societe.country %}{{ form.vars.value.societe.country.id }}{% else %}1{% endif %}
+    );
+  });
+  {% endif %}
+
+  $('#address-contact').click(function(e){
+    e.preventDefault();
+
+    {% if app.user.societe %}
+    updateShippingAddress(
+      "{{ app.user.fullName }}",
+      "{{ app.user.address1 }}",
+      "{{ app.user.address2 }}",
+      "{{ app.user.zip }}",
+      "{{ app.user.town }}",
+      {% if app.user.country %}{{ app.user.country.id }}{% else %}1{% endif %}
+    );
+    {% else %}
+    if($('#aw_plansbundle_commande_userContact').val() == ''){
+      return;
+    }
+
+    updateShippingAddress(
+      $('#aw_plansbundle_commande_userContact :selected').data('name'),
+      $('#aw_plansbundle_commande_userContact :selected').data('address1'),
+      $('#aw_plansbundle_commande_userContact :selected').data('address2'),
+      $('#aw_plansbundle_commande_userContact :selected').data('zip'),
+      $('#aw_plansbundle_commande_userContact :selected').data('town'),
+      $('#aw_plansbundle_commande_userContact :selected').data('country'),
+    );
+    {% endif %}
+  });
+
+  $('#address-site').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress(
+      $('#aw_plansbundle_commande_site').val(),
+      $('#aw_plansbundle_commande_address1').val(),
+      $('#aw_plansbundle_commande_address2').val(),
+      $('#aw_plansbundle_commande_zip').val(),
+      $('#aw_plansbundle_commande_town').val(),
+      1
+    );
+  });
+
+  $('#address-agence').click(function(e){
+    e.preventDefault();
+
+    updateShippingAddress('CONSILIUM', '', '', '', '', 1);
+  });
+
+  // activer le bouton commande
+  $('#aw_plansbundle_commande_cgv').prop('checked', false);
+  $('#aw_plansbundle_commande_cgv').click(function(){
+    if(this.checked){
+      $('.btn-submit').prop('disabled', false);
+    }else{
+      $('.btn-submit').prop('disabled', true);
+    }
+  });
+
+  $('.btn-submit').click(function(){
+    $('form[name="{{ form.vars.id }}"]').submit();
+  });
+});
+</script>
+{% endblock %}

@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Form\CommandeSousTraitantType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,9 +17,11 @@ use Symfony\Component\Finder\Finder;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use AW\PlansBundle\Entity\CommandeST;
 use AW\PlansBundle\Entity\Commande;
 use AW\PlansBundle\Entity\Mail;
 use AW\PlansBundle\Form\CommandeType;
+use AW\PlansBundle\Form\CommandeSTType;
 use AW\DoliBundle\Entity\Societe;
 
 class NewController extends Controller
@@ -184,6 +187,173 @@ class NewController extends Controller
     ;
 
     return $this->render('AWPlansBundle:New:new.html.twig', array(
+      'form' => $form->createView(),
+      'logo' => isset($logo) ? $logo : null,
+      'finder' => isset($finder) ? $finder : null,
+      'consigne' => $consigne
+    ));
+  }
+  /**
+   * @ParamConverter("societe", options={"mapping": {"socid": "id"}})
+   */
+  public function newSTAction(Request $request, Societe $societe=null)
+  {
+    $this->denyAccessUnlessGranted('webappli.cmdplan.new');
+
+    $commande = new CommandeST();
+
+    if($societe){
+      $commande->setSociete($societe);
+    }elseif($this->getUser()->getSociete()){
+      $commande->setSociete($this->getUser()->getSociete());
+    }
+
+    // bien vérifier pour les utilisateurs clients qu'ils font bien partie de la societe
+    if($societe and $this->getUser()->getSociete() and $societe != $this->getUser()->getSociete()){
+      $ok = false;
+      foreach($this->getUser()->getSociete()->getChildren() as $child){
+        if($societe == $child){
+          $ok = true;
+          break;
+        }
+      }
+
+      if(!$ok){
+        return $this->redirectToRoute('aw_plans_new_st');
+      }
+    }
+
+    $form = $this->get('form.factory')->create(CommandeSousTraitantType::class, $commande);
+
+    $form->handleRequest($request);
+    if($request->isMethod('POST') and $form->isValid()){
+      $em = $this
+        ->getDoctrine()
+        ->getManager()
+      ;
+
+      $commande->setUserCreation($this->getUser());
+
+      /*
+       * Insertion des données en base en 2 étapes
+       * 1 - Enregistrement de la commande
+       * 2 - Enregistrement des plans en ajoutant le lien vers la commande ayant un ID maintenant
+       *
+       * Source : https://github.com/winzou/SdzBlog/blob/master/src/Sdz/BlogBundle/Controller/BlogController.php
+       */
+
+      $commande->getListDet()->clear(); // vider les details
+
+      $tmpdir = sys_get_temp_dir().'/'.$commande->getDir(); // sauvegarder le dossier temporaire
+      $em->persist($commande);
+      $em->flush();
+
+      $newdir = $this->getParameter('documents_dir').'/cmdplan/'.$commande->getDir().'/creation';
+      $fs = new Filesystem();
+      $fs->mirror($tmpdir, $newdir);
+
+      /*
+       * Désactiver les événements Doctrines
+       * Afin d'éviter des doublons dans les lignes de commande Dolibarr
+       */
+      $em
+        ->getEventManager()
+        ->removeEventListener(
+          array('postPersist'),
+          $this->get('aw_plans.eventlistener.commandedet')
+        )
+      ;
+
+      foreach($form->get('listDet')->getData() as $det){
+        $det->setCommande($commande);
+        $commande->addListDet($det);
+        $em->persist($det);
+      }
+      $em->flush();
+
+      $this->get('aw_plans.eventlistener.doli_commande')->updateDoliCommandeDet($commande);
+
+      $model = $em
+        ->getRepository('AWCoreBundle:ModelMail')
+        ->findOneByType('NEW_COMMANDE');
+      ;
+      if($model !== null){
+        $em->detach($model);
+
+        try{
+          $model->render($this->get('twig'), array('commande' => $commande));
+
+          if($this->getUser()->getSociete() and $this->getUser()->getEmail()){
+            $to = $this->getUser()->getFullName().' <'.$this->getUser()->getEmail().'>, '.$this->getParameter('email_plans');
+          }else{
+            $to = $this->getParameter('email_plans');
+          }
+
+          $mail = new Mail();
+          $mail
+            ->setCommande($commande)
+            ->setAddressTo($to)
+            ->setSubject($model->getSubject())
+            ->setMessage($model->getContent())
+          ;
+
+          $message = (new \Swift_Message())
+            ->setFrom($this->getParameter('email_plans'))
+            ->setTo($mail->getAddressToFormated())
+            ->setSubject($mail->getSubject())
+            ->setBody($mail->getMessage(), 'text/html')
+          ;
+
+          if(!$this->get('kernel')->isDebug()){
+            $message->setBcc($this->getParameter('email_bcc'));
+
+            foreach($commande->getSociete()->getCommercials() as $commercial){
+              if($commercial->getEmail()){
+                $message->addBcc($commercial->getEmail());
+              }
+            }
+          }
+
+          $finder = new Finder();
+          foreach($finder->files()->in($newdir) as $file){
+            $message->attach(\Swift_Attachment::fromPath($file->getRealPath()));
+          }
+
+          $this->get('mailer')->send($message);
+
+          $em->persist($mail);
+          $em->flush();
+        }catch(\Exception $e){
+          $this->addFlash('error', "Échec d'envoi de mail (Error :".$e->getMessage().")");
+        }
+      }else{
+        $this->addFlash('error', "Échec d'envoi de mail");
+      }
+
+      return $this->redirectToRoute('aw_plans_view', array('id' => $commande->getId()));
+    }
+
+    if($commande->getDir()){
+      $dir = sys_get_temp_dir().'/'.$commande->getDir();
+
+      $finder = new Finder();
+      foreach($finder->files()->name('logo.*')->in($dir) as $file){
+        $logo = $file;
+        break;
+      }
+
+      $finder = new Finder();
+      $finder->files()->notName('logo.*')->in($dir);
+    }
+
+    $consigne = $this
+      ->getDoctrine()
+      ->getManager()
+      ->getRepository('AWPlansBundle:Consigne')
+      ->find(1)
+    ;
+
+    return $this->render('AWPlansBundle:New:new_st.html.twig', array(
       'form' => $form->createView(),
       'logo' => isset($logo) ? $logo : null,
       'finder' => isset($finder) ? $finder : null,

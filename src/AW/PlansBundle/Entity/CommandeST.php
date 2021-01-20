@@ -19,7 +19,7 @@ use AW\DoliBundle\Entity\Societe;
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields="ref")
  */
-class Commande
+class CommandeST
 {
     /**
      * @var int

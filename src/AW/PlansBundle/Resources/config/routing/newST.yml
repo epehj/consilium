@@ -1,0 +1,33 @@
+aw_plans_new_st:
+    path: /{socid}
+    defaults:
+        _controller: AWPlansBundle:New:newST
+        socid:
+    requirements:
+        socid: \d+
+
+
+aw_plans_new_st_upload:
+    path: /upload/{type}.{_format}
+    defaults:
+        _controller: AWPlansBundle:New:upload
+        _format: json
+    requirements:
+        _format: json
+        type: logo|releves
+    methods: [POST]
+
+aw_plans_new_st_upload_view:
+    path: /upload/view/{dir}/{file}
+    defaults:
+        _controller: AWPlansBundle:New:uploadView
+    methods: [GET]
+
+aw_plans_new_st_upload_delete:
+    path: /upload/delete/{_format}/{dir}/{file}
+    defaults:
+        _controller: AWPlansBundle:New:uploadDelete
+        _format: json
+    requirements:
+        _format: json
+    methods: [DELETE]
