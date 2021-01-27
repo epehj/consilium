@@ -200,7 +200,12 @@ class NewController extends Controller
   {
     $this->denyAccessUnlessGranted('webappli.cmdplan.new');
 
-    $commande = new CommandeST();
+    $commande = new Commande();
+    // valeurs par défaut pour gérer les champs obligatoires
+    $commandeST = new CommandeST();
+    $commandeST->setCommande($commande);
+    $commande->setCommandeST($commandeST);
+    $commandeST->setInfosComplementaires(CommandeST::NONE);
 
     if($societe){
       $commande->setSociete($societe);
@@ -223,8 +228,7 @@ class NewController extends Controller
       }
     }
 
-    $form = $this->get('form.factory')->create(CommandeSousTraitantType::class, $commande);
-
+    $form = $this->get('form.factory')->create(CommandeSousTraitantType::class, $commandeST);
     $form->handleRequest($request);
     if($request->isMethod('POST') and $form->isValid()){
       $em = $this
@@ -243,6 +247,19 @@ class NewController extends Controller
        */
 
       $commande->getListDet()->clear(); // vider les details
+      switch ($commandeST->getPrestation()) {
+          case CommandeST::PRESTA_TOTAL:
+              $commande->setReleve(true);
+              $commande->setPose(true);
+              break;
+          case CommandeST::PRESTA_POSE:
+              $commande->setPose(true);
+              break;
+          case CommandeST::PRESTA_RELEVE:
+              $commande->setReleve(true);
+              break;
+
+      }
 
       $tmpdir = sys_get_temp_dir().'/'.$commande->getDir(); // sauvegarder le dossier temporaire
       $em->persist($commande);
@@ -361,6 +378,7 @@ class NewController extends Controller
     ));
   }
 
+  //fixme changer le dossir d'upload des bons dans "bon"
   public function uploadAction(Request $request, $type)
   {
     $this->denyAccessUnlessGranted('webappli.cmdplan.new');

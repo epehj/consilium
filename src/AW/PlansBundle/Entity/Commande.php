@@ -588,6 +588,14 @@ class Commande
      */
     protected $poseur;
 
+    /**
+     * @var CommandeST
+     *
+     * @ORM\OneToOne(targetEntity="AW\PlansBundle\Entity\CommandeST", cascade={"persist", "remove"}, inversedBy="commande")
+     * @ORM\JoinColumn(name="fk_id_commande_st", referencedColumnName="rowid")
+     */
+    protected $commandeST;
+
 
     const STATUS_ATTENTE_VALIDATION	= 0;
     const STATUS_VALIDATED					= 10;
@@ -2676,6 +2684,22 @@ class Commande
     public function setPoseur($poseur)
     {
         $this->poseur = $poseur;
+    }
+
+    /**
+     * @return CommandeST
+     */
+    public function getCommandeST()
+    {
+        return $this->commandeST;
+    }
+
+    /**
+     * @param CommandeST $commandeST
+     */
+    public function setCommandeST($commandeST)
+    {
+        $this->commandeST = $commandeST;
     }
 
 }

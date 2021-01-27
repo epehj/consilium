@@ -35,83 +35,131 @@
     <h3 class="panel-title">Client</h3>
   </div>
   <div class="panel-body">
-    {{ form_row(form.societe) }}
-    {% if form.vars.value.societe %}{{ form_row(form.userContact) }}{% endif %}
-    {{ form_row(form.refClient) }}
+    {{ form_row(form.commande.societe) }}
+    {% if form.vars.value.commande.societe %}{{ form_row(form.commande.userContact) }}{% endif %}
+    {{ form_row(form.commande.refClient) }}
 
-    {% if form.vars.value.societe and form.vars.value.societe.infosPlans and form.vars.value.societe.infosPlans.allowContactBat %}
+    {% if form.vars.value.commande.societe and form.vars.value.commande.societe.infosPlans and form.vars.value.commande.societe.infosPlans.allowContactBat %}
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       Si vous souhaitez que les BATs soient envoyés à une tierce personne, veuillez indiquer ci-dessous ses coordonnées.
     </div>
 
-    {{ form_row(form.contactBATName) }}
-    {{ form_row(form.contactBATPhone) }}
-    {{ form_row(form.contactBATEmail) }}
+    {{ form_row(form.commande.contactBATName) }}
+    {{ form_row(form.commande.contactBATPhone) }}
+    {{ form_row(form.commande.contactBATEmail) }}
     {% endif %}
   </div>
 </div>
 
-<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- site -->
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}" > <!-- Prestation choisie -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Prestation</h3>
+  </div>
+  <div class="panel-body">
+    {{ form_row(form.prestation) }}
+  </div>
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}"> <!-- site -->
   <div class="panel-heading">
     <h3 class="panel-title">Information du site</h3>
   </div>
   <div class="panel-body">
-    {{ form_row(form.site) }}
-    {{ form_row(form.address1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
-    {{ form_row(form.address2) }}
-    {{ form_row(form.zip) }}
-    {{ form_row(form.town) }}
-
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      Cliquez sur l'image ci-dessous pour ajouter un logo du site.
-    </div>
-    <div class="alert alert-danger hidden logo-error">
-      <span class="pficon pficon-error-circle-o"></span>
-      Échec d'envoi du logo. Merci de bien sélectionner une image.
-    </div>
     <div class="row">
-      <div class="col-xs-6 col-xs-offset-2 col-md-6 col-md-offset-3">
-        <a class="thumbnail" id="addlogo">
-          <img
-            src="{% if logo %}{{ path('aw_plans_new_upload_view', {dir: form.children.dir.vars.value, file: logo.filename}) }}{% else %}{{ asset('img/nophoto.png') }}{% endif %}"
-            alt="Logo"
-            title="Cliquez ici pour ajouter ou modifier le logo"
-          >
-        </a>
+      <div class="col-xs-6 col-md-5 col-md-offset-1">
+        {{ form_row(form.commande.site) }}
+        {{ form_row(form.refCommande) }}
+        {{ form_row(form.operation) }}
+        {{ form_row(form.refBatiment) }}
+        {{ form_row(form.typeBatiment) }}
+
+        <div class="alert alert-info">
+          <span class="pficon pficon-info"></span>
+          Cliquez sur l'image ci-dessous pour ajouter un logo du site.
+        </div>
+        <div class="alert alert-danger hidden logo-error">
+          <span class="pficon pficon-error-circle-o"></span>
+          Échec d'envoi du logo. Merci de bien sélectionner une image.
+        </div>
+        <div class="row">
+          <div class="col-xs-6 col-xs-offset-2 col-md-6 col-md-offset-3">
+            <a class="thumbnail" id="addlogo">
+              <img
+                      src="{% if logo %}{{ path('aw_plans_new_upload_view', {dir: form.children.dir.vars.value, file: logo.filename}) }}{% else %}{{ asset('img/nophoto.png') }}{% endif %}"
+                      alt="Logo"
+                      title="Cliquez ici pour ajouter ou modifier le logo"
+              >
+            </a>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-xs-6 col-md-5 col-md-offset-1">
+        {{ form_row(form.commande.address1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
+        {{ form_row(form.commande.address2) }}
+        {{ form_row(form.commande.zip) }}
+        {{ form_row(form.commande.town) }}
+        {{ form_row(form.urlInfosSite) }}
+
+        <div class="col-sm-2 col-sm-offset-5">
+          <button type="button" class="btn btn-primary" id="addfileBon">
+            <span class="glyphicon glyphicon-plus"></span>
+            Joindre un ou plusieurs bon de pose
+          </button>
+        </div>
       </div>
     </div>
-
     <div class="alert alert-info">
       <span class="pficon pficon-info"></span>
       Notez dans le champ <strong>Remarques</strong> tous renseignements complémentaires nécessaires au bon traitement de la commande.
     </div>
-    {{ form_row(form.remarques) }}
+    {{ form_row(form.commande.remarques) }}
+  </div>
+  <div class="row">
+    Ajouter les infos complémentaires : relevés plans dispo et validation oblg client ?
+  </div>
+
+</div>
+
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}"> <!-- infos intervention -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Infos interventions</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6 col-md-5 col-md-offset-1">
+        {{ form_row(form.contact1) }}
+        {{ form_row(form.contact2) }}
+        {{ form_row(form.clientFinal) }}
+      </div>
+      <div class="col-xs-6 col-md-5 col-md-offset-1">
+        {{ form_row(form.acces) }}
+        {{ form_row(form.commentaire) }}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}"> <!-- infos intervention -->
+  <div class="panel-heading">
+    <h3 class="panel-title">Urgence</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-xs-6 col-md-5 col-md-offset-3">
+        <div class="input-daterange">
+          {{ form_row(form.urgence) }}
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- relves/pose -->
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}"> <!-- infos intervention -->
   <div class="panel-heading">
-    <h3 class="panel-title">Relevés/Pose</h3>
+    <h3 class="panel-title">Relevés</h3>
   </div>
   <div class="panel-body">
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      Si vous souhaitez qu'un technicien CONSILIUM effectue les relevés de plans sur site, mettre à <strong>Oui</strong> le champ ci-dessous. Dans ce cas, joindre des fichiers de relevés est facultatif.
-    </div>
-    {{ form_row(form.releve) }}
-
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      Si vous souhaitez qu'un technicien CONSILIUM effectue la pose des plans sur site, mettre à <strong>Oui</strong> le champ ci-dessous.
-    </div>
-    {{ form_row(form.pose) }}
-
-    <div class="alert alert-info">
-      <span class="pficon pficon-info"></span>
-      Cliquez sur le bouton ci-dessous pour ajouter un ou plusieurs relevés à votre commande.
-    </div>
     <div class="row">
       <div class="col-sm-2 col-sm-offset-5">
         <button type="button" class="btn btn-primary" id="addfile">
@@ -120,30 +168,10 @@
         </button>
       </div>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="list-group" id="filelist">
-        {% if finder %}
-        {% for file in finder %}
-          <a class="list-group-item">
-            <span class="glyphicon glyphicon-file"></span>
-            <span class="filename">{{ file.filename }}</span>
-            <span class="pull-right">
-              <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_new_upload_delete', {dir: form.children.dir.vars.value, file: file.filename}) }}">
-                <span class="glyphicon glyphicon-trash"></span>
-                <span class="hidden-xs">Supprimer</span>
-              </button>
-            </span>
-          </a>
-        {% endfor %}
-        {% endif %}
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 
-<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- plans -->
+<div class="panel panel-info {% if not form.vars.value.commande.societe %}hidden{% endif %}"> <!-- plans -->
   <div class="panel-heading">
     <h3 class="panel-title">Ajout de plans</h3>
   </div>
@@ -168,8 +196,8 @@
       </div>
     </div>
 
-    <div id="listDet" data-prototype="{{ form_row(form.listDet.vars.prototype)|e }}">
-      {% for i,formChild in form.listDet %}
+    <div id="listDet" data-prototype="{{ form_row(form.commande.listDet.vars.prototype)|e }}">
+      {% for i,formChild in form.commande.listDet %}
       <div class="panel" data-index="{{ i }}">
         <div class="panel-heading clearfix plan-{{ formChild.vars.value.type | lower }}">
           <h3 class="panel-title pull-left">{{ formChild.vars.value.typeName }}</h3>
@@ -182,13 +210,13 @@
     </div>
   </div>
 </div>
-
-<div class="panel panel-info {% if not form.vars.value.societe %}hidden{% endif %}"> <!-- adresse de livraison -->
+{#  todo a cacher sauf si selection pose#}
+<div id="livraison" class="panel panel-info hidden"> <!-- adresse de livraison -->
   <div class="panel-heading">
     <h3 class="panel-title">Adresse de livraison</h3>
   </div>
   <div class="panel-body">
-    {% if form.vars.data.societe %}
+    {% if form.vars.data.commande.societe %}
     <div class="row well-sm">
       <div class="col-xs-12 col-md-3">
         <a class="btn btn-default btn-block" id="address-client">Adresse de la société</a>
@@ -208,20 +236,20 @@
       </div>
     </div>
 
-    {{ form_row(form.shippingRecipient) }}
-    {{ form_row(form.shippingAddress1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
-    {{ form_row(form.shippingAddress2) }}
-    {{ form_row(form.shippingZip) }}
-    {{ form_row(form.shippingTown) }}
-    {{ form_row(form.shippingCountry) }}
+    {{ form_row(form.commande.shippingRecipient) }}
+    {{ form_row(form.commande.shippingAddress1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
+    {{ form_row(form.commande.shippingAddress2) }}
+    {{ form_row(form.commande.shippingZip) }}
+    {{ form_row(form.commande.shippingTown) }}
+    {{ form_row(form.commande.shippingCountry) }}
   {% endif %}
   </div>
 </div>
 
-<div class="row {% if not form.vars.value.societe %}hidden{% endif %}">
+<div class="row {% if not form.vars.value.commande.societe %}hidden{% endif %}">
   <div class="col-xs-12 col-md-6 col-md-offset-3">
     <p><a href="{{ asset('public/CGV.pdf') }}" target="_blank">Télécharger et lire les conditions générales de vente</a>.</p>
-    {{ form_widget(form.cgv) }}
+    {{ form_widget(form.commande.cgv) }}
 
     <a class="btn btn-default btn-cancel" href="{{ path('aw_plans_list') }}">
       <span class="i fa fa-angle-left"></span>
@@ -235,8 +263,9 @@
   </div>
 </div>
 
+{#  TODO Se debarasser du form_rest(form), qui transmet le token CSRF, et transmettre uniquement le token pour cacher les champs non utilisés#}
 {{ form_rest(form) }}
-{{ form_end(form) }}
+{{ form_end(form, {'render_rest': false}) }}
 
 <div class="hidden">
   <input type="file" name="form[logo]" id="logoupload">
@@ -252,19 +281,38 @@
 <script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
 <script src="{{ asset('libs/patternfly-bootstrap-combobox/js/bootstrap-combobox.js') }}"></script>
 <script src="{{ asset('libs/bootstrap3-typeahead.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+<script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
 <script>
 $(function(){
   // ajout des étoiles rouges pour tous les champs obligatoires
   $('label.required').addClass('required-pf');
 
   // gestion de choix des clients
-  $('#aw_plansbundle_commande_societe').combobox();
-  $('#aw_plansbundle_commande_societeundefined').attr('autocomplete', 'off'); {# BugFix https://github.com/danielfarrell/bootstrap-combobox/issues/227 #}
-  $('#aw_plansbundle_commande_societe').change(function(){
+  $('#aw_plansbundle_commande_st_commande_societe').combobox();
+  $('#aw_plansbundle_commande_st_commande_societeundefined').attr('autocomplete', 'off'); {# BugFix https://github.com/danielfarrell/bootstrap-combobox/issues/227 #}
+  $('#aw_plansbundle_commande_st_commande_societe').change(function(){
+    console.log('value changed');
     if($(this).val()){
       window.location.href = "{{ path('aw_plans_new_st') }}"+"/"+$(this).val();
     }else{
       self.updateView();
+    }
+  });
+
+  $(function(){
+    $('.input-daterange').datepicker({
+      format: 'dd-mm-yyyy',
+      language: 'fr'
+    });
+  });
+
+  //affichage du div infos de livraison si choix de prestation releve
+  $("input[name='aw_plansbundle_commande_st[prestation]']").click(function() {
+    if ($(this).val() == 1) {
+      $('#livraison').removeClass('hidden');
+    } else {
+      $('#livraison').addClass('hidden');
     }
   });
 
@@ -291,12 +339,12 @@ $(function(){
       ;
     },
     updater: function(item){
-      if($(this.$element[0]).attr('id') == 'aw_plansbundle_commande_address1'){
-        $('#aw_plansbundle_commande_zip').val(item.zip);
-        $('#aw_plansbundle_commande_town').val(item.town);
+      if($(this.$element[0]).attr('id') == 'aw_plansbundle_commande_st_address1'){
+        $('#aw_plansbundle_commande_st_zip').val(item.zip);
+        $('#aw_plansbundle_commande_st_town').val(item.town);
       }else{
-        $('#aw_plansbundle_commande_shippingZip').val(item.zip);
-        $('#aw_plansbundle_commande_shippingTown').val(item.town);
+        $('#aw_plansbundle_commande_st_shippingZip').val(item.zip);
+        $('#aw_plansbundle_commande_st_shippingTown').val(item.town);
       }
 
       return item.address;
@@ -315,7 +363,7 @@ $(function(){
   });
 
   $('#logoupload').fileupload({
-    url: "{{ path('aw_plans_new_upload', {type: 'logo'}) }}",
+    url: "{{ path('aw_plans_new_st_upload', {type: 'logo'}) }}",
     dataType: 'json',
     formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
     add: function(e, data){
@@ -332,8 +380,9 @@ $(function(){
     }
   });
 
+  // fixme ajouter l'upload dans le bon dossier
   $('#relevesupload').fileupload({
-    url: "{{ path('aw_plans_new_upload', {type: 'releves'}) }}",
+    url: "{{ path('aw_plans_new_st_upload', {type: 'releves'}) }}",
     dataType: 'json',
     formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
     add: function(e, data){
@@ -451,16 +500,16 @@ $(function(){
 
       var panel = $('<div class="panel"><div class="panel-heading clearfix plan-'+type.toLowerCase()+'"><h3 class="panel-title pull-left">'+title+'</h3></div><div class="panel-body"></div></div>');
 
-      var panelBody = $(template).find('#aw_plansbundle_commande_listDet_'+self.index);
+      var panelBody = $(template).find('#aw_plansbundle_commande_st_listDet_'+self.index);
       // valeur par défaut d'un plan
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_type').val(type);
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_qty').val(1);
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_format').val(format);
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_matiere').val('PR');
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_design').val('2D');
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_vue').val('A');
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_finition').val('CT');
-      panelBody.find('#aw_plansbundle_commande_listDet_'+self.index+'_remise').val(0);
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_type').val(type);
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_qty').val(1);
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_format').val(format);
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_matiere').val('PR');
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_design').val('2D');
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_vue').val('A');
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_finition').val('CT');
+      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_remise').val(0);
 
       panel.find('.panel-body').append(panelBody);
 
@@ -487,42 +536,42 @@ $(function(){
       });
 
       // Masquer le champ design pour les plans de masse
-      if(prototype.find('#aw_plansbundle_commande_listDet_'+index+'_type').val() == 'PM'){
-        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_design').val('');
-        prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_design"]').parent().addClass('hidden');
+      if(prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_type').val() == 'PM'){
+        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_design').val('');
+        prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_design"]').parent().addClass('hidden');
       }else{
-        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_design option[value=""]').remove();
+        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_design option[value=""]').remove();
       }
 
       // Masquer les champs trou et fond
-      prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
-      prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
-      prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background option[value=""]').addClass('hidden');
+      prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().addClass('hidden');
+      prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().addClass('hidden');
+      prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background option[value=""]').addClass('hidden');
 
-      prototype.find('#aw_plansbundle_commande_listDet_'+self.index+'_matiere').change(function(e){
+      prototype.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_matiere').change(function(e){
         // Gestion de trou
-        prototype.find('#aw_plansbundle_commande_listDet_'+index+'_hole').val(0);
+        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_hole').val(0);
         if(['DB', 'DAB'].indexOf($(this).val()) != -1){
-          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().removeClass('hidden');
+          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().removeClass('hidden');
         }else{
-          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
+          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().addClass('hidden');
         }
 
         // Gestion de fond
         if(['PX', 'AL'].indexOf($(this).val()) != -1){
-          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().removeClass('hidden');
-          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background').val('T');
+          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().removeClass('hidden');
+          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background').val('T');
         }else{
-          prototype.find('label[for="aw_plansbundle_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
-          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_background').val('');
+          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().addClass('hidden');
+          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background').val('');
         }
       });
 
-      prototype.find('#aw_plansbundle_commande_listDet_'+index+'_hole').change(function(e){
+      prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_hole').change(function(e){
         if($(this).val() == 1){
-          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_finition').val('EN');
+          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_finition').val('EN');
         }else{
-          prototype.find('#aw_plansbundle_commande_listDet_'+index+'_finition').val('CT');
+          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_finition').val('CT');
         }
       });
     };
@@ -530,25 +579,25 @@ $(function(){
   plans.init();
 
   function updateShippingAddress(recipient, address1, address2, zip, town, country){
-    $('#aw_plansbundle_commande_shippingRecipient').val(recipient);
-    $('#aw_plansbundle_commande_shippingAddress1').val(address1);
-    $('#aw_plansbundle_commande_shippingAddress2').val(address2);
-    $('#aw_plansbundle_commande_shippingZip').val(zip);
-    $('#aw_plansbundle_commande_shippingTown').val(town);
-    $('#aw_plansbundle_commande_shippingCountry').val(country);
+    $('#aw_plansbundle_commande_st_shippingRecipient').val(recipient);
+    $('#aw_plansbundle_commande_st_shippingAddress1').val(address1);
+    $('#aw_plansbundle_commande_st_shippingAddress2').val(address2);
+    $('#aw_plansbundle_commande_st_shippingZip').val(zip);
+    $('#aw_plansbundle_commande_st_shippingTown').val(town);
+    $('#aw_plansbundle_commande_st_shippingCountry').val(country);
   }
 
-  {% if form.vars.value.societe %}
+  {% if form.vars.value.commande.societe %}
   $('#address-client').click(function(e){
     e.preventDefault();
 
     updateShippingAddress(
-      "{{ form.vars.value.societe.name }}",
-      "{{ form.vars.value.societe.address1 }}",
-      "{{ form.vars.value.societe.address2 }}",
-      "{{ form.vars.value.societe.zip }}",
-      "{{ form.vars.value.town }}",
-      {% if form.vars.value.societe.country %}{{ form.vars.value.societe.country.id }}{% else %}1{% endif %}
+      "{{ form.vars.value.commande.societe.name }}",
+      "{{ form.vars.value.commande.societe.address1 }}",
+      "{{ form.vars.value.commande.societe.address2 }}",
+      "{{ form.vars.value.commande.societe.zip }}",
+      "{{ form.vars.value.commande.town }}",
+      {% if form.vars.value.commande.societe.country %}{{ form.vars.value.commande.societe.country.id }}{% else %}1{% endif %}
     );
   });
   {% endif %}
@@ -566,17 +615,17 @@ $(function(){
       {% if app.user.country %}{{ app.user.country.id }}{% else %}1{% endif %}
     );
     {% else %}
-    if($('#aw_plansbundle_commande_userContact').val() == ''){
+    if($('#aw_plansbundle_commande_st_userContact').val() == ''){
       return;
     }
 
     updateShippingAddress(
-      $('#aw_plansbundle_commande_userContact :selected').data('name'),
-      $('#aw_plansbundle_commande_userContact :selected').data('address1'),
-      $('#aw_plansbundle_commande_userContact :selected').data('address2'),
-      $('#aw_plansbundle_commande_userContact :selected').data('zip'),
-      $('#aw_plansbundle_commande_userContact :selected').data('town'),
-      $('#aw_plansbundle_commande_userContact :selected').data('country'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('name'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('address1'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('address2'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('zip'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('town'),
+      $('#aw_plansbundle_commande_st_userContact :selected').data('country'),
     );
     {% endif %}
   });
@@ -585,11 +634,11 @@ $(function(){
     e.preventDefault();
 
     updateShippingAddress(
-      $('#aw_plansbundle_commande_site').val(),
-      $('#aw_plansbundle_commande_address1').val(),
-      $('#aw_plansbundle_commande_address2').val(),
-      $('#aw_plansbundle_commande_zip').val(),
-      $('#aw_plansbundle_commande_town').val(),
+      $('#aw_plansbundle_commande_st_site').val(),
+      $('#aw_plansbundle_commande_st_address1').val(),
+      $('#aw_plansbundle_commande_st_address2').val(),
+      $('#aw_plansbundle_commande_st_zip').val(),
+      $('#aw_plansbundle_commande_st_town').val(),
       1
     );
   });
@@ -601,8 +650,8 @@ $(function(){
   });
 
   // activer le bouton commande
-  $('#aw_plansbundle_commande_cgv').prop('checked', false);
-  $('#aw_plansbundle_commande_cgv').click(function(){
+  $('#aw_plansbundle_commande_st_commande_cgv').prop('checked', false);
+  $('#aw_plansbundle_commande_st_commande_cgv').click(function(){
     if(this.checked){
       $('.btn-submit').prop('disabled', false);
     }else{
