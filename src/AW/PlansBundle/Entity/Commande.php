@@ -777,18 +777,20 @@ class Commande
      */
     public function isValid(ExecutionContextInterface $context)
     {
+        // FIXME est ce que les relevés sont toujours obligatoire avec les commandes ST ? si on désactive pour ST, est ce que ça a un impact pour normal ?
+
       // relevés obligatoires sauf si demande de relevé sur site
-      if(!$this->releve and $this->id === null){
-        $dir = sys_get_temp_dir().'/'.$this->dir;
-        $finder = new Finder();
-        $finder->files()->notName('logo.*')->in($dir);
-        if(iterator_count($finder) == 0){
-          $context
-            ->buildViolation('Merci de joindre au moins un relevé.')
-            ->addViolation()
-          ;
-        }
-      }
+//      if(!$this->releve and $this->id === null){
+//        $dir = sys_get_temp_dir().'/'.$this->dir;
+//        $finder = new Finder();
+//        $finder->files()->notName('logo.*')->in($dir);
+//        if(iterator_count($finder) == 0){
+//          $context
+//            ->buildViolation('Merci de joindre au moins un relevé.')
+//            ->addViolation()
+//          ;
+//        }
+//      }
 
       if(
         (empty($this->contactBATName) and ($this->contactBATPhone or $this->contactBATEmail)) or

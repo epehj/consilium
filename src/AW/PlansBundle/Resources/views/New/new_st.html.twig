@@ -196,6 +196,7 @@
       </div>
     </div>
 
+    <pre>{{ dump(form.commande.listDet) }}</pre>
     <div id="listDet" data-prototype="{{ form_row(form.commande.listDet.vars.prototype)|e }}">
       {% for i,formChild in form.commande.listDet %}
       <div class="panel" data-index="{{ i }}">
@@ -471,6 +472,7 @@ $(function(){
     };
 
     this.add = function(type){
+      console.log(self.container);
       var template = self.container.data('prototype')
         .replace(/__name__label__/g, 'Plans n°'+(self.index+1))
         .replace(/__name__/g, self.index)
@@ -500,16 +502,16 @@ $(function(){
 
       var panel = $('<div class="panel"><div class="panel-heading clearfix plan-'+type.toLowerCase()+'"><h3 class="panel-title pull-left">'+title+'</h3></div><div class="panel-body"></div></div>');
 
-      var panelBody = $(template).find('#aw_plansbundle_commande_st_listDet_'+self.index);
+      var panelBody = $(template).find('#aw_plansbundle_commande_st_commande_listDet_'+self.index);
       // valeur par défaut d'un plan
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_type').val(type);
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_qty').val(1);
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_format').val(format);
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_matiere').val('PR');
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_design').val('2D');
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_vue').val('A');
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_finition').val('CT');
-      panelBody.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_remise').val(0);
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_type').val(type);
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_qty').val(1);
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_format').val(format);
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_matiere').val('PR');
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_design').val('2D');
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_vue').val('A');
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_finition').val('CT');
+      panelBody.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_remise').val(0);
 
       panel.find('.panel-body').append(panelBody);
 
@@ -536,42 +538,42 @@ $(function(){
       });
 
       // Masquer le champ design pour les plans de masse
-      if(prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_type').val() == 'PM'){
-        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_design').val('');
-        prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_design"]').parent().addClass('hidden');
+      if(prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_type').val() == 'PM'){
+        prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_design').val('');
+        prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_design"]').parent().addClass('hidden');
       }else{
-        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_design option[value=""]').remove();
+        prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_design option[value=""]').remove();
       }
 
       // Masquer les champs trou et fond
-      prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().addClass('hidden');
-      prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().addClass('hidden');
-      prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background option[value=""]').addClass('hidden');
+      prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
+      prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
+      prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_background option[value=""]').addClass('hidden');
 
-      prototype.find('#aw_plansbundle_commande_st_listDet_'+self.index+'_matiere').change(function(e){
+      prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+self.index+'_matiere').change(function(e){
         // Gestion de trou
-        prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_hole').val(0);
+        prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_hole').val(0);
         if(['DB', 'DAB'].indexOf($(this).val()) != -1){
-          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().removeClass('hidden');
+          prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_hole"]').parent().removeClass('hidden');
         }else{
-          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_hole"]').parent().addClass('hidden');
+          prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_hole"]').parent().addClass('hidden');
         }
 
         // Gestion de fond
         if(['PX', 'AL'].indexOf($(this).val()) != -1){
-          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().removeClass('hidden');
-          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background').val('T');
+          prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_background"]').parent().removeClass('hidden');
+          prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_background').val('T');
         }else{
-          prototype.find('label[for="aw_plansbundle_commande_st_listDet_'+index+'_background"]').parent().addClass('hidden');
-          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_background').val('');
+          prototype.find('label[for="aw_plansbundle_commande_st_commande_listDet_'+index+'_background"]').parent().addClass('hidden');
+          prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_background').val('');
         }
       });
 
-      prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_hole').change(function(e){
+      prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_hole').change(function(e){
         if($(this).val() == 1){
-          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_finition').val('EN');
+          prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_finition').val('EN');
         }else{
-          prototype.find('#aw_plansbundle_commande_st_listDet_'+index+'_finition').val('CT');
+          prototype.find('#aw_plansbundle_commande_st_commande_listDet_'+index+'_finition').val('CT');
         }
       });
     };
@@ -579,12 +581,12 @@ $(function(){
   plans.init();
 
   function updateShippingAddress(recipient, address1, address2, zip, town, country){
-    $('#aw_plansbundle_commande_st_shippingRecipient').val(recipient);
-    $('#aw_plansbundle_commande_st_shippingAddress1').val(address1);
-    $('#aw_plansbundle_commande_st_shippingAddress2').val(address2);
-    $('#aw_plansbundle_commande_st_shippingZip').val(zip);
-    $('#aw_plansbundle_commande_st_shippingTown').val(town);
-    $('#aw_plansbundle_commande_st_shippingCountry').val(country);
+    $('#aw_plansbundle_commande_st_commande_shippingRecipient').val(recipient);
+    $('#aw_plansbundle_commande_st_commande_shippingAddress1').val(address1);
+    $('#aw_plansbundle_commande_st_commande_shippingAddress2').val(address2);
+    $('#aw_plansbundle_commande_st_commande_shippingZip').val(zip);
+    $('#aw_plansbundle_commande_st_commande_shippingTown').val(town);
+    $('#aw_plansbundle_commande_st_commande_shippingCountry').val(country);
   }
 
   {% if form.vars.value.commande.societe %}
@@ -620,12 +622,12 @@ $(function(){
     }
 
     updateShippingAddress(
-      $('#aw_plansbundle_commande_st_userContact :selected').data('name'),
-      $('#aw_plansbundle_commande_st_userContact :selected').data('address1'),
-      $('#aw_plansbundle_commande_st_userContact :selected').data('address2'),
-      $('#aw_plansbundle_commande_st_userContact :selected').data('zip'),
-      $('#aw_plansbundle_commande_st_userContact :selected').data('town'),
-      $('#aw_plansbundle_commande_st_userContact :selected').data('country'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('name'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('address1'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('address2'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('zip'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('town'),
+      $('#aw_plansbundle_commande_st_commande_userContact :selected').data('country'),
     );
     {% endif %}
   });
@@ -634,11 +636,11 @@ $(function(){
     e.preventDefault();
 
     updateShippingAddress(
-      $('#aw_plansbundle_commande_st_site').val(),
-      $('#aw_plansbundle_commande_st_address1').val(),
-      $('#aw_plansbundle_commande_st_address2').val(),
-      $('#aw_plansbundle_commande_st_zip').val(),
-      $('#aw_plansbundle_commande_st_town').val(),
+      $('#aw_plansbundle_commande_st_commande_site').val(),
+      $('#aw_plansbundle_commande_st_commande_address1').val(),
+      $('#aw_plansbundle_commande_st_commande_address2').val(),
+      $('#aw_plansbundle_commande_st_commande_zip').val(),
+      $('#aw_plansbundle_commande_st_commande_town').val(),
       1
     );
   });

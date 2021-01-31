@@ -281,7 +281,7 @@ class NewController extends Controller
         )
       ;
 
-      foreach($form->get('listDet')->getData() as $det){
+      foreach($form->get('commande')->get('listDet')->getData() as $det){
         $det->setCommande($commande);
         $commande->addListDet($det);
         $em->persist($det);

@@ -67,8 +67,18 @@ class CommandeSousTraitantType extends AbstractType
             'label' => 'Réf. Bâtiment',
             'required' => false
         ))
-        ->add('typeBatiment', TextType::class, array(
+        ->add('typeBatiment', ChoiceType::class, array(
             'label' => 'Type Bâtiment',
+            'choices' => array(
+                'ERP' => 'ERP',
+                'Habitation' => 'Habitation',
+                'École' => 'École',
+                'Parking' => 'Parking',
+                'Hôtel' => 'Hôtel',
+                'Hôpital' =>'Hôpital',
+                'Chambre' => 'Chambre',
+                'Bateau'=> 'Bateau'
+            ),
             'required' => false
         ))
         ->add('urlInfosSite', TextType::class, array(
@@ -97,6 +107,7 @@ class CommandeSousTraitantType extends AbstractType
         ))
         ->add('urgence',DateType::class, array(
             'widget' => 'single_text',
+            'label' => 'Date limite',
             'format' => 'dd-MM-yyyy',
             'html5' => false,
             'required' => false,

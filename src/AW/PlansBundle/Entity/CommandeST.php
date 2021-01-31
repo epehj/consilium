@@ -51,7 +51,6 @@ class CommandeST
      *
      * @ORM\Column(name="prestation", type="integer", nullable=true)
      * @Assert\Type("integer")
-     * @Assert\NotNull()
      * @Assert\GreaterThanOrEqual(1)
      */
     // TODO trouver pourquoi si l'on choisi aucun radiobutton on a pas de messages d'erreur
@@ -63,7 +62,6 @@ class CommandeST
      *
      * @ORM\Column(name="anomalie", type="integer", nullable=true)
      * @Assert\Type("integer")
-     * @Assert\NotNull()
      * @Assert\GreaterThanOrEqual(1)
      */
     private $anomalie;
@@ -413,6 +411,31 @@ class CommandeST
         $this->anomalie = $anomalie;
     }
 
+    /**
+     * @Assert\Callback
+     */
+    public function isValid(ExecutionContextInterface $context)
+    {
+        if($this->prestation > 0){
+            switch ($this->prestation){
+                case CommandeST::PRESTA_RELEVE:break;
+                    $this->commande->setReleve(true);
+                    $this->commande->setPose(false);
+                case CommandeST::PRESTA_TOTAL:
+                    $commande->setReleve(true);
+                    $commande->setPose(true);
+                    break;
+                case CommandeST::PRESTA_POSE:
+                    $commande->setPose(true);
+                    break;
+            }
+        }
+        else {
+            $context
+                ->buildViolation('Le choix d\'un type de prestation est obligatoire.')
+                ->addViolation();
+        }
+    }
 
 //    // TODO probablement déplacer les statuts dans la classe abstraite mais grosse phase de test a prévoir suite aux tests
 //    const STATUS_ATTENTE_VALIDATION	    = 0;
