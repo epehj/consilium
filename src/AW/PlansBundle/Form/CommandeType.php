@@ -57,7 +57,8 @@ class CommandeType extends AbstractType
         'required' => false
       ))
       ->add('site', TextType::class, array(
-        'label' => 'Nom du site'
+        'label' => 'Nom du site',
+          'required' =>true,
       ))
       ->add('address1', TextType::class, array(
         'label' => 'Adresse'

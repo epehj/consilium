@@ -56,6 +56,9 @@ function initMap(){
       url: '{{ path('aw_plans_view', {id: commande.id}) }}',
       status: {{ commande.releveStatus }},
       position: {{ commande.geoCode | json_encode(constant('JSON_PRETTY_PRINT')) | raw }}
+      {% if commande.commandeST is not null %}
+        , anomalie: {{ commande.commandeST.anomalie }}
+      {% endif %}
     },
   {% endfor %}
   ];
@@ -64,7 +67,9 @@ function initMap(){
     var marker = new google.maps.Marker({
       position: site.position,
       title: site.name,
-      label: site.status == 0 ? 'R' : 'P' // R = Relevé ou P = Pose
+      // label: site.status == 0 ? 'R' : 'P', // R = Relevé ou P = Pose // label pas forcement utile, ca rend l'icone moins lisible
+      // TODO ajouter les anomalies dans les markers
+      icon: site.status == 0 ? (site.anomalie > 0 ? 'http://epehj.com/maps_icon/pin_r_ano.png' : 'http://epehj.com/maps_icon/pin_r.png' ) : (site.anomalie > 0 ? 'http://epehj.com/maps_icon/pin_p_ano.png': 'http://epehj.com/maps_icon/pin_p.png')
     });
 
     marker.addListener('click', function(){

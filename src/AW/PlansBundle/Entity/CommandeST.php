@@ -49,14 +49,24 @@ class CommandeST
     /**
      * @var array
      *
-     * @ORM\Column(name="prestation", type="integer")
+     * @ORM\Column(name="prestation", type="integer", nullable=true)
      * @Assert\Type("integer")
      * @Assert\NotNull()
      * @Assert\GreaterThanOrEqual(1)
      */
     // TODO trouver pourquoi si l'on choisi aucun radiobutton on a pas de messages d'erreur
-    /** type de prestation choisie pour le client : Releve (1), Total(2) ou Pose(3) */
+    // type de prestation choisie pour le client : Releve (1), Total(2) ou Pose(3)
     private $prestation;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="anomalie", type="integer", nullable=true)
+     * @Assert\Type("integer")
+     * @Assert\NotNull()
+     * @Assert\GreaterThanOrEqual(1)
+     */
+    private $anomalie;
 
     /**
      * @var string
@@ -386,6 +396,23 @@ class CommandeST
     {
         $this->id = $id;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAnomalie()
+    {
+        return $this->anomalie;
+    }
+
+    /**
+     * @param mixed $anomalie
+     */
+    public function setAnomalie($anomalie)
+    {
+        $this->anomalie = $anomalie;
+    }
+
 
 //    // TODO probablement déplacer les statuts dans la classe abstraite mais grosse phase de test a prévoir suite aux tests
 //    const STATUS_ATTENTE_VALIDATION	    = 0;
