@@ -49,9 +49,8 @@ class CommandeST
     /**
      * @var array
      *
-     * @ORM\Column(name="prestation", type="integer", nullable=true)
-     * @Assert\Type("integer")
-     * @Assert\GreaterThanOrEqual(1)
+     * @ORM\Column(name="prestation", type="string", length=50, nullable=true)
+     * @Assert\Length(max=50)
      */
     // TODO trouver pourquoi si l'on choisi aucun radiobutton on a pas de messages d'erreur
     // type de prestation choisie pour le client : Releve (1), Total(2) ou Pose(3)
@@ -151,9 +150,9 @@ class CommandeST
     const RELEVE_PLANS_DISPO            = 10;
     const VALIDATION_OBLIG              = 20;
 
-    const PRESTA_RELEVE                        = 1;
-    const PRESTA_POSE                          = 2;
-    const PRESTA_TOTAL                         = 3;
+    const PRESTA_RELEVE                        = 'STR - Relevé';
+    const PRESTA_POSE                          = 'STP - Pose';
+    const PRESTA_TOTAL                         = 'STT - Total';
 
     /**
      * @return int

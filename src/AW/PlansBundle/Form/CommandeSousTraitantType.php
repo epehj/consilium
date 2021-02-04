@@ -72,10 +72,10 @@ class CommandeSousTraitantType extends AbstractType
             'choices' => array(
                 'ERP' => 'ERP',
                 'Habitation' => 'Habitation',
-                'École' => 'École',
+                'École' => 'Ecole',
                 'Parking' => 'Parking',
-                'Hôtel' => 'Hôtel',
-                'Hôpital' =>'Hôpital',
+                'Hôtel' => 'Hotel',
+                'Hôpital' =>'Hopital',
                 'Chambre' => 'Chambre',
                 'Bateau'=> 'Bateau'
             ),

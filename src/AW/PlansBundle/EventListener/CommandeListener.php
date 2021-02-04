@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\EventListener;
 
+use AW\PlansBundle\Entity\CommandeST;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -43,6 +44,7 @@ class CommandeListener
   {
     $entity = $args->getObject();
 
+    //pas sur d'avoir besoin de capter l'évent quand on persiste une commandeST
     if(!$entity instanceof Commande){
       return;
     }
@@ -59,8 +61,11 @@ class CommandeListener
 
     $nextRef = 'AW'.date('ym').str_pad(strval($lastRefNumber+1), 4, '0', STR_PAD_LEFT); // nouvelle référence
 
-    $dir = trim($entity->getSociete()->getName().' - '.$entity->getSite().' - '.$nextRef); // dossier de la commande
-    // remplacer les caractères accentués
+    if($entity instanceof Commande)
+        $dir = trim($entity->getSociete()->getName().' - '.$entity->getSite().' - '.$nextRef); // dossier de la commande
+    else
+        $dir = trim($entity->getCommande()->getSociete()->getName().' - '.$entity->getCommande->getSite().' - '.$nextRef); // dossier de la commande
+      // remplacer les caractères accentués
     $search = [
       'À' => 'a', 'Á' => 'a', 'Â' => 'a', 'Ä' => 'a', 'à' => 'a',
       'á' => 'a', 'â' => 'a', 'ä' => 'a', '@' => 'a', 'È' => 'e',
@@ -92,6 +97,7 @@ class CommandeListener
       ->setRef($nextRef)
       ->setDir($dir)
     ;
+//      $entity->getCommandeST()->setR
 
     $entity->setDoliCommande(new DoliCommande());
     $entity->getDoliCommande()

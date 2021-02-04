@@ -1,0 +1,159 @@
+{% extends "AWCoreBundle::layout.html.twig" %}
+
+{% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+
+<link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+<link rel="stylesheet" href="{{ asset('libs/jquery-file-upload/css/jquery.fileupload.css') }}">
+
+{% endblock %}
+
+{% block content %}
+
+  {% include "AWPlansBundle:Default:tab.html.twig" %}
+    <div class="row">
+      <div class="col-md-5">
+        {% include "AWPlansBundle:Releves:header_infos_site.html.twig" %}
+      </div>
+      <div class="col-md-6 col-md-offset-1">
+      {#infos interventions#}
+        {% include "AWPlansBundle:Releves:header_infos_intervention.html.twig" %}
+      </div>
+  </div>
+{#{% if commande.commandeST.anomalie is not null%}#}
+<div class="row">
+  <div class="col-md-12">
+  {% include "AWPlansBundle:Releves:anomalies.html.twig" %}
+  </div>
+</div>
+
+  {#{% endif %}#}
+{% include "AWPlansBundle:Default:info.html.twig" %}
+
+<div class="row toolbar-pf">
+  <div class="col-sm-12">
+    <div class="toolbar-pf-actions">
+      {% if is_granted('ADD_RELEVE', commande) %}
+        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
+
+        <span class="btn btn-primary fileinput-button visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
+        <i class="glyphicon glyphicon-plus"></i>
+        <span>Ajouter des relevés de plans</span>
+        <input type="file" name="form[files][]" id="fileupload" multiple>
+      </span>
+
+        <a href="{{ path('aw_plans_releves_add_releveur', {id: commande.id}) }}" class="btn btn-success">Affecter un releveur</a>
+      {% endif %}
+
+      {% if is_granted('STACK_RELEVE', commande) %}
+        <a
+                href="{{ path('aw_plans_releves_update', {status: constant('RELEVE_STATUS_EN_ATTENTE', commande), id: commande.id}) }}"
+                class="btn btn-warning visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"
+                data-confirm-message="Êtes-vous sûr de vouloir remettre cette commande en attente de relevé de plans ?"
+        >Remettre en attente de relevé de plans</a>
+      {% endif %}
+
+      {% if is_granted('POSE_DONE', commande) %}
+        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
+
+        <a
+                href="{{ path('aw_plans_pose_add_poseur', {id: commande.id}) }}"
+                class="btn btn-warning visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"
+        >Affecter un poseur</a>
+      {% endif %}
+
+      {% if is_granted('STACK_POSE', commande) %}
+        <a
+                href="{{ path('aw_plans_releves_update', {status: constant('POSE_STATUS_EN_ATTENTE', commande), id: commande.id}) }}"
+                class="btn btn-warning visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"
+                data-confirm-message="Êtes-vous sûr de vouloir remettre cette commande en attente de pose ?"
+        >Remettre en attente de pose</a>
+      {% endif %}
+
+      {% if is_granted('RELEVE_ANOMALIE', commande) %}
+        <a
+                href="{{ path('aw_plans_releves_update', {status: constant('RELEVE_ANOMALIE', commande), id: commande.id}) }}"
+                class="btn btn-danger visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"
+                data-confirm-message="Êtes-vous sûr de vouloir marquer le relevé de cette commande en anomalie ?"
+        >Anomalie</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if is_granted('ADD_RELEVE', commande) %}
+<div class="row">
+  <div class="list-group" id="filelist">
+    {% for file in finder %}
+      <a href="{{ path('aw_plans_releves_download', {id: commande.id, file: file.filename}) }}" class="list-group-item">
+        <span class="glyphicon glyphicon-file"></span>
+        <span class="truncate">{{ file.filename }}</span>
+        <span class="pull-right">
+        <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_releves_delete', {id: commande.id, file: file.filename}) }}">
+          <span class="glyphicon glyphicon-trash"></span>
+          <span class="hidden-xs">Supprimer</span>
+        </button>
+      </span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{% include "AWPlansBundle:Default:plans.html.twig" %}
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+
+  {% if is_granted('ADD_RELEVE', commande) %}
+    <script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+    <script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
+    <script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
+
+    <script>
+      $(function(){
+        $('#fileupload').fileupload({
+          url: "{{ path('aw_plans_releves_upload', {id: commande.id}) }}",
+          dataType: 'json',
+          add: function(e, data){
+            data.context = [];
+            $.each(data.files, function(index, file){
+              item = $('<a/>')
+                      .addClass('list-group-item')
+                      .append('<span class="glyphicon glyphicon-file"></span> <span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+              item.appendTo('#filelist');
+              data.context.push(item);
+            });
+
+            data.submit();
+          },
+          done: function(e, data){
+            $.each(data.result, function (index, file){
+              data.context[index].attr('href', file.url);
+              data.context[index].find('.filename').text(file.name);
+              data.context[index].find('.pull-right').html('<button class="btn btn-danger delete-file" data-link="'+file.delete_url+'"><span class="glyphicon glyphicon-trash"></span><span class="hidden-xs">Supprimer</span></button>');
+            });
+          },
+          fail: function(e, data){
+            $.each(data.files, function(index, file){
+              data.context[index].find('.pull-right').html('<strong>Échec</strong>');
+            });
+          }
+        });
+
+        $('#filelist').delegate('.delete-file', 'click', function(e){
+          e.preventDefault();
+
+          var r = confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')
+          if(r == true){
+            window.location.href = $(this).data('link');
+          }
+        });
+      });
+    </script>
+  {% endif %}
+{% endblock %}

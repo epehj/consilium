@@ -1,0 +1,17 @@
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            <h3 class="panel-title pull-left">Infos Intervention</h3>
+        </div>
+        <div class="panel-body">
+            <div>
+                <p id="infosInterventions">
+                    <strong><span class="pull-left"> Contact 1 : {{ commande.commandeST.contact1 }}</span> <span class="pull-right">Client Final : {{  commande.commandeST.clientFinal }}</span> </strong><br />
+                Contact 2 : {{ commande.commandeST.contact2 }}
+                </p>
+                Accès : {{ commande.commandeST.acces }} <br />
+                Remarques : {{ commande.remarques }}
+            </div>
+        </div>
+    </div>
+</div>

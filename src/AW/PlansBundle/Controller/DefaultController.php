@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Entity\CommandeST;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -257,6 +258,9 @@ class DefaultController extends Controller
   {
     $this->denyAccessUnlessGranted('VIEW', $commande);
 
+    // FIXME : hack degueu pour afficher les anciennes commandes (qui n'ont pas de commandes ST associées)
+      if($commande->getCommandeST() == null)
+          $commande->setCommandeST(new CommandeST());
     return $this->render('AWPlansBundle:Default:view.html.twig', array(
       'commande' => $commande
     ));

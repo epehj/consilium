@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Entity\CommandeST;
 use AW\PlansBundle\Form\AddPoseurType;
 use AW\PlansBundle\Form\AddReleveurType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -134,8 +135,9 @@ class RelevesController extends Controller
       ->notName('logo_client.*')
       ->in($dir)
     ;
-
-    return $this->render('AWPlansBundle:Releves:view.html.twig', array(
+      if($commande->getCommandeST() == null)
+          $commande->setCommandeST(new CommandeST());
+    return $this->render('AWPlansBundle:Releves:new_view.html.twig', array(
       'commande' => $commande,
       'finder'   => $finder
     ));
