@@ -57,15 +57,6 @@ class CommandeST
     private $prestation;
 
     /**
-     * @var array
-     *
-     * @ORM\Column(name="anomalie", type="integer", nullable=true)
-     * @Assert\Type("integer")
-     * @Assert\GreaterThanOrEqual(1)
-     */
-    private $anomalie;
-
-    /**
      * @var string
      *
      * @ORM\Column(name="ref_batiment", type="string", length=50, nullable=true)
@@ -144,6 +135,22 @@ class CommandeST
      */
     private $urgence;
 
+    /**
+     * @var Anomalie
+     * @ORM\ManyToMany(targetEntity="AW\PlansBundle\Entity\Anomalie", inversedBy="commandes")
+     * @ORM\JoinTable(name="aw_anomalies_commande",
+     *                joinColumns={@ORM\JoinColumn(name="fk_commande", referencedColumnName="rowid")},
+     *                inverseJoinColumns={@ORM\JoinColumn(name="fk_anomalie", referencedColumnName="rowid")})
+     */
+    protected $anomalies;
+
+    /**
+     * @var array
+     * @ORM\Column(name="validation_obligatoire_releveur", type="boolean", nullable=false)
+     */
+    protected $validationObligatoireByReleveur;
+
+
 
 
     const NONE                          = 0;
@@ -153,6 +160,70 @@ class CommandeST
     const PRESTA_RELEVE                        = 'STR - Relevé';
     const PRESTA_POSE                          = 'STP - Pose';
     const PRESTA_TOTAL                         = 'STT - Total';
+
+
+    public function getReleveur(){
+        return $this->commande->getReleveur();
+    }
+
+    public function setReleveur($releveur){
+        return $this->commande->setReleveur($releveur);
+    }
+    public function getRemarques(){
+        return $this->commande->getRemarques();
+    }
+
+    public function setRemarques($remarques){
+        return $this->commande->setRemarques($remarques);
+    }
+
+    public function __construct()
+    {
+        $this->anomalies = new ArrayCollection();
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationObligatoireByReleveur()
+    {
+        return $this->validationObligatoireByReleveur;
+    }
+
+    /**
+     * @param array $validationObligatoireByReleveur
+     */
+    public function setValidationObligatoireByReleveur($validationObligatoireByReleveur)
+    {
+        $this->validationObligatoireByReleveur = $validationObligatoireByReleveur;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAnomalies()
+    {
+        return $this->anomalies;
+    }
+
+    /**
+     * @param ArrayCollection $anomalies
+     */
+    public function addAnomalies($anomaliies)
+    {
+        if(!$this->anomalies->contains($anomaliies))
+            $this->anomalies[] = $anomaliies;
+        return $this->anomalies;
+    }
+    /**
+     * @param ArrayCollection $anomalies
+     */
+    public function removeAnomalie($anomaliies)
+    {
+        if($this->anomalies->contains($anomaliies))
+            $this->anomalies->removeElement($anomaliies);
+        return $this->anomalies;
+    }
 
     /**
      * @return int
@@ -392,22 +463,6 @@ class CommandeST
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAnomalie()
-    {
-        return $this->anomalie;
-    }
-
-    /**
-     * @param mixed $anomalie
-     */
-    public function setAnomalie($anomalie)
-    {
-        $this->anomalie = $anomalie;
     }
 
     /**

@@ -574,7 +574,7 @@ class Commande
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User", inversedBy="commandes_relevees")
      * @ORM\JoinColumn(name="fk_user_releveur", referencedColumnName="rowid")
      * @Assert\Valid()
      */
@@ -582,7 +582,7 @@ class Commande
     /**
      * @var User
      *
-     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="AW\DoliBundle\Entity\User", inversedBy="commandes_posees")
      * @ORM\JoinColumn(name="fk_user_poseur", referencedColumnName="rowid")
      * @Assert\Valid()
      */
@@ -595,7 +595,6 @@ class Commande
      * @ORM\JoinColumn(name="fk_id_commande_st", referencedColumnName="rowid")
      */
     protected $commandeST;
-
 
     const STATUS_ATTENTE_VALIDATION	= 0;
     const STATUS_VALIDATED					= 10;
@@ -675,6 +674,7 @@ class Commande
         $this->bats = new ArrayCollection();
         $this->productions = new ArrayCollection();
         $this->renvoi = false;
+        $this->anomalies = new ArrayCollection();
     }
 
     public function __clone()
@@ -2704,4 +2704,14 @@ class Commande
         $this->commandeST = $commandeST;
     }
 
+
+    /**
+     * Get renvoi
+     *
+     * @return boolean
+     */
+    public function getRenvoi()
+    {
+        return $this->renvoi;
+    }
 }

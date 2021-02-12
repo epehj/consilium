@@ -85,6 +85,13 @@ aw_plans_releves_add_releveur:
     requirements:
         id: \d+
 
+aw_plans_releves_termine:
+    path: /end/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:terminerReleve
+    requirements:
+        id: \d+
+
 aw_plans_pose_add_poseur:
     path: /add/poseur/{id}
     defaults:

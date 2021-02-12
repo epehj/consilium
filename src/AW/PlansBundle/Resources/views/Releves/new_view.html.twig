@@ -22,7 +22,8 @@
         {% include "AWPlansBundle:Releves:header_infos_intervention.html.twig" %}
       </div>
   </div>
-{#{% if commande.commandeST.anomalie is not null%}#}
+{#  fixme regarder sur la length des anos#}
+{#{% if commande.commandeST.anomalies is not null%}#}
 <div class="row">
   <div class="col-md-12">
   {% include "AWPlansBundle:Releves:anomalies.html.twig" %}
@@ -45,6 +46,7 @@
       </span>
 
         <a href="{{ path('aw_plans_releves_add_releveur', {id: commande.id}) }}" class="btn btn-success">Affecter un releveur</a>
+        <a href="{{ path('aw_plans_releves_termine', {id: commande.id}) }}" class="btn btn-success">Relevé terminé</a>
       {% endif %}
 
       {% if is_granted('STACK_RELEVE', commande) %}

@@ -109,97 +109,98 @@ class CommandeType extends AbstractType
     $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event){
       $commande = $event->getData();
       $form = $event->getForm();
-      $dir = empty($commande->getDir()) ? tempnam(sys_get_temp_dir(), 'AW') : $commande->getDir();
-      $fs = new Filesystem();
-      if(!is_dir($dir)){
-        $fs->remove($dir);
-      }
-      if(!file_exists($dir)){
-        $fs->mkdir($dir);
-      }
 
-      if($commande->getSociete()){
-        if($commande->getUserContact()){
-          $userContact = $commande->getUserContact();
-        }elseif($this->tokenStorage->getToken()->getUser()->getSociete()){
-          $userContact = $this->tokenStorage->getToken()->getUser();
-        }else{
-          $userContact = null;
+      // on vérifie que commande existe, dans le cas d'un appel depuis un subform/nestedform et qu'on ait une commandeSTType qui l'ai appelé
+        if ($commande) {
+            $dir = empty($commande->getDir()) ? tempnam(sys_get_temp_dir(), 'AW') : $commande->getDir();
+            $fs = new Filesystem();
+            if (!is_dir($dir)) {
+                $fs->remove($dir);
+            }
+            if (!file_exists($dir)) {
+                $fs->mkdir($dir);
+            }
+            if ($commande->getSociete()) {
+                if ($commande->getUserContact()) {
+                    $userContact = $commande->getUserContact();
+                } elseif ($this->tokenStorage->getToken()->getUser()->getSociete()) {
+                    $userContact = $this->tokenStorage->getToken()->getUser();
+                } else {
+                    $userContact = null;
+                }
+
+                $form
+                    ->add('userContact', EntityType::class, array(
+                        'label' => 'Contact',
+                        'class' => 'AWDoliBundle:User',
+                        'query_builder' => function (UserRepository $er) use ($commande) {
+                            return $er->getSocieteUsersQueryBuilder($commande->getSociete());
+                        },
+                        'choice_label' => function ($user) {
+                            return $user->getFullName() . ' - ' . $user->getSociete()->getName() . ' <' . $user->getEmail() . '>';
+                        },
+                        'choice_attr' => function ($user, $key, $index) {
+                            return array(
+                                'data-name' => $user->getFullName(),
+                                'data-address1' => $user->getAddress1(),
+                                'data-address2' => $user->getAddress2(),
+                                'data-zip' => $user->getZip(),
+                                'data-town' => $user->getTown(),
+                                'data-country' => $user->getCountry() ? $user->getCountry()->getId() : 1
+                            );
+                        },
+                        'data' => $userContact,
+                        'required' => false
+                    ))
+                    ->add('dir', HiddenType::class, array(
+                        'data' => basename($dir)
+                    ))
+                    ->add('shippingRecipient', TextType::class, array(
+                        'label' => 'Nom',
+                        'data' => $commande->getShippingRecipient() ? $commande->getShippingRecipient() : $commande->getSociete()->getName()
+                    ))
+                    ->add('shippingAddress1', TextType::class, array(
+                        'label' => 'Adresse',
+                        'data' => $commande->getShippingAddress1() ? $commande->getShippingAddress1() : $commande->getSociete()->getAddress1()
+                    ))
+                    ->add('shippingAddress2', TextType::class, array(
+                        'label' => 'Adresse complémentaire',
+                        'data' => $commande->getShippingAddress2() ? $commande->getShippingAddress2() : $commande->getSociete()->getAddress2(),
+                        'required' => false
+                    ))
+                    ->add('shippingZip', TextType::class, array(
+                        'label' => 'Code postal',
+                        'data' => $commande->getShippingZip() ? $commande->getShippingZip() : $commande->getSociete()->getZip()
+                    ))
+                    ->add('shippingTown', TextType::class, array(
+                        'label' => 'Ville',
+                        'data' => $commande->getShippingTown() ? $commande->getShippingTown() : $commande->getSociete()->getTown()
+                    ))
+                    ->add('shippingCountry', EntityType::class, array(
+                        'label' => 'Pays',
+                        'class' => 'AWDoliBundle:Country',
+                        'choice_label' => 'name',
+                        'data' => $commande->getShippingCountry() ? $commande->getShippingCountry() : $commande->getSociete()->getCountry()
+                    ));
+
+                // ajout d'un contact BATs
+                if ($commande->getSociete()->getInfosPlans() and $commande->getSociete()->getInfosPlans()->getAllowContactBat()) {
+                    $form
+                        ->add('contactBATName', TextType::class, array(
+                            'label' => 'Nom du contact',
+                            'required' => false
+                        ))
+                        ->add('contactBATPhone', TextType::class, array(
+                            'label' => 'Téléphone',
+                            'required' => false
+                        ))
+                        ->add('contactBATEmail', TextType::class, array(
+                            'label' => 'E-Mail',
+                            'required' => false
+                        ));
+                }
+            }
         }
-
-        $form
-          ->add('userContact', EntityType::class, array(
-            'label' => 'Contact',
-            'class' => 'AWDoliBundle:User',
-            'query_builder' => function(UserRepository $er) use($commande){
-              return $er->getSocieteUsersQueryBuilder($commande->getSociete());
-            },
-            'choice_label' => function($user){
-              return $user->getFullName().' - '.$user->getSociete()->getName().' <'.$user->getEmail().'>';
-            },
-            'choice_attr' => function($user, $key, $index){
-              return array(
-                'data-name' => $user->getFullName(),
-                'data-address1' => $user->getAddress1(),
-                'data-address2' => $user->getAddress2(),
-                'data-zip' => $user->getZip(),
-                'data-town' => $user->getTown(),
-                'data-country' => $user->getCountry() ? $user->getCountry()->getId() : 1
-              );
-            },
-            'data' => $userContact,
-            'required' => false
-          ))
-          ->add('dir', HiddenType::class, array(
-            'data' => basename($dir)
-          ))
-          ->add('shippingRecipient', TextType::class, array(
-            'label' => 'Nom',
-            'data' => $commande->getShippingRecipient() ? $commande->getShippingRecipient() : $commande->getSociete()->getName()
-          ))
-          ->add('shippingAddress1', TextType::class, array(
-            'label' => 'Adresse',
-            'data' => $commande->getShippingAddress1() ? $commande->getShippingAddress1() : $commande->getSociete()->getAddress1()
-          ))
-          ->add('shippingAddress2', TextType::class, array(
-            'label' => 'Adresse complémentaire',
-            'data' => $commande->getShippingAddress2() ? $commande->getShippingAddress2() : $commande->getSociete()->getAddress2(),
-            'required' => false
-          ))
-          ->add('shippingZip', TextType::class, array(
-            'label' => 'Code postal',
-            'data' => $commande->getShippingZip() ? $commande->getShippingZip() : $commande->getSociete()->getZip()
-          ))
-          ->add('shippingTown', TextType::class, array(
-            'label' => 'Ville',
-            'data' => $commande->getShippingTown() ? $commande->getShippingTown() : $commande->getSociete()->getTown()
-          ))
-          ->add('shippingCountry', EntityType::class, array(
-            'label' => 'Pays',
-            'class' => 'AWDoliBundle:Country',
-            'choice_label' => 'name',
-            'data' => $commande->getShippingCountry() ? $commande->getShippingCountry() : $commande->getSociete()->getCountry()
-          ))
-        ;
-
-        // ajout d'un contact BATs
-        if($commande->getSociete()->getInfosPlans() and $commande->getSociete()->getInfosPlans()->getAllowContactBat()){
-          $form
-            ->add('contactBATName', TextType::class, array(
-              'label' => 'Nom du contact',
-              'required' => false
-            ))
-            ->add('contactBATPhone', TextType::class, array(
-              'label' => 'Téléphone',
-              'required' => false
-            ))
-            ->add('contactBATEmail', TextType::class, array(
-              'label' => 'E-Mail',
-              'required' => false
-            ))
-          ;
-        }
-      }
     });
   }
 

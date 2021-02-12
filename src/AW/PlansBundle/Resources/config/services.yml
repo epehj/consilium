@@ -13,6 +13,13 @@ services:
         tags:
             - { name: form.type }
 
+    aw_plans.form.terminer_releve_type:
+        class: AW\PlansBundle\Form\TerminerReleveType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
     aw_plans.form.commande_sous_traitant_type:
         class: AW\PlansBundle\Form\CommandeSousTraitantType
         arguments:

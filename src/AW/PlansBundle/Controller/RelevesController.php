@@ -5,6 +5,7 @@ namespace AW\PlansBundle\Controller;
 use AW\PlansBundle\Entity\CommandeST;
 use AW\PlansBundle\Form\AddPoseurType;
 use AW\PlansBundle\Form\AddReleveurType;
+use AW\PlansBundle\Form\TerminerReleveType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -555,4 +556,36 @@ class RelevesController extends Controller
               'form' => $form->createView()
           ));
   }
+
+
+    public function terminerReleveAction(Request $request, Commande $commande) {
+        /**
+         * TODO : pour chaque «étape» de validation faire un formulaire(Type) correspondant aux données à choisir
+         * - addReleveurType ( datatype : commande)
+         * - anomalieType (datatype : anomalie)
+         * - commande a annuler (datatype ? si oui, commande st)
+         * - modification (datatype : commande)
+         *
+         * Regrouper tous ces *type dans un autre «grand» form, en passant en array les différentes infos. Chaque form devrait réussir à s'en sortir et mapper les infos correctement
+         * le datatype du «grand» sera null -> il ne correspond à aucune entity
+         */
+      $commandeST = $commande->getCommandeST();
+        $form = $this->get('form.factory')->create(TerminerReleveType::class, $commandeST);
+//        array(
+//            'faro'=>$commandeST->isFaro(),
+////            'anomalies' => $commandeST->getAnomalies(),
+//            'releveur' => $commande
+//        ));
+
+        $form->handleRequest($request);
+        if($request->isMethod('POST') ){ //and $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
+        }
+        return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',
+            array(
+                'commande' => $commande,
+                'form' => $form->createView()
+            ));
+    }
 }

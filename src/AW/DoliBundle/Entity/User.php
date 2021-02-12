@@ -2,6 +2,7 @@
 
 namespace AW\DoliBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
@@ -161,13 +162,84 @@ class User implements AdvancedUserInterface
     private $param;
 
     /**
+     * @var Commande
+     *
+     * @ORM\OneToMany(targetEntity="AW\UserBundle\Entity\UserParam", mappedBy="releveur",cascade="all", orphanRemoval=true))
+     */
+    private $commandesRelevees;
+
+    /**
+     * @var Commande
+     *
+     * @ORM\OneToMany(targetEntity="AW\UserBundle\Entity\UserParam", mappedBy="poseur", cascade="all", orphanRemoval=true))
+     */
+    private $commandesPosees;
+
+
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->groups = new \Doctrine\Common\Collections\ArrayCollection();
         $this->rightsDef = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->commandesPosees = \Doctrine\Common\Collections\ArrayCollection();
+        $this->commandesRelevees = \Doctrine\Common\Collections\ArrayCollection();
         $this->rights = null;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getCommandesPosees()
+    {
+        return $this->commandesPosees;
+    }
+
+    /**
+     * @param ArrayCollection $commandePosees
+     */
+    public function addCommandePosees($commandePosees)
+    {
+        if(!$this->commandePosees->contains($commandePosees))
+            $this->commandePosees[] = $commandePosees;
+        return $this;
+    }
+    /**
+     * @param ArrayCollection $anomalies
+     */
+    public function removeCommandePosees($commandePosees)
+    {
+        if($this->commandePosees->contains($commandePosees))
+            $this->commandePosees->removeElement($commandePosees);
+        return $this;
+    }
+    /**
+     * @return ArrayCollection
+     */
+    public function getCommandesRelevees()
+    {
+        return $this->commandesRelevees;
+    }
+
+    /**
+     * @param ArrayCollection $commandeRelevees
+     */
+    public function addCommandeRelevees($commandeRelevees)
+    {
+        if(!$this->commandeRelevees->contains($commandeRelevees))
+            $this->commandeRelevees[] = $commandeRelevees;
+        return $this;
+    }
+    /**
+     * @param ArrayCollection $anomalies
+     */
+    public function removeCommandeRelevees($commandeRelevees)
+    {
+        if($this->commandeRelevees->contains($commandeRelevees))
+            $this->commandeRelevees->removeElement($commandeRelevees);
+        return $this;
     }
 
     /**

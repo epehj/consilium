@@ -116,7 +116,7 @@ class CommandeSousTraitantType extends AbstractType
             )
         ))
         ->add('commande', CommandeType::class, array(
-            'label' => 'label child commande a supprimer',
+            'label' => false,
             'required' => false
         ))
 //        ->add('infosComplementaires', ChoiceType::class, array(
