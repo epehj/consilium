@@ -46,14 +46,32 @@ class TerminerReleveType extends AbstractType
             'label' => 'Remarques',
             'required' => false
         ))
-//        ->add('anomalies', CollectionType::class, array(
-//            'entry_type' => AnomalieType::class
-//        ))
-            ->add('anomalies', EntityType::class, array(
+        ->add('anomalies', EntityType::class, array(
             'class' => 'AWPlansBundle:Anomalie',
             'choice_label' => 'label',
             'multiple' => true,
             'expanded' => true,
+        ))
+        ->add('remarqueAno', TextType::class, array(
+            'label' => 'Remarque',
+            'required' => false
+        ))
+        ->add('remarqueCancel', TextType::class, array(
+            'label' => 'Explication',
+            'required' => false
+        ))
+        ->add('cancel', ChoiceType::class, array(
+            'label' => 'Annuler la commande ?',
+            'choices' => array(
+                'Oui' => true,
+                'Non' => false
+            ),
+            'expanded' => true
+        ))
+        ->add('typeBatiment', EntityType::class, array(
+            'label' => 'Type de bat.',
+            'class' => 'AWPlansBundle:TypeBatiment',
+            'choice_label' => 'type'
         ))
     ;
   }

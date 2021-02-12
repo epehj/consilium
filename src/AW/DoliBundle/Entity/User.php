@@ -164,14 +164,14 @@ class User implements AdvancedUserInterface
     /**
      * @var Commande
      *
-     * @ORM\OneToMany(targetEntity="AW\UserBundle\Entity\UserParam", mappedBy="releveur",cascade="all", orphanRemoval=true))
+     * @ORM\OneToMany(targetEntity="AW\PlansBundle\Entity\Commande", mappedBy="releveur",cascade="all", orphanRemoval=true))
      */
     private $commandesRelevees;
 
     /**
      * @var Commande
      *
-     * @ORM\OneToMany(targetEntity="AW\UserBundle\Entity\UserParam", mappedBy="poseur", cascade="all", orphanRemoval=true))
+     * @ORM\OneToMany(targetEntity="AW\PlansBundle\Entity\Commande", mappedBy="poseur", cascade="all", orphanRemoval=true))
      */
     private $commandesPosees;
 
@@ -200,19 +200,19 @@ class User implements AdvancedUserInterface
     /**
      * @param ArrayCollection $commandePosees
      */
-    public function addCommandePosees($commandePosees)
+    public function addCommandesPosees($commandePosees)
     {
-        if(!$this->commandePosees->contains($commandePosees))
-            $this->commandePosees[] = $commandePosees;
+        if(!$this->commandesPosees->contains($commandePosees))
+            $this->commandesPosees[] = $commandePosees;
         return $this;
     }
     /**
      * @param ArrayCollection $anomalies
      */
-    public function removeCommandePosees($commandePosees)
+    public function removeCommandesPosees($commandePosees)
     {
-        if($this->commandePosees->contains($commandePosees))
-            $this->commandePosees->removeElement($commandePosees);
+        if($this->commandesPosees->contains($commandePosees))
+            $this->commandesPosees->removeElement($commandePosees);
         return $this;
     }
     /**
@@ -226,19 +226,19 @@ class User implements AdvancedUserInterface
     /**
      * @param ArrayCollection $commandeRelevees
      */
-    public function addCommandeRelevees($commandeRelevees)
+    public function addCommandesRelevees($commandeRelevees)
     {
-        if(!$this->commandeRelevees->contains($commandeRelevees))
-            $this->commandeRelevees[] = $commandeRelevees;
+        if(!$this->commandesRelevees->contains($commandeRelevees))
+            $this->commandesRelevees[] = $commandeRelevees;
         return $this;
     }
     /**
      * @param ArrayCollection $anomalies
      */
-    public function removeCommandeRelevees($commandeRelevees)
+    public function removeCommandesRelevees($commandeRelevees)
     {
-        if($this->commandeRelevees->contains($commandeRelevees))
-            $this->commandeRelevees->removeElement($commandeRelevees);
+        if($this->commandesRelevees->contains($commandeRelevees))
+            $this->commandesRelevees->removeElement($commandeRelevees);
         return $this;
     }
 

@@ -67,18 +67,10 @@ class CommandeSousTraitantType extends AbstractType
             'label' => 'Réf. Bâtiment',
             'required' => false
         ))
-        ->add('typeBatiment', ChoiceType::class, array(
-            'label' => 'Type Bâtiment',
-            'choices' => array(
-                'ERP' => 'ERP',
-                'Habitation' => 'Habitation',
-                'École' => 'Ecole',
-                'Parking' => 'Parking',
-                'Hôtel' => 'Hotel',
-                'Hôpital' =>'Hopital',
-                'Chambre' => 'Chambre',
-                'Bateau'=> 'Bateau'
-            ),
+        ->add('typeBatiment', EntityType::class, array(
+            'label' => 'Type de bat.',
+            'class' => 'AWPlansBundle:TypeBatiment',
+            'choice_label' => 'type',
             'required' => false
         ))
         ->add('urlInfosSite', TextType::class, array(

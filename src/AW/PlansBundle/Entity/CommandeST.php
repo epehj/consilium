@@ -78,10 +78,9 @@ class CommandeST
      */
     private $operation;
     /**
-     * @var string
+     * @var TypeBatiment
      *
-     * @ORM\Column(name="type_batiment", type="string", length=50, nullable=true)
-     * @Assert\Length(max=50)
+     * @ORM\ManyToOne(targetEntity="AW\PlansBundle\Entity\TypeBatiment", inversedBy="commandeST")
      */
     private $typeBatiment;
     /**
@@ -145,13 +144,27 @@ class CommandeST
     protected $anomalies;
 
     /**
-     * @var array
+     * @var boolean
      * @ORM\Column(name="validation_obligatoire_releveur", type="boolean", nullable=false)
      */
     protected $validationObligatoireByReleveur;
 
+    /**
+     * @var boolean
+     * @ORM\Column(name="cancel", type="boolean", nullable=false)
+     */
+    protected $cancel;
 
-
+    /**
+     * @var string
+     * @ORM\Column(name="remarque_cancel", type="string", nullable=true)
+     */
+    protected $remarqueCancel;
+    /**
+     * @var string
+     * @ORM\Column(name="remarque_ano", type="string", nullable=true)
+     */
+    protected $remarqueAno;
 
     const NONE                          = 0;
     const RELEVE_PLANS_DISPO            = 10;
@@ -161,6 +174,53 @@ class CommandeST
     const PRESTA_POSE                          = 'STP - Pose';
     const PRESTA_TOTAL                         = 'STT - Total';
 
+    /**
+     * @return string
+     */
+    public function getRemarqueCancel()
+    {
+        return $this->remarqueCancel;
+    }
+
+    /**
+     * @param string $remarqueCancel
+     */
+    public function setRemarqueCancel($remarqueCancel)
+    {
+        $this->remarqueCancel = $remarqueCancel;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCancel()
+    {
+        return $this->cancel;
+    }
+
+    /**
+     * @param bool $cancel
+     */
+    public function setCancel($cancel)
+    {
+        $this->cancel = $cancel;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemarqueAno()
+    {
+        return $this->remarqueAno;
+    }
+
+    /**
+     * @param string $remarqueAno
+     */
+    public function setRemarqueAno($remarqueAno)
+    {
+        $this->remarqueAno = $remarqueAno;
+    }
 
     public function getReleveur(){
         return $this->commande->getReleveur();

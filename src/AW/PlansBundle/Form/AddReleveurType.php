@@ -21,7 +21,7 @@ class AddReleveurType extends AbstractType
   {
     $builder
       ->add('releveur', EntityType::class, array(
-        'label' => false,
+        'label' => 'Affecter un releveur',
         'class' => 'AWDoliBundle:User',
         'query_builder' => function(UserRepository $er) {
           return $er->getUsersInReleveurGroupQueryBuilder();
