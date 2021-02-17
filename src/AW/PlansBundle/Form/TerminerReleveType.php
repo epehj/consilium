@@ -34,7 +34,7 @@ class TerminerReleveType extends AbstractType
         ->add('releveur', AddReleveurType::class)
         ->add('validationObligatoireByReleveur', ChoiceType::class, array(
         'label' => 'Validation obligatoire par le releveur',
-        'expanded' => true,
+//        'expanded' => true,
         'multiple' => false,
         'choices' => array(
             'Oui' => true,
@@ -66,7 +66,7 @@ class TerminerReleveType extends AbstractType
                 'Oui' => true,
                 'Non' => false
             ),
-            'expanded' => true
+//            'expanded' => true
         ))
         ->add('typeBatiment', EntityType::class, array(
             'label' => 'Type de bat.',

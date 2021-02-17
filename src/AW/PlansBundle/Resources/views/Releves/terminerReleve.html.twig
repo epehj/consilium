@@ -2,10 +2,17 @@
 
 {% block title %}{{ commande.ref }} :: {{ parent() }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+    <link rel="stylesheet" href="{{ asset('bundles/awplans/css/plans.css') }}">
+{% endblock %}
+
+
 {% block content %}
     {{ form_start(form) }}
 <div class="row">
-  <div class="col-xs-12 col-md-8 col-md-offset-2">
+  <div class="col-xs-12 col-md-10 col-md-offset-1">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h3 class="panel-title">Commande {{ commande.ref }}</h3>
@@ -44,6 +51,7 @@
               <div class="panel-body">
                   {{ form_row(form.typeBatiment)}}
               </div>
+              {% include "AWPlansBundle:Default:plans.html.twig" %}
 
           </div>
       <div class="row">

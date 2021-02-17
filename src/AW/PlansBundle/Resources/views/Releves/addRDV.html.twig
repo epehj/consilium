@@ -16,7 +16,8 @@
       {{ form_rest(form) }}
 
       <div class="row">
-        <a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
+{#        <a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>#}
+        <a href="{{ path('aw_plans_releves_termine', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
         <button type="submit" class="btn btn-primary">Enregistrer</button>
       </div>
 
