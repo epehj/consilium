@@ -33,7 +33,7 @@ class CommandeST
     /**
      * @var Commande
      * @ORM\OneToOne(targetEntity=Commande::class, mappedBy="commandeST")
-     * @Assert\Valid
+//     * @Assert\Valid
      */
     private $commande;
 
@@ -222,13 +222,6 @@ class CommandeST
         $this->remarqueAno = $remarqueAno;
     }
 
-    public function getReleveur(){
-        return $this->commande->getReleveur();
-    }
-
-    public function setReleveur($releveur){
-        return $this->commande->setReleveur($releveur);
-    }
     public function getRemarques(){
         return $this->commande->getRemarques();
     }

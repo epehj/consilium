@@ -31,7 +31,6 @@ class TerminerReleveType extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $builder
-        ->add('releveur', AddReleveurType::class)
         ->add('validationObligatoireByReleveur', ChoiceType::class, array(
         'label' => 'Validation obligatoire par le releveur',
 //        'expanded' => true,
@@ -73,6 +72,10 @@ class TerminerReleveType extends AbstractType
             'class' => 'AWPlansBundle:TypeBatiment',
             'choice_label' => 'type'
         ))
+        ->add('commande', AggregationCommandeType::class)
+        ->add('acces', TextType::class)
+//        ->add('commande', ContactBatNameType::class)
+
     ;
   }
 

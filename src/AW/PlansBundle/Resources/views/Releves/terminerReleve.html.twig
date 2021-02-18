@@ -21,7 +21,8 @@
           <div class="panel panel-default">
               <div class="panel-heading">Relevé OK</div>
               <div class="panel-body">
-                  {{ form_widget(form.releveur)}}
+                  {{ dump(form.commande) }}
+                  {{ form_row(form.commande.releveur)}}
                   <input type="text" value="TODO ajouter des releves">
                   {{ form_row(form.validationObligatoireByReleveur)}}
                   {{ form_row(form.remarques) }}
@@ -49,7 +50,30 @@
 
               <div class="panel-heading">Modifications</div>
               <div class="panel-body">
-                  {{ form_row(form.typeBatiment)}}
+                  <div class="row">
+                      <div class="col-md-4">
+                          {{ form_row(form.commande.address1, {attr: {autocomplete: 'off', class: 'typeahead'}}) }}
+                          {% if commande.address2 is not null and commande.address2 is not empty %}
+                          {{ form_row(form.commande.address2) }}
+                          {% endif %}
+                      </div>
+                      <div class="col-md-4">
+                          {{ form_row(form.commande.zip) }}
+                      </div>
+                      <div class="col-md-4">
+                          {{ form_row(form.commande.town) }}
+                      </div>
+                      </div>
+                      <div class="col-md-4">
+                          {{ form_row(form.commande.contactBatName) }}
+                      </div>
+                      <div class="col-md-4">
+                          {{ form_row(form.acces) }}
+                      </div>
+                      <div class="col-md-4">
+                          {{ form_row(form.typeBatiment)}}
+                      </div>
+{#                  TODO ajouter l'upload de logo si besoin#}
               </div>
               {% include "AWPlansBundle:Default:plans.html.twig" %}
 

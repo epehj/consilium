@@ -13,15 +13,8 @@
 {% block content %}
 
   {% include "AWPlansBundle:Default:tab.html.twig" %}
-    <div class="row">
-      <div class="col-md-5">
-        {% include "AWPlansBundle:Releves:header_infos_site.html.twig" %}
-      </div>
-      <div class="col-md-6 col-md-offset-1">
-      {#infos interventions#}
-        {% include "AWPlansBundle:Releves:header_infos_intervention.html.twig" %}
-      </div>
-  </div>
+  {% include "AWPlansBundle:Default:new_header.html.twig" %}
+
 {#  fixme regarder sur la length des anos#}
 {#{% if commande.commandeST.anomalies is not null%}#}
 <div class="row">

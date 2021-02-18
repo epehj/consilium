@@ -2,6 +2,7 @@
 
 namespace AW\PlansBundle\Controller;
 
+use AW\PlansBundle\Entity\CommandeST;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -255,6 +256,9 @@ class EditController extends Controller
       return $this->redirectToRoute('aw_plans_view', array('id' => $det->getCommande()->getId()));
     }
 
+    //FIXME faire la vérification de l'existence de la commandeST dans la vue plutot ?
+    if($det->getCommande()->getCommandeST() === null)
+        $det->getCommande()->setCommandeST(new CommandeST());
     return $this->render('AWPlansBundle:Edit:det.html.twig', array(
       'form' => $form->createView(),
       'commande' => $det->getCommande()
