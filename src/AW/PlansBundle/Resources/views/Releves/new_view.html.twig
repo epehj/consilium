@@ -16,14 +16,14 @@
   {% include "AWPlansBundle:Default:new_header.html.twig" %}
 
 {#  fixme regarder sur la length des anos#}
-{#{% if commande.commandeST.anomalies is not null%}#}
+{% if commande.commandeST.anomalies is not null and commande.commandeST.anomalies is not empty%}
 <div class="row">
   <div class="col-md-12">
   {% include "AWPlansBundle:Releves:anomalies.html.twig" %}
   </div>
 </div>
+{% endif %}
 
-  {#{% endif %}#}
 {% include "AWPlansBundle:Default:info.html.twig" %}
 
 <div class="row toolbar-pf">

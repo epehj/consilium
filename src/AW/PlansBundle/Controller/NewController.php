@@ -200,6 +200,7 @@ class NewController extends Controller
   {
     $this->denyAccessUnlessGranted('webappli.cmdplan.new');
 
+    // FIXME ajouter les valeurs par defaut pour les champs qui devrait etre nullable=false (validationObligatoireReleveur et cancel au moins)
     $commande = new Commande();
     // valeurs par défaut pour gérer les champs obligatoires
     $commandeST = new CommandeST();

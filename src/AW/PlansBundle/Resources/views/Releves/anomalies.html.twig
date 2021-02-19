@@ -1,7 +1,15 @@
 <div class="row">
-    <div class="panel panel-default">
+    <div class="panel panel-warning">
         <div class="panel-heading clearfix">
             <h3 class="panel-title pull-left">Anomalies</h3>
+        </div>
+        <div class="panel-body">
+            <div class="btn-group">
+                {% for ano in commande.commandeST.anomalies %}
+                    <span class="glyphicon glyphicon-warning-sign"></span> {{ ano.label| e}} <br />
+                </a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

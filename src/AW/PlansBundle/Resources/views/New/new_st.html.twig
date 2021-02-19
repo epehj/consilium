@@ -265,7 +265,10 @@
 </div>
 
 {#  TODO Se debarasser du form_rest(form), qui transmet le token CSRF, et transmettre uniquement le token pour cacher les champs non utilisés#}
-{{ form_rest(form) }}
+  {{ form_row(form._token) }}
+{{ form_row(form.commande.dir) }}
+{#  <pre>{{ form_rest(form) }}</pre>#}
+{#{{ form_rest(form) }}#}
 {{ form_end(form, {'render_rest': false}) }}
 
 <div class="hidden">

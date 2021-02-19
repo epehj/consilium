@@ -222,6 +222,7 @@ class RelevesController extends Controller
 
   public function updateAction(Commande $commande, $status)
   {
+      //FIxME ajouter le passage de la commande en statut ANO si anomalie présente
     switch($status){
       case Commande::RELEVE_STATUS_TERMINE:
         $this->denyAccessUnlessGranted('ADD_RELEVE', $commande);
@@ -564,10 +565,10 @@ class RelevesController extends Controller
 
         $form->handleRequest($request);
         if($request->isMethod('POST') and $form->isValid()) {
-            dump($form->getData());
-            die();
-//            $this->getDoctrine()->getManager()->flush();
-//            return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
+//            dump($form->getData());
+//            die();
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
         return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',
             array(

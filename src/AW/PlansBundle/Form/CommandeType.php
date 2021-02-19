@@ -56,6 +56,7 @@ class CommandeType extends AbstractType
         'label' => 'Ref. Client',
         'required' => false
       ))
+        // TODO remplacer cette partie par l'addresseType
       ->add('site', TextType::class, array(
         'label' => 'Nom du site',
           'required' =>true,
@@ -73,20 +74,20 @@ class CommandeType extends AbstractType
       ->add('town', TextType::class, array(
         'label' => 'Ville'
       ))
-      ->add('releve', ChoiceType::class, array(
-        'label' => 'Relevés plans',
-        'choices' => array(
-          'Oui' => true,
-          'Non' => false
-        )
-      ))
-      ->add('pose', ChoiceType::class, array(
-        'label' => 'Pose plans',
-        'choices' => array(
-          'Oui' => true,
-          'Non' => false
-        )
-      ))
+//      ->add('releve', ChoiceType::class, array(
+//        'label' => 'Relevés plans',
+//        'choices' => array(
+//          'Oui' => true,
+//          'Non' => false
+//        )
+//      ))
+//      ->add('pose', ChoiceType::class, array(
+//        'label' => 'Pose plans',
+//        'choices' => array(
+//          'Oui' => true,
+//          'Non' => false
+//        )
+//      ))
       ->add('remarques', TextareaType::class, array(
         'label' => 'Remarques',
         'required' => false

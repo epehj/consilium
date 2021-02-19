@@ -145,13 +145,13 @@ class CommandeST
 
     /**
      * @var boolean
-     * @ORM\Column(name="validation_obligatoire_releveur", type="boolean", nullable=false)
+     * @ORM\Column(name="validation_obligatoire_releveur", type="boolean", nullable=true)
      */
     protected $validationObligatoireByReleveur;
 
     /**
      * @var boolean
-     * @ORM\Column(name="cancel", type="boolean", nullable=false)
+     * @ORM\Column(name="cancel", type="boolean", nullable=true)
      */
     protected $cancel;
 
@@ -523,7 +523,7 @@ class CommandeST
      */
     public function isValid(ExecutionContextInterface $context)
     {
-        if($this->prestation > 0){
+        if($this->prestation != null){
             switch ($this->prestation){
                 case CommandeST::PRESTA_RELEVE:break;
                     $this->commande->setReleve(true);
