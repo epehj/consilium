@@ -50,12 +50,20 @@
             </td>
           </tr>
           {% endif %}
+{#          je n'utilise pas le commande.status pour ajouter la classe d'ano css, parce qu'il faudrait ajouter un nouveau statut à la commande, et modifier le voter et la sécurity : bcp de taf et je maitrise peu, donc tweak sale ici#}
+          {% if commande.commandeST.anomalies and commande.commandeST.anomalies is not empty %}
+          <tr class="status-ano">
+          {% else %}
           <tr class="status-{{ commande.status }}">
+            {% endif %}
             <td><strong>Statut</strong></td>
             <td>
               {{ commande.statusLabel }}
               {% if commande.releve and not commande.isWaiting %}
                 / {{ commande.releveStatusLabel }}
+              {% if commande.commandeST.anomalies and commande.commandeST.anomalies is not empty  %}
+                / Anomalie
+                {% endif %}
               {% endif %}
               {% if not app.user.societe %}
                 {% if commande.production == 1 %}

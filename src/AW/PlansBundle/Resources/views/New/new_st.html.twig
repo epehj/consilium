@@ -196,7 +196,7 @@
       </div>
     </div>
 
-    <pre>{{ dump(form.commande.listDet) }}</pre>
+{#    <pre>{{ dump(form.commande.listDet) }}</pre>#}
     <div id="listDet" data-prototype="{{ form_row(form.commande.listDet.vars.prototype)|e }}">
       {% for i,formChild in form.commande.listDet %}
       <div class="panel" data-index="{{ i }}">
@@ -266,8 +266,8 @@
 
 {#  TODO Se debarasser du form_rest(form), qui transmet le token CSRF, et transmettre uniquement le token pour cacher les champs non utilisés#}
   {{ form_row(form._token) }}
-{{ form_row(form.commande.dir) }}
-{#  <pre>{{ form_rest(form) }}</pre>#}
+{#  {% if form.commande is not null %}{{ form_row(form.commande.dir) }}{% endif %}#}
+  {{ form_rest(form) }}
 {#{{ form_rest(form) }}#}
 {{ form_end(form, {'render_rest': false}) }}
 

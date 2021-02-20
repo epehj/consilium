@@ -596,16 +596,16 @@ class Commande
      */
     protected $commandeST;
 
-    const STATUS_ATTENTE_VALIDATION	= 0;
+    const STATUS_ATTENTE_VALIDATION	        = 0;
     const STATUS_VALIDATED					= 10;
-    const STATUS_BAT								= 20;
+    const STATUS_BAT						= 20;
     const STATUS_BAT_MODIF					= 30;
-    const STATUS_BAT_VALIDATED			= 40;
-    const STATUS_EN_FABRICATION			= 50;
-    const STATUS_RECEIVED						= 60;
-    const STATUS_EN_EXPEDITION			= 70;
-    const STATUS_CLOSED							= 80;
-    const STATUS_CANCELED						= 90;
+    const STATUS_BAT_VALIDATED		    	= 40;
+    const STATUS_EN_FABRICATION		    	= 50;
+    const STATUS_RECEIVED					= 60;
+    const STATUS_EN_EXPEDITION			    = 70;
+    const STATUS_CLOSED						= 80;
+    const STATUS_CANCELED					= 90;
 
     public static $statusName = array(
       self::STATUS_ATTENTE_VALIDATION => 'En attente de validation',

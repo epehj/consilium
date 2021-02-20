@@ -529,11 +529,11 @@ class CommandeST
                     $this->commande->setReleve(true);
                     $this->commande->setPose(false);
                 case CommandeST::PRESTA_TOTAL:
-                    $commande->setReleve(true);
-                    $commande->setPose(true);
+                    $this->commande->setReleve(true);
+                    $this->commande->setPose(true);
                     break;
                 case CommandeST::PRESTA_POSE:
-                    $commande->setPose(true);
+                    $this->commande->setPose(true);
                     break;
             }
         }

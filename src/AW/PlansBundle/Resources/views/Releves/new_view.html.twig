@@ -30,15 +30,15 @@
   <div class="col-sm-12">
     <div class="toolbar-pf-actions">
       {% if is_granted('ADD_RELEVE', commande) %}
-        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
+{#        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>#}
 
-        <span class="btn btn-primary fileinput-button visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">
-        <i class="glyphicon glyphicon-plus"></i>
-        <span>Ajouter des relevés de plans</span>
-        <input type="file" name="form[files][]" id="fileupload" multiple>
-      </span>
+{#        <span class="btn btn-primary fileinput-button visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block">#}
+{#        <i class="glyphicon glyphicon-plus"></i>#}
+{#        <span>Ajouter des relevés de plans</span>#}
+{#        <input type="file" name="form[files][]" id="fileupload" multiple>#}
+{#      </span>#}
 
-        <a href="{{ path('aw_plans_releves_add_releveur', {id: commande.id}) }}" class="btn btn-success">Affecter un releveur</a>
+{#        <a href="{{ path('aw_plans_releves_add_releveur', {id: commande.id}) }}" class="btn btn-success">Affecter un releveur</a>#}
         <a href="{{ path('aw_plans_releves_termine', {id: commande.id}) }}" class="btn btn-success">Relevé terminé</a>
       {% endif %}
 
@@ -51,7 +51,7 @@
       {% endif %}
 
       {% if is_granted('POSE_DONE', commande) %}
-        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
+{#        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>#}
 
         <a
                 href="{{ path('aw_plans_pose_add_poseur', {id: commande.id}) }}"
@@ -67,13 +67,13 @@
         >Remettre en attente de pose</a>
       {% endif %}
 
-      {% if is_granted('RELEVE_ANOMALIE', commande) %}
-        <a
-                href="{{ path('aw_plans_releves_update', {status: constant('RELEVE_ANOMALIE', commande), id: commande.id}) }}"
-                class="btn btn-danger visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"
-                data-confirm-message="Êtes-vous sûr de vouloir marquer le relevé de cette commande en anomalie ?"
-        >Anomalie</a>
-      {% endif %}
+{#      {% if is_granted('RELEVE_ANOMALIE', commande) %}#}
+{#        <a#}
+{#                href="{{ path('aw_plans_releves_update', {status: constant('RELEVE_ANOMALIE', commande), id: commande.id}) }}"#}
+{#                class="btn btn-danger visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block confirm"#}
+{#                data-confirm-message="Êtes-vous sûr de vouloir marquer le relevé de cette commande en anomalie ?"#}
+{#        >Anomalie</a>#}
+{#      {% endif %}#}
     </div>
   </div>
 </div>
