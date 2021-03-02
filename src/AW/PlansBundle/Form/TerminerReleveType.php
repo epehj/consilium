@@ -72,7 +72,7 @@ class TerminerReleveType extends AbstractType
             'class' => 'AWPlansBundle:TypeBatiment',
             'choice_label' => 'type'
         ))
-        ->add('commande', AggregationCommandeType::class)
+        ->add('commande', AggregationCommandeReleveType::class)
         ->add('acces', TextType::class)
 //        ->add('commande', ContactBatNameType::class)
 

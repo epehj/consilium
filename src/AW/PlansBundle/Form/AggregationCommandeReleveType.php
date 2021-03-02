@@ -11,7 +11,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /** Form qui regroupe toutes les données propres a une commande, que l'on afficher dans la sous commande */
-class AggregationCommandeType extends \Symfony\Component\Form\AbstractType
+class AggregationCommandeReleveType extends \Symfony\Component\Form\AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

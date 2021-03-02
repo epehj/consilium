@@ -54,9 +54,10 @@
 {#        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>#}
 
         <a
-                href="{{ path('aw_plans_pose_add_poseur', {id: commande.id}) }}"
+{#                href="{{ path('aw_plans_pose_add_poseur', {id: commande.id}) }}"#}
+                href="{{ path('aw_plans_pose_termine', {id: commande.id}) }}"
                 class="btn btn-warning visible-xs-block visible-sm-inline-block visible-md-inline-block visible-lg-inline-block"
-        >Affecter un poseur</a>
+        >Pose terminée</a>
       {% endif %}
 
       {% if is_granted('STACK_POSE', commande) %}

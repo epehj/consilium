@@ -19,16 +19,17 @@
       </div>
       <div class="panel-body">
           <div class="panel panel-default">
-              <div class="panel-heading">Relevé OK</div>
-              <div class="panel-body">
+              <div class="panel-heading"><label for="releveCB">Relevé OK </label><input type="checkbox" id="releveCB" /></div>
+              <div class="panel-body collapse" id="releve">
+                  {{ dump(form.commande) }}
                   {{ form_row(form.commande.releveur)}}
                   <input type="text" value="TODO ajouter des releves">
                   {{ form_row(form.validationObligatoireByReleveur)}}
                   {{ form_row(form.remarques) }}
               </div>
 
-              <div class="panel-heading">Anomalies</div>
-              <div class="panel-body">
+              <div class="panel-heading"><label for="anomaliesCB">Anomalies</label><input type="checkbox" id="anomaliesCB" /></div>
+              <div class="panel-body collapse" id="anomalies">
                   {{ form_row(form.anomalies)}}
                   {{ form_row(form.remarqueAno)}}
 {#                  TODO ajouter event : quand click sur btn RDV, selectionner ano «prise de rdv»#}
@@ -41,8 +42,8 @@
                   {% endif %}
               </div>
 
-              <div class="panel-heading">Commande à annuler</div>
-              <div class="panel-body">
+              <div class="panel-heading"><label for="cancelCB">Commande à annuler</label><input type="checkbox" id="cancelCB" /></div>
+              <div class="panel-body collapse" id="cancel">
                   {{ form_row(form.cancel)}}
                   {{ form_row(form.remarqueCancel)}}
               </div>
@@ -99,6 +100,37 @@
 <script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
 <script>
 $(function(){
+    $('input:checkbox').on('change', function(event){
+        //on vérifie que la cb sur laquelle on a cliqué contient bien "CB" dans son id
+        if($(this).attr('id').indexOf('CB') <= -1)
+            return;
+        let divNameFromCheckboxName = $(this).attr('id').substring(0, $(this).attr('id').indexOf('CB'));
+        var source = this;
+
+        //on met la CB sur laquelle on vient de cliquer a vrai
+        $(this).prop('checked', source.checked);
+
+        //et on affiche le div correspondant (desolé, c'est sale mais il est tard la)
+        let divToToggle = $('#' + divNameFromCheckboxName);
+        divToToggle.toggleClass('in');
+
+        if(source.checked){ // si on vient de choisir une CB, on décoche toutes les autres
+            $('input:checkbox').each(function(){
+                if(this != source) {
+                    //on verifie que c'est bien une CB d'un panel id sur laquelle on a cliqué, elle contient "CB" dans l'id (d'autres checkbox sont présentes dans le form)
+                    let idWithNoCBinside = $(this).attr('id').indexOf('CB');
+                    if(idWithNoCBinside > -1)
+                    {
+                        $(this).prop('checked', false);
+                        // on cache si besoin la div précédemment sélectionnée si elle contient la classe in
+                        let otherDivs = $('#' + $(this).attr('id').substring(0, idWithNoCBinside));
+                        if (otherDivs[0].classList.contains('in'))
+                            otherDivs.toggleClass('in');
+                    }
+                }
+            });
+        }
+    });
   $('#aw_plansbundle_commande_releve_note_date_date').datepicker({
     autoclose: true,
     calendarWeeks: true,

@@ -17,13 +17,14 @@
                 {{ commande.societe.name }}
               {% endif %}
             </strong>
-            <p>{{ commande.commandeST.refCommande }} | {{ commande.commandeST.operation }} | {{ commande.commandeST.refBatiment }}</p>
+            <p>Réf : commande n°{{ commande.commandeST.refCommande }} | opération {{ commande.commandeST.operation }} | batiment {{ commande.commandeST.refBatiment }}</p>
           </div>
 
           <div class="col-md-6">
             <address>
-              {{ commande.societe.address1 }}<br />
-              {% if commande.societe.address2 %}{{ commande.societe.address2 }}<br />{% endif %}
+              <b>{{ commande.site }}</b><br />
+              {{ commande.address1 }}<br />
+              {% if commande.address2 %}{{ commande.address2 }}<br />{% endif %}
               {{ commande.societe.zip }} {{ commande.societe.town }}<br />
               {% if commande.societe.country %}{{ commande.societe.country.name }}{% endif %}
             </address>

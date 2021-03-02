@@ -5,6 +5,7 @@ namespace AW\PlansBundle\Controller;
 use AW\PlansBundle\Entity\CommandeST;
 use AW\PlansBundle\Form\AddPoseurType;
 use AW\PlansBundle\Form\AddReleveurType;
+use AW\PlansBundle\Form\TerminerPoseType;
 use AW\PlansBundle\Form\TerminerReleveType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -571,6 +572,24 @@ class RelevesController extends Controller
             return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
         return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',
+            array(
+                'commande' => $commande,
+                'form' => $form->createView()
+            ));
+    }
+
+    public function terminerPoseAction(Request $request, Commande $commande) {
+      $commandeST = $commande->getCommandeST();
+        $form = $this->get('form.factory')->create(TerminerPoseType::class, $commandeST);
+
+        $form->handleRequest($request);
+        if($request->isMethod('POST') and $form->isValid()) {
+//            dump($form->getData());
+//            die();
+            $this->getDoctrine()->getManager()->flush();
+            return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
+        }
+        return $this->render('AWPlansBundle:Releves:terminerPose.html.twig',
             array(
                 'commande' => $commande,
                 'form' => $form->createView()

@@ -85,8 +85,9 @@ aw_plans_releves_add_releveur:
     requirements:
         id: \d+
 
+# //FIXME changer l'url pour accorder l'orthographe…
 aw_plans_releves_termine:
-    path: /end/{id}
+    path: /end/releve/{id}
     defaults:
         _controller: AWPlansBundle:Releves:terminerReleve
     requirements:
@@ -96,5 +97,12 @@ aw_plans_pose_add_poseur:
     path: /add/poseur/{id}
     defaults:
         _controller: AWPlansBundle:Releves:addPoseur
+    requirements:
+        id: \d+
+
+aw_plans_pose_termine:
+    path: /end/pose/{id}
+    defaults:
+        _controller: AWPlansBundle:Releves:terminerPose
     requirements:
         id: \d+
