@@ -50,12 +50,13 @@
             </td>
           </tr>
           {% endif %}
+{#          je vire la couleur spéciale du status, par demande de quentin. Les anos sont simplement affichées dans l'encart + dans le statut#}
 {#          je n'utilise pas le commande.status pour ajouter la classe d'ano css, parce qu'il faudrait ajouter un nouveau statut à la commande, et modifier le voter et la sécurity : bcp de taf et je maitrise peu, donc tweak sale ici#}
-          {% if commande.commandeST.anomalies and commande.commandeST.anomalies is not empty %}
-          <tr class="status-ano">
-          {% else %}
+{#          {% if commande.commandeST.anomalies and commande.commandeST.anomalies is not empty %}#}
+{#          <tr class="status-ano">#}
+{#          {% else %}#}
           <tr class="status-{{ commande.status }}">
-            {% endif %}
+{#            {% endif %}#}
             <td><strong>Statut</strong></td>
             <td>
               {{ commande.statusLabel }}

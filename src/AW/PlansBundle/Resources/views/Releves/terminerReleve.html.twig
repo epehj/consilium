@@ -19,17 +19,17 @@
       </div>
       <div class="panel-body">
           <div class="panel panel-default">
-              <div class="panel-heading"><label for="releveCB">Relevé OK </label><input type="checkbox" id="releveCB" /></div>
+              <div class="panel-heading"><label for="releveCB">Relevé OK </label> <input type="checkbox" style="visibility: hidden;" id="releveCB" /></div>
               <div class="panel-body collapse" id="releve">
-                  {{ dump(form.commande) }}
                   {{ form_row(form.commande.releveur)}}
                   <input type="text" value="TODO ajouter des releves">
                   {{ form_row(form.validationObligatoireByReleveur)}}
                   {{ form_row(form.remarques) }}
               </div>
 
-              <div class="panel-heading"><label for="anomaliesCB">Anomalies</label><input type="checkbox" id="anomaliesCB" /></div>
+              <div class="panel-heading"><label for="anomaliesCB">Anomalies</label> <input type="checkbox" id="anomaliesCB"  style="visibility: hidden;" /></div>
               <div class="panel-body collapse" id="anomalies">
+                  <div class="alert alert-danger hidden" id="aw_plansbundle_terminer_releve_alert">Merci de choisir au moins une anomalie.</div>
                   {{ form_row(form.anomalies)}}
                   {{ form_row(form.remarqueAno)}}
 {#                  TODO ajouter event : quand click sur btn RDV, selectionner ano «prise de rdv»#}
@@ -42,7 +42,7 @@
                   {% endif %}
               </div>
 
-              <div class="panel-heading"><label for="cancelCB">Commande à annuler</label><input type="checkbox" id="cancelCB" /></div>
+              <div class="panel-heading"><label for="cancelCB">Commande à annuler</label> <input type="checkbox" id="cancelCB" style="visibility: hidden;"  /></div>
               <div class="panel-body collapse" id="cancel">
                   {{ form_row(form.cancel)}}
                   {{ form_row(form.remarqueCancel)}}
@@ -80,7 +80,7 @@
           </div>
       <div class="row">
         <a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
-        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="submit" id="aw_plansbundle_terminer_releve_submit" class="btn btn-primary">Enregistrer</button>
       </div>
 
       </div>
@@ -131,6 +131,18 @@ $(function(){
             });
         }
     });
+
+
+    $('#aw_plansbundle_terminer_releve_submit').on('click', function(){
+        //si div anomalies visible, on vérifie qu'au moins une cochée
+        if($('#anomalies').hasClass('in')){
+            if($('#aw_plansbundle_terminer_releve_anomalies input:checkbox:checked').length < 1){
+                    $('#aw_plansbundle_terminer_releve_alert').toggleClass('hidden');
+                return false;
+            }
+        }
+    });
+
   $('#aw_plansbundle_commande_releve_note_date_date').datepicker({
     autoclose: true,
     calendarWeeks: true,

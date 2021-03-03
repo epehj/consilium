@@ -7,6 +7,7 @@ use AW\PlansBundle\Form\AddPoseurType;
 use AW\PlansBundle\Form\AddReleveurType;
 use AW\PlansBundle\Form\TerminerPoseType;
 use AW\PlansBundle\Form\TerminerReleveType;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -562,13 +563,18 @@ class RelevesController extends Controller
 
     public function terminerReleveAction(Request $request, Commande $commande) {
       $commandeST = $commande->getCommandeST();
+      //RAZ des ano s'il en existait d'anciennes (demande de Quentin)
+        $commandeST->getAnomalies()->clear();
         $form = $this->get('form.factory')->create(TerminerReleveType::class, $commandeST);
 
         $form->handleRequest($request);
         if($request->isMethod('POST') and $form->isValid()) {
 //            dump($form->getData());
 //            die();
+            // on enregistre les modifs s'il y a, puis si des anos sont existantes, on redirige vers la vue, sans changer le statut
             $this->getDoctrine()->getManager()->flush();
+            if($commandeST->getAnomalies()->count() > 0)
+                return $this->redirectToRoute('aw_plans_releves_view', array('id'=>$commande->getId()));
             return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
         return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',
