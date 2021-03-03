@@ -42,6 +42,13 @@ class Anomalie
      */
     protected $commandes;
 
+    //le type d'ano : ano de pose (0) ou de releve (1)
+    /**
+     * @var var boolean
+     * @ORM\Column(name="isAnoPose", type="boolean")
+     */
+    protected $anoPose;
+
     /**
      * @return int
      */
@@ -81,5 +88,22 @@ class Anomalie
     {
         $this->commandes = $commandes;
     }
+
+    /**
+     * @return var
+     */
+    public function getAnoPose()
+    {
+        return $this->anoPose;
+    }
+
+    /**
+     * @param var $anoPose
+     */
+    public function setAnoPose($anoPose)
+    {
+        $this->anoPose = $anoPose;
+    }
+
 
 }

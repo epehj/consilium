@@ -41,8 +41,8 @@ class TerminerReleveType extends AbstractType
             )
         ))
         //le field remarques vient de la commande
-        ->add('remarques', TextareaType::class, array(
-            'label' => 'Remarques',
+        ->add('remarques', TextType::class, array(
+            'label' => 'Remarque',
             'required' => false
         ))
         ->add('anomalies', EntityType::class, array(
@@ -73,7 +73,9 @@ class TerminerReleveType extends AbstractType
             'choice_label' => 'type'
         ))
         ->add('commande', AggregationCommandeReleveType::class)
-        ->add('acces', TextType::class)
+        ->add('acces', TextType::class, array(
+            'required' => false
+        ))
 //        ->add('commande', ContactBatNameType::class)
 
     ;
