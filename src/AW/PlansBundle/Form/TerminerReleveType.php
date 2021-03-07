@@ -48,6 +48,9 @@ class TerminerReleveType extends AbstractType
         ->add('anomalies', EntityType::class, array(
             'class' => 'AWPlansBundle:Anomalie',
             'choice_label' => 'label',
+            'query_builder' => function(AnomalieRepository $repo) {
+                return $repo->getAnomaliesReleve();
+            },
             'multiple' => true,
             'expanded' => true,
         ))

@@ -40,7 +40,7 @@ class TerminerPoseType extends AbstractType
                 'class' => 'AWPlansBundle:Anomalie',
                 'choice_label' => 'label',
                 'query_builder' => function(AnomalieRepository $em) {
-                    $em->findBy(array('anoPose' => true));
+                    return $em->getAnomaliesPose();
                 },
                 'multiple' => true,
                 'expanded' => true,
@@ -49,25 +49,27 @@ class TerminerPoseType extends AbstractType
                 'label' => 'Remarque',
                 'required' => false
             ))
-            ->add('remarqueCancel', TextType::class, array(
-                'label' => 'Explication',
-                'required' => false
-            ))
-            ->add('cancel', ChoiceType::class, array(
-                'label' => 'Annuler la commande ?',
-                'choices' => array(
-                    'Oui' => true,
-                    'Non' => false
-                ),
-//            'expanded' => true
-            ))
             ->add('typeBatiment', EntityType::class, array(
                 'label' => 'Type de bat.',
                 'class' => 'AWPlansBundle:TypeBatiment',
                 'choice_label' => 'type'
             ))
             ->add('commande', AggregationCommandePoseType::class)
-            ->add('acces', TextType::class)
+            ->add('acces', TextType::class, array(
+                'required' => false
+            ))
+            ->add('inaccessible', ChoiceType::class, array(
+                'label'=> 'Le lieu était il inaccessible ?',
+                'required' => false,
+                'choices' => array(
+                    'Oui' => true,
+                    'Non' => false
+                )
+            ))
+            ->add('remarqueInaccessible', TextType::class, array(
+                'label' => 'Remarque',
+                'required' => false
+            ))
 //        ->add('commande', ContactBatNameType::class)
 
         ;
@@ -89,6 +91,6 @@ class TerminerPoseType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return 'aw_plansbundle_terminer_releve';
+        return 'aw_plansbundle_terminer_pose';
     }
 }

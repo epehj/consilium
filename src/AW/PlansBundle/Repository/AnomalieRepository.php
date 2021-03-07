@@ -14,4 +14,12 @@ class AnomalieRepository extends \Doctrine\ORM\EntityRepository
 //        return $this->findOneBy(array('id' => $id));
     }
 
+    public function getAnomaliesPose(){
+        return $this->getQueryBuilder()->where('a.anoPose = true');
+    }
+
+    public function getAnomaliesReleve(){
+        return $this->getQueryBuilder()->where('a.anoPose = false');
+    }
+
 }

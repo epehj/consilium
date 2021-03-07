@@ -80,7 +80,7 @@
           </div>
       <div class="row">
         <a href="{{ path('aw_plans_releves_view', {id: commande.id}) }}" class="btn btn-default">Annuler</a>
-        <button type="submit" id="aw_plansbundle_terminer_releve_submit" class="btn btn-primary">Enregistrer</button>
+        <button type="submit" id="aw_plansbundle_terminer_releve_submit" disable="true" class="btn btn-primary">Enregistrer</button>
       </div>
 
       </div>
@@ -109,6 +109,8 @@ $(function(){
 
         //on met la CB sur laquelle on vient de cliquer a vrai
         $(this).prop('checked', source.checked);
+        // on active le bouton submit, c'est juste une mini protection, à revoir
+        $('#aw_plansbundle_terminer_releve_submit').prop('disabled', false);
 
         //et on affiche le div correspondant (desolé, c'est sale mais il est tard la)
         let divToToggle = $('#' + divNameFromCheckboxName);

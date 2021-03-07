@@ -16,7 +16,23 @@
   {% include "AWPlansBundle:Default:new_header.html.twig" %}
 
 {#  fixme regarder sur la length des anos#}
-{% if commande.commandeST.anomalies is not null and commande.commandeST.anomalies is not empty%}
+{% if commande.commandeST.inaccessible%}
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="panel panel-danger ">
+        <div class="panel-heading clearfix">
+          <h3 class="panel-title pull-left">Anomalies - Pose en attente</h3>
+        </div>
+        <div class="panel-body">
+              <span class="glyphicon glyphicon-warning-sign"></span>{{ commande.commandeST.remarqueInaccessible }}<br />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+  {% if commande.commandeST.anomalies is not null and commande.commandeST.anomalies is not empty%}
 <div class="row">
   <div class="col-md-12">
   {% include "AWPlansBundle:Releves:anomalies.html.twig" %}
@@ -49,7 +65,6 @@
                 data-confirm-message="Êtes-vous sûr de vouloir remettre cette commande en attente de relevé de plans ?"
         >Remettre en attente de relevé de plans</a>
       {% endif %}
-
       {% if is_granted('POSE_DONE', commande) %}
 {#        <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>#}
 

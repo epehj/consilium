@@ -584,16 +584,27 @@ class RelevesController extends Controller
             ));
     }
 
-    public function terminerPoseAction(Request $request, Commande $commande) {
-      $commandeST = $commande->getCommandeST();
+    public function terminerPoseAction(Request $request, Commande $commande)
+    {
+        $commandeST = $commande->getCommandeST();
+        // on RAZ les valeurs pour remettre "par defaut" (demande de Quentin)
+        $commandeST->getAnomalies()->clear();
+        $commandeST->setInaccessible(false);
+
         $form = $this->get('form.factory')->create(TerminerPoseType::class, $commandeST);
 
         $form->handleRequest($request);
-        if($request->isMethod('POST') and $form->isValid()) {
-//            dump($form->getData());
-//            die();
+        if ($request->isMethod('POST') and $form->isValid()) {
             $this->getDoctrine()->getManager()->flush();
-            return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
+            if ($commandeST->getAnomalies()->count() == 0 && !$commandeST->isInaccessible())
+                return $this->redirectToRoute('aw_plans_pose_end', array('id' => $commande->getId()));
+            else {
+                if ($commandeST->getAnomalies()->count() > 0) {
+                    $commande->updateStatus($this->getUser(), Commande::STATUS_BAT);
+                }
+                $this->getDoctrine()->getManager()->flush();
+                return $this->redirectToRoute('aw_plans_releves_view', array('id' => $commande->getId()));
+            }
         }
         return $this->render('AWPlansBundle:Releves:terminerPose.html.twig',
             array(

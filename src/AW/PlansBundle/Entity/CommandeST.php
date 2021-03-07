@@ -166,6 +166,18 @@ class CommandeST
      */
     protected $remarqueAno;
 
+    /**
+     * @var string
+     * @ORM\Column(name="remarque_incacessible", type="string", nullable=true)
+     */
+    protected $remarqueInaccessible;
+
+    /**
+     * @var var boolean
+     * @ORM\Column(name="inaccessible", type="boolean", nullable=true)
+     */
+    protected $inaccessible;
+
     const NONE                          = 0;
     const RELEVE_PLANS_DISPO            = 10;
     const VALIDATION_OBLIG              = 20;
@@ -173,6 +185,38 @@ class CommandeST
     const PRESTA_RELEVE                        = 'STR - Relevé';
     const PRESTA_POSE                          = 'STP - Pose';
     const PRESTA_TOTAL                         = 'STT - Total';
+
+    /**
+     * @return string
+     */
+    public function getRemarqueInaccessible()
+    {
+        return $this->remarqueInaccessible;
+    }
+
+    /**
+     * @param string $remarqueInaccessible
+     */
+    public function setRemarqueInaccessible($remarqueInaccessible)
+    {
+        $this->remarqueInaccessible = $remarqueInaccessible;
+    }
+
+    /**
+     * @return var
+     */
+    public function isInaccessible()
+    {
+        return $this->inaccessible;
+    }
+
+    /**
+     * @param var $inaccessible
+     */
+    public function setInaccessible($inaccessible)
+    {
+        $this->inaccessible = $inaccessible;
+    }
 
     /**
      * @return string
