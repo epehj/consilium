@@ -13,6 +13,20 @@ services:
         tags:
             - { name: form.type }
 
+    aw_plans.form.aggregation_commande_releve_type:
+        class: AW\PlansBundle\Form\AggregationCommandeReleveType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
+    aw_plans.form.aggregation_commande_pose_type:
+        class: AW\PlansBundle\Form\AggregationCommandePoseType
+        arguments:
+            - "@security.token_storage"
+        tags:
+            - { name: form.type }
+
     aw_plans.form.terminer_releve_type:
         class: AW\PlansBundle\Form\TerminerReleveType
         arguments:
