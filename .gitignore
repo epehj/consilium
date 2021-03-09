@@ -4,3 +4,13 @@ vendor/
 var/
 
 web/
+node_modules
+.idea
+bin/
+/documents/
+
+sql/
+
+consilium.iml
+
+app/config/parameters.yml
