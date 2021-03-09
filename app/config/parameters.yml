@@ -3,15 +3,15 @@ parameters:
     database_host: localhost
     database_port: null
     database_name: dolibarr
-    database_user: dolibarr
-    database_password: nA844tvlfEjKQ5ud
+    database_user: phpmyadmin
+    database_password: root
     mailer_transport: smtp
     mailer_host: ssl0.ovh.net
     mailer_port: 587
     mailer_user: plan@consilium-plan.fr
     mailer_password: cg9K2uR7g
     mailer_encryption: tls
-    documents_dir: /home/www/wp.consilium-plan.fr/documents
+    documents_dir: /home/epehj/public_html/consilium/documents
     doli_url: 'https://plan.consilium-plan.fr'
     doli_documents_dir: /home/www/plan.consilium-plan.fr/documents
     doli_api_url: 'https://plan.consilium-plan.fr/api/index.php'
@@ -26,8 +26,10 @@ parameters:
         - 30
         - 32
         - 31
-    google_public_api_key: AIzaSyC-IpQ5UBeLwepQfH4C2KwB_r9Vwdk59nc
-    google_private_api_key: AIzaSyDXRRUyTAfR1UFlkGsWImxzhQ9mqIm5TNo
+    google_public_api_key: AIzaSyAAM4P_WWYKGOdVZ6dPKgKGKeA9vNb46pg
+    google_private_api_key: AIzaSyAAM4P_WWYKGOdVZ6dPKgKGKeA9vNb46pg
+#    AIzaSyAAM4P_WWYKGOdVZ6dPKgKGKeA9vNb46pg cle perso mas
+#    AIzaSyCYY4-OMCHuOKsA1ObnsLhGw7fOkUFm8Xs cle consilium
     exchange_host: null
     exchange_plans_username: null
     exchange_plans_password: null
