@@ -6,6 +6,7 @@ namespace AW\PlansBundle\Form;
 
 use AW\DoliBundle\Repository\UserRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -48,6 +49,11 @@ class AggregationCommandePoseType extends \Symfony\Component\Form\AbstractType
                 'choice_label' => function($user){
                     return $user->getFullName().' <'.$user->getEmail().'>';
                 }
+            ))
+            //le field remarques vient de la commande
+            ->add('remarques', TextareaType::class, array(
+                'label' => 'Remarques',
+                'required' => false
             ))
             ;
 
