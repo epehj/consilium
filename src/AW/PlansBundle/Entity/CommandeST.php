@@ -266,13 +266,13 @@ class CommandeST
         $this->remarqueAno = $remarqueAno;
     }
 
-    public function getRemarques(){
-        return $this->commande->getRemarques();
-    }
-
-    public function setRemarques($remarques){
-        return $this->commande->setRemarques($remarques);
-    }
+//    public function getRemarques(){
+//        return $this->commande->getRemarques();
+//    }
+//
+//    public function setRemarques($remarques){
+//        return $this->commande->setRemarques($remarques);
+//    }
 
     public function __construct()
     {

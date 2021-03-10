@@ -562,7 +562,9 @@ class RelevesController extends Controller
 
 
     public function terminerReleveAction(Request $request, Commande $commande) {
-      $commandeST = $commande->getCommandeST();
+        if( $commande->getCommandeST() == null)
+            $commande->setCommandeST(new CommandeST());
+        $commandeST = $commande->getCommandeST();
       //RAZ des ano s'il en existait d'anciennes (demande de Quentin)
         $commandeST->getAnomalies()->clear();
         $form = $this->get('form.factory')->create(TerminerReleveType::class, $commandeST);
@@ -586,6 +588,9 @@ class RelevesController extends Controller
 
     public function terminerPoseAction(Request $request, Commande $commande)
     {
+        //pour gerer les anciennes commandes qui n'étaient pas liées à une commande ST
+        if( $commande->getCommandeST() == null)
+            $commande->setCommandeST(new CommandeST());
         $commandeST = $commande->getCommandeST();
         // on RAZ les valeurs pour remettre "par defaut" (demande de Quentin)
         $commandeST->getAnomalies()->clear();

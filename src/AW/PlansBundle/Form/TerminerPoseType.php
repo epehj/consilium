@@ -31,11 +31,11 @@ class TerminerPoseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            //le field remarques vient de la commande
-            ->add('remarques', TextareaType::class, array(
-                'label' => 'Remarques',
-                'required' => false
-            ))
+//            //le field remarques vient de la commande
+//            ->add('remarques', TextareaType::class, array(
+//                'label' => 'Remarques',
+//                'required' => false
+//            ))
             ->add('anomalies', EntityType::class, array(
                 'class' => 'AWPlansBundle:Anomalie',
                 'choice_label' => 'label',

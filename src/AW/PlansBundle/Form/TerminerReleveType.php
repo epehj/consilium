@@ -41,10 +41,10 @@ class TerminerReleveType extends AbstractType
             )
         ))
         //le field remarques vient de la commande
-        ->add('remarques', TextType::class, array(
-            'label' => 'Remarque',
-            'required' => false
-        ))
+//        ->add('remarques', TextType::class, array(
+//            'label' => 'Remarque',
+//            'required' => false
+//        ))
         ->add('anomalies', EntityType::class, array(
             'class' => 'AWPlansBundle:Anomalie',
             'choice_label' => 'label',
