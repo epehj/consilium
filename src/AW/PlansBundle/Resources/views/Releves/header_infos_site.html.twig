@@ -20,12 +20,13 @@
             <p>Réf : commande n°{{ commande.commandeST.refCommande }} | opération {{ commande.commandeST.operation }} | batiment {{ commande.commandeST.refBatiment }}</p>
           </div>
 
+{#          FIXME a tester avec les sociétes, qui ne doivent pas afficher les bonnes coordonnées en l'état#}
           <div class="col-md-6">
             <address>
               <b>{{ commande.site }}</b><br />
               {{ commande.address1 }}<br />
               {% if commande.address2 %}{{ commande.address2 }}<br />{% endif %}
-              {{ commande.societe.zip }} {{ commande.societe.town }}<br />
+              {{ commande.zip }} {{ commande.town }}<br />
               {% if commande.societe.country %}{{ commande.societe.country.name }}{% endif %}
             </address>
           </div>
