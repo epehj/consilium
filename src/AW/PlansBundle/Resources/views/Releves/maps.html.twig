@@ -72,6 +72,9 @@ function initMap(){
         {% endfor %}
         {% endif %}
       ],
+      {% if commande.commandeST is not null and commande.commandeST.remarqueAno %}
+      remarqueAno: '{{ commande.commandeST.remarqueAno}}',
+      {% endif %}
       url: '{{ path('aw_plans_releves_view', {id: commande.id}) }}',
       status: {{ commande.releveStatus }},
       position: {{ commande.geoCode | json_encode(constant('JSON_PRETTY_PRINT')) | raw }}
@@ -94,6 +97,7 @@ function initMap(){
       for(i = 0; i<site.anomalies.length; i++) {
         contenuAno += '<span class="glyphicon glyphicon-warning-sign"></span>'+site.anomalies[i].label+'<br />';
       }
+      if(site.remarqueAno) contenuAno += site.remarqueAno + '<br />';
 
       var content = '<div id="content">'
         + '<div id="siteNotice"></div>'

@@ -37,7 +37,6 @@ class GeoCodingCommand extends ContainerAwareCommand
       ->getRepository('AWPlansBundle:Commande')
       ->findEmptyGeoCode()
     ;
-
     foreach($commandes as $commande){
       $address = $commande->getAddress1().', '.$commande->getZip().' '.$commande->getTown().', France';
       $url = 'https://maps.googleapis.com/maps/api/geocode/json?address='.urlencode($address).'&key='.$this->getContainer()->getParameter('google_private_api_key');

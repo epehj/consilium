@@ -343,12 +343,12 @@ $(function(){
       ;
     },
     updater: function(item){
-      if($(this.$element[0]).attr('id') == 'aw_plansbundle_commande_st_address1'){
-        $('#aw_plansbundle_commande_st_zip').val(item.zip);
-        $('#aw_plansbundle_commande_st_town').val(item.town);
+      if($(this.$element[0]).attr('id') == 'aw_plansbundle_commande_st_commande_address1'){
+        $('#aw_plansbundle_commande_st_commande_zip').val(item.zip);
+        $('#aw_plansbundle_commande_st_commande_town').val(item.town);
       }else{
-        $('#aw_plansbundle_commande_st_shippingZip').val(item.zip);
-        $('#aw_plansbundle_commande_st_shippingTown').val(item.town);
+        $('#aw_plansbundle_commande_st_commande_shippingZip').val(item.zip);
+        $('#aw_plansbundle_commande_st_commande_shippingTown').val(item.town);
       }
 
       return item.address;
