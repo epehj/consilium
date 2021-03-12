@@ -47,17 +47,6 @@ function initMap(){
 
   var infoWindow = new google.maps.InfoWindow;
 
-  {#// impossible d'utiliser le for twig dans la génération du code google map, obligé de faire ça a part#}
-  {#{% for commande in commandes if commande.geoCode %}#}
-  {#  {% if commande.commandeST is not null and commande.commandeST.anomalies is not null and commande.commandeST.anomalies is not empty %}#}
-  {#  var anos = [];#}
-  {#    {% for a in commande.commandeST.anomalies %}#}
-  {#    var ano = {label: {{ a.label }}};#}
-  {#    anos.push(ano);#}
-  {#    {% endfor %}#}
-  {#  {% endif %}#}
-  {#{% endfor %}#}
-
   var sites = [
   {% for commande in commandes if commande.geoCode %}
     {
@@ -69,8 +58,8 @@ function initMap(){
       {% if commande.releveur is not null
         and commande.poseur is not null
       %}
-      releveur: '{{ commande.releveur  }}',
-      poseur: '{{ commande.poseur }}',
+      releveur: '{{ commande.releveur.fullName  }}',
+      poseur: '{{ commande.poseur.fullName }}',
       {% endif %}
       {% if commande.commandeST is not null%}
       urlInfosSite: '{{ commande.commandeST.urlInfosSite }}',
@@ -96,7 +85,8 @@ function initMap(){
       title: site.name,
       // label: site.status == 0 ? 'R' : 'P', // R = Relevé ou P = Pose // label pas forcement utile, ca rend l'icone moins lisible
       // TODO ajouter les anomalies dans les markers
-      icon: site.status == 0 ? (site.anomalies.length > 0 ? 'http://epehj.com/maps_icon/pin_r_ano.png' : 'http://epehj.com/maps_icon/pin_r.png' ) : (site.anomalie > 0 ? 'http://epehj.com/maps_icon/pin_p_ano.png': 'http://epehj.com/maps_icon/pin_p.png')
+      icon: site.status == 0 ? (site.anomalies.length > 0 ? 'http://epehj.com/maps_icon/pin_r_ano.png' : 'http://epehj.com/maps_icon/pin_r.png' ) : (site.anomalie > 0 ? 'http://epehj.com/maps_icon/pin_p_ano.png': 'http://epehj.com/maps_icon/pin_p.png'),
+      map: map
     });
 
     marker.addListener('click', function(){
@@ -123,10 +113,12 @@ function initMap(){
 
     return marker;
   });
+  console.log(markers.length);
+  console.log(sites.length);
 
-  var markerCluster = new MarkerClusterer(map, markers,
-    {imagePath: "{{ asset('libs/markerclusterer/images/m') }}"}
-  );
+  {#var markerCluster = new MarkerClusterer(map, markers,#}
+  {#  {imagePath: "{{ asset('libs/markerclusterer/images/m') }}"}#}
+  {#);#}
 }
 </script>
 <script src="{{ asset('libs/markerclusterer/markerclusterer.js') }}"></script>
