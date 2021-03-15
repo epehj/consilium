@@ -10,7 +10,13 @@
                 Contact 2 : {{ commande.commandeST.contact2 }}
                 </p>
                 Accès : {{ commande.commandeST.acces }} <br />
-                Remarques : {{ commande.remarques }}
+                Remarques : {{ commande.remarques }} <br />
+                {% if commande.commandeST is not null and commande.commandeST.urgence %}
+                    A réaliser avant le {{ commande.commandeST.urgence }}
+                {% endif %}
+                {% if commande.commandeST is not null and commande.commandeST.commentaire %}
+                    Infos supplémentaires : {{ commande.commandeST.commentaire }}
+                {% endif %}
             </div>
         </div>
     </div>

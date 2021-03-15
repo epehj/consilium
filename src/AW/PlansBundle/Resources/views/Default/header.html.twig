@@ -106,7 +106,10 @@
           <strong>Remarques :</strong><br>
           {{ commande.remarques | nl2br }}
           {% if commande.commandeST is not null and commande.commandeST.remarqueCancel is not empty %}
-            {{ commande.commandeST.remarqueCancel }}
+            {{ commande.commandeST.remarqueCancel | nl2br }}
+          {% endif %}
+          {% if commande.commandeST is not null and commande.commandeST.validationObligatoireByReleveur%}
+            <p>Attention : la validation par le releveur est obligatoire</p>
           {% endif %}
         </p>
 

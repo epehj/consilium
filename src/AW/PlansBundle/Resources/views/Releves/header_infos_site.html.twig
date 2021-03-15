@@ -17,7 +17,13 @@
                 {{ commande.societe.name }}
               {% endif %}
             </strong>
-            <p>Réf : commande n°{{ commande.commandeST.refCommande }} | opération {{ commande.commandeST.operation }} | batiment {{ commande.commandeST.refBatiment }}</p>
+            {% if commande.commandeST is not null %}
+            <p>
+              {% if commande.commandeST.refCommande is not null %}Réf : commande n°{{ commande.commandeST.refCommande }} {% endif %}
+              {% if commande.commandeST.refCommande is not null %} | opération {{ commande.commandeST.operation }} {% endif %}
+              {% if commande.commandeST.refCommande is not null %}| batiment {{ commande.commandeST.refBatiment }} {% endif %}
+            </p>
+            {% endif %}
           </div>
 
 {#          FIXME a tester avec les sociétes, qui ne doivent pas afficher les bonnes coordonnées en l'état#}
