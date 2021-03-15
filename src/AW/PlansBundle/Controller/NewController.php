@@ -207,6 +207,7 @@ class NewController extends Controller
     $commandeST->setCommande($commande);
     $commande->setCommandeST($commandeST);
     $commandeST->setInfosComplementaires(CommandeST::NONE);
+    $commandeST->setCancel(false);
 
     if($societe){
       $commande->setSociete($societe);

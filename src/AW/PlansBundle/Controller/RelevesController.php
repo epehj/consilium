@@ -573,6 +573,7 @@ class RelevesController extends Controller
         if($request->isMethod('POST') and $form->isValid()) {
             // on enregistre les modifs s'il y a, puis si des anos sont existantes, on redirige vers la vue, sans changer le statut
             $this->getDoctrine()->getManager()->flush();
+            // la commande st est créée par defaut avec un cancel a true, erreur a corriger
             if($commandeST->getAnomalies()->count() > 0 && !$commandeST->isCancel())
                 return $this->redirectToRoute('aw_plans_releves_view', array('id'=>$commande->getId()));
             else { // commande a annuler
