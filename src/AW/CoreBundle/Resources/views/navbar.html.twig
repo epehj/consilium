@@ -130,11 +130,11 @@
             <a href="{{ path('aw_plans_list') }}">Liste</a>
           </li>
 
-          {% if is_granted('webappli.cmdplan.new') %}
-          <li>
-            <a href="{{ path('aw_plans_new') }}">Nouvelle commande</a>
-          </li>
-          {% endif %}
+{#          {% if is_granted('webappli.cmdplan.new') %}#}
+{#          <li>#}
+{#            <a href="{{ path('aw_plans_new') }}">Nouvelle commande</a>#}
+{#          </li>#}
+{#          {% endif %}#}
 
           {% if is_granted('webappli.cmdplan.see_facturation') %}
           <li>
