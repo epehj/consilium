@@ -571,12 +571,14 @@ class RelevesController extends Controller
 
         $form->handleRequest($request);
         if($request->isMethod('POST') and $form->isValid()) {
-//            dump($form->getData());
-//            die();
             // on enregistre les modifs s'il y a, puis si des anos sont existantes, on redirige vers la vue, sans changer le statut
             $this->getDoctrine()->getManager()->flush();
-            if($commandeST->getAnomalies()->count() > 0)
+            if($commandeST->getAnomalies()->count() > 0 && !$commandeST->isCancel())
                 return $this->redirectToRoute('aw_plans_releves_view', array('id'=>$commande->getId()));
+            else { // commande a annuler
+                $commande->updateStatus($this->getUser(), Commande::STATUS_CANCELED);
+                $this->getDoctrine()->getManager()->flush();
+            }
             return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
         return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',

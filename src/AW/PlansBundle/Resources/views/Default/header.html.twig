@@ -105,6 +105,9 @@
         <p>
           <strong>Remarques :</strong><br>
           {{ commande.remarques | nl2br }}
+          {% if commande.commandeST is not null and commande.commandeST.remarqueCancel is not empty %}
+            {{ commande.commandeST.remarqueCancel }}
+          {% endif %}
         </p>
 
         {% if commande.contactBATName %}
