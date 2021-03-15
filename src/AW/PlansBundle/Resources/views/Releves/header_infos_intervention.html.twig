@@ -7,7 +7,8 @@
             <div>
                 <p id="infosInterventions">
                     <strong><span class="pull-left"> Contact 1 : {{ commande.commandeST.contact1 }}</span> <span class="pull-right">Client Final : {{  commande.commandeST.clientFinal }}</span> </strong><br />
-                Contact 2 : {{ commande.commandeST.contact2 }}
+                Contact 2 : {{ commande.commandeST.contact2 }}<br />
+                {% if commande.contactModification %}Contact Modifé : {{ commande.contactModification }}{% endif %}
                 </p>
                 Accès : {{ commande.commandeST.acces }} <br />
                 Remarques : {{ commande.remarques }} <br />
