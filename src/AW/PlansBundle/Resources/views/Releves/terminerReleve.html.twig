@@ -32,14 +32,6 @@
                   <div class="alert alert-danger hidden" id="aw_plansbundle_terminer_releve_alert">Merci de choisir au moins une anomalie.</div>
                   {{ form_row(form.anomalies)}}
                   {{ form_row(form.remarqueAno)}}
-{#                  TODO ajouter event : quand click sur btn RDV, selectionner ano «prise de rdv»#}
-                  {% if is_granted('ADD_RELEVE', commande) %}
-                      <div class="row">
-                          <div class="col-md-offset-2">
-                            <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
-                          </div>
-                      </div>
-                  {% endif %}
               </div>
 
               <div class="panel-heading"><label for="cancelCB">Commande à annuler</label> <input type="checkbox" id="cancelCB" style="visibility: hidden;"  /></div>
