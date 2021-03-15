@@ -37,14 +37,6 @@
               <div class="panel-body collapse" id="inaccessible">
                   {{ form_row(form.inaccessible)}}
                   {{ form_row(form.remarqueInaccessible)}}
-                  {#                  TODO ajouter event : quand click sur btn RDV, selectionner ano «prise de rdv»#}
-                  {% if is_granted('POSE_DONE', commande) %}
-                      <div class="row">
-                          <div class="col-md-offset-2">
-                              <a href="{{ path('aw_plans_releves_add_rdv', {id: commande.id}) }}" class="btn btn-success">Noter le rendez-vous</a>
-                          </div>
-                      </div>
-                  {% endif %}
               </div>
 
               <div class="panel-heading"><label>Modifications</label></div>
