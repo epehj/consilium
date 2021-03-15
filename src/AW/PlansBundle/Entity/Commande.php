@@ -595,6 +595,13 @@ class Commande
      */
     protected $commandeST;
 
+    /**
+     * var String
+     *
+     * @ORM\Column(name="contactModification", type="string", nullable=true)
+     */
+    protected $contactModification;
+
     const STATUS_ATTENTE_VALIDATION	        = 0;
     const STATUS_VALIDATED					= 10;
     const STATUS_BAT						= 20;
@@ -632,6 +639,22 @@ class Commande
       self::POSE_STATUS_TERMINE       => 'Pose terminé',
       self::RELEVE_ANOMALIE           => 'Anomalie'
     );
+
+    /**
+     * @return mixed
+     */
+    public function getContactModification()
+    {
+        return $this->contactModification;
+    }
+
+    /**
+     * @param mixed $contactModification
+     */
+    public function setContactModification($contactModification)
+    {
+        $this->contactModification = $contactModification;
+    }
 
     /**
      * @return User
