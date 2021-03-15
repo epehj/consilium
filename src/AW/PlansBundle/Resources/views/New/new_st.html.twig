@@ -270,7 +270,6 @@
   {{ form_rest(form) }}
 {#{{ form_rest(form) }}#}
 {{ form_end(form, {'render_rest': false}) }}
-
 <div class="hidden">
   <input type="file" name="form[logo]" id="logoupload">
   <input type="file" name="form[files][]" id="relevesupload" multiple>
@@ -367,9 +366,9 @@ $(function(){
   });
 
   $('#logoupload').fileupload({
-    url: "{{ path('aw_plans_new_st_upload', {type: 'logo'}) }}",
+    url: "{{ path('aw_plans_new_upload', {type: 'logo'}) }}",
     dataType: 'json',
-    formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
+    formData: {'form[dir]': '{% if form.children.commande.dir is defined %}{{ form.children.commande.dir.vars.value }}{% endif %}'},
     add: function(e, data){
       $('#addlogo img').attr('src', '{{ asset('img/ajax-loader.gif') }}');
       $('.logo-error').addClass('hidden');
@@ -386,9 +385,9 @@ $(function(){
 
   // fixme ajouter l'upload dans le bon dossier
   $('#relevesupload').fileupload({
-    url: "{{ path('aw_plans_new_st_upload', {type: 'releves'}) }}",
+    url: "{{ path('aw_plans_new_upload', {type: 'releves'}) }}",
     dataType: 'json',
-    formData: {'form[dir]': '{% if form.dir is defined %}{{ form.children.dir.vars.value }}{% endif %}'},
+    formData: {'form[dir]': '{% if form.children.commande.dir is defined %}{{ form.children.commande.dir.vars.value }}{% endif %}'} ,
     add: function(e, data){
       data.context = [];
       $.each(data.files, function(index, file){
