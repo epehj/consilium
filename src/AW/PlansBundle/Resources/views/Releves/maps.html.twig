@@ -88,14 +88,14 @@ function initMap(){
       title: site.name,
       // label: site.status == 0 ? 'R' : 'P', // R = Relevé ou P = Pose // label pas forcement utile, ca rend l'icone moins lisible
       // TODO ajouter les anomalies dans les markers
-      icon: site.status == 0 ? (site.anomalies.length > 0 ? 'http://epehj.com/maps_icon/pin_r_ano.png' : 'http://epehj.com/maps_icon/pin_r.png' ) : (site.anomalie > 0 ? 'http://epehj.com/maps_icon/pin_p_ano.png': 'http://epehj.com/maps_icon/pin_p.png'),
+      icon: site.status == 0 ? (site.anomalies.length > 0 ? 'http://epehj.com/maps_icon/pin_r_ano.png' : 'http://epehj.com/maps_icon/pin_r.png' ) : (site.anomalies.length > 0 ? 'http://epehj.com/maps_icon/pin_p_ano.png': 'http://epehj.com/maps_icon/pin_p.png'),
       map: map
     });
 
     marker.addListener('click', function(){
       var contenuAno = '';
       for(i = 0; i<site.anomalies.length; i++) {
-        contenuAno += '<span class="glyphicon glyphicon-warning-sign"></span>'+site.anomalies[i].label+'<br />';
+        contenuAno += '<span class="glyphicon glyphicon-warning-sign"> '+site.anomalies[i].label+'</span><br />';
       }
       if(site.remarqueAno) contenuAno += site.remarqueAno + '<br />';
 

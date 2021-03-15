@@ -8,6 +8,9 @@
                 {% for ano in commande.commandeST.anomalies %}
                     <span class="glyphicon glyphicon-warning-sign"></span> {{ ano.label| e}} <br />
                 {% endfor %}
+                {% if commande.commandeST is not null and commande.commandeST.remarqueAno is not null%}
+                    {{ commande.commandeST.remarqueAno }}
+                {% endif %}
             </div>
         </div>
     </div>
