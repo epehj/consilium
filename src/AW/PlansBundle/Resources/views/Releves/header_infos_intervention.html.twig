@@ -12,7 +12,7 @@
                 Accès : {{ commande.commandeST.acces }} <br />
                 Remarques : {{ commande.remarques }} <br />
                 {% if commande.commandeST is not null and commande.commandeST.urgence %}
-                    A réaliser avant le {{ commande.commandeST.urgence }}
+                    A réaliser avant le {{ commande.commandeST.urgence | date('d/m/Y')}}
                 {% endif %}
                 {% if commande.commandeST is not null and commande.commandeST.commentaire %}
                     Infos supplémentaires : {{ commande.commandeST.commentaire }}
