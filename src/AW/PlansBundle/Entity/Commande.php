@@ -49,8 +49,7 @@ class Commande
     /**
      * @var string
      *
-     * @ORM\Column(name="site", type="string", length=255)
-     * @Assert\NotBlank()
+     * @ORM\Column(name="site", type="string", length=255, nullable=true)
      * @Assert\Length(max=255)
      */
     private $site;
