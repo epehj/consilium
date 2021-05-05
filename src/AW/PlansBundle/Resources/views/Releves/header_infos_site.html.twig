@@ -52,6 +52,11 @@
             </table>
           </div>
         </div>
+        {% if commande.commandeST %}
+        <div class="col-md-6">
+          <span>Type de batiment : {{ commande.commandeST.typeBatiment.type }}</span>
+        </div>
+        {% endif %}
 
   </div>
     </div>
