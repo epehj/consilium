@@ -39,85 +39,20 @@
           <div class="col-md-6">
             URL : <a href="http://{{ commande.commandeST.urlInfosSite }}" target="_blank">{{ commande.commandeST.urlInfosSite }}</a>
           </div>
+
+          <div class="col-md-8 table-responsive">
+            <table class="table">
+              <tr>
+                <td style="border-top: none;">Validation obligatoire par le client :</td>
+                <td style="border-top: none;">{% if commande.commandeST.validationObligatoireByClient %}<span class="glyphicon glyphicon-ok-circle">Oui</span>{% else %}<span class="glyphicon glyphicon-remove-circle">Non</span>{% endif %}</td>
+              </tr>
+              <tr>
+                <td style="border-top: none;">Relevés/Plans dispos :</td>
+                <td style="border-top: none;">{% if commande.commandeST.relevesPlansDispo %}<span class="glyphicon glyphicon-ok-circle">Oui</span>{% else %}<span class="glyphicon glyphicon-remove-circle">Non</span>{% endif %}</td>
+            </table>
+          </div>
         </div>
+
   </div>
-
-{#  <div class="col-md-4"> <!-- infos site -->#}
-{#    <div class="panel panel-default">#}
-{#      <div class="panel-heading clearfix">#}
-{#        <h3 class="panel-title pull-left">Site</h3>#}
-{#        {% if is_granted('EDIT_INTERNAL_USER', commande) %}#}
-{#        <div class="btn-group pull-right">#}
-{#          <a href="{{ path('aw_plans_edit', {element: 'site', id: commande.id}) }}" class="btn btn-default">#}
-{#            <span class="glyphicon glyphicon-edit"></span>#}
-{#            <span class="hidden-xs">Modifier</span>#}
-{#          </a>#}
-{#        </div>#}
-{#        {% endif %}#}
-{#      </div>#}
-{#      <div class="panel-body">#}
-{#        <address>#}
-{#          <strong>{{ commande.site }}</strong><br />#}
-{#          {{ commande.address1 }}<br />#}
-{#          {% if commande.address2 %}{{ commande.address2 }}<br />{% endif %}#}
-{#          {{ commande.zip }} {{ commande.town }}#}
-{#        </address>#}
-
-{#        {% if commande.releve %}#}
-{#        <p class="text-danger">#}
-{#          <strong>Relevés de plans sur site par un technicien CONSILIUM :</strong> Oui#}
-{#        </p>#}
-{#        {% endif %}#}
-
-{#        {% if commande.pose %}#}
-{#        <p class="text-danger">#}
-{#          <strong>Pose des plans sur site par un technicien CONSILIUM :</strong> Oui#}
-{#        </p>#}
-{#        {% endif %}#}
-
-{#        {% if commande.releveNote %}#}
-{#        <p class="text-danger">#}
-{#          <strong>Note relevé/pose :</strong>#}
-{#          {{ commande.releveNote }}#}
-{#        </p>#}
-{#        {% endif %}#}
-
-{#        <p>#}
-{#          <strong>Remarques :</strong><br />#}
-{#          {{ commande.remarques | nl2br }}#}
-{#        </p>#}
-
-{#        {% if commande.contactBATName %}#}
-{#        <p>#}
-{#          <strong>Contact pour l'envoi des BATs :</strong><br />#}
-{#          {{ commande.contactBATName }} - {{ commande.contactBATPhone }} - <a href="mailto:{{ commande.contactBATEmail }}">{{ commande.contactBATEmail }}</a>#}
-{#        </p>#}
-{#        {% endif %}#}
-{#      </div>#}
-{#    </div>#}
-{#  </div>#}
-
-{#  <div class="col-md-4"> <!-- adresse de livraison -->#}
-{#    <div class="panel panel-default">#}
-{#      <div class="panel-heading clearfix">#}
-{#        <h3 class="panel-title pull-left">Adresse de livraison</h3>#}
-{#        {% if is_granted('EDIT', commande) %}#}
-{#        <div class="btn-group pull-right">#}
-{#          <a href="{{ path('aw_plans_edit', {element: 'shipping', id: commande.id}) }}" class="btn btn-default">#}
-{#            <span class="glyphicon glyphicon-edit"></span>#}
-{#            <span class="hidden-xs">Modifier</span>#}
-{#          </a>#}
-{#        </div>#}
-{#        {% endif %}#}
-{#      </div>#}
-{#      <div class="panel-body">#}
-{#        <address>#}
-{#          <strong>{{ commande.shippingRecipient }}</strong><br />#}
-{#          {{ commande.shippingAddress1 }}<br />#}
-{#          {% if commande.shippingAddress2 %}{{ commande.shippingAddress2 }}<br />{% endif %}#}
-{#          {{ commande.shippingZip }} {{ commande.shippingTown }}<br />#}
-{#          {% if commande.shippingCountry %}{{ commande.shippingCountry.name }}{% endif %}#}
-{#        </address>#}
-{#      </div>#}
     </div>
 </div>

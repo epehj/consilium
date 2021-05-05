@@ -206,8 +206,10 @@ class NewController extends Controller
     $commandeST = new CommandeST();
     $commandeST->setCommande($commande);
     $commande->setCommandeST($commandeST);
-    $commandeST->setInfosComplementaires(CommandeST::NONE);
+//    $commandeST->setInfosComplementaires(CommandeST::NONE);
     $commandeST->setCancel(false);
+    $commandeST->setValidationObligatoireByClient(false);
+    $commandeST->setRelevesPlansDispo(false);
 
     if($societe){
       $commande->setSociete($societe);
@@ -482,7 +484,7 @@ class NewController extends Controller
 
   public function uploadDeleteAction($dir, $file)
   {
-    $this->denyAccessUnlessGranted('webappli.cmdplan.new');
+//    $this->denyAccessUnlessGranted('webappli.cmdplan.new');
 
     $filepath = sys_get_temp_dir().'/'.$dir.'/'.$file;
     if(!file_exists($filepath) or !is_file($filepath)){

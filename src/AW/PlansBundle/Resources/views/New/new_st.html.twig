@@ -73,6 +73,7 @@
         {{ form_row(form.operation) }}
         {{ form_row(form.refBatiment) }}
         {{ form_row(form.typeBatiment) }}
+        {{ form_row(form.relevesPlansDispo) }}
 
         <div class="alert alert-info">
           <span class="pficon pficon-info"></span>
@@ -101,14 +102,7 @@
         {{ form_row(form.commande.zip) }}
         {{ form_row(form.commande.town) }}
         {{ form_row(form.urlInfosSite) }}
-
-{#        <div class="col-sm-2 col-sm-offset-5">#}
-{#          <button type="button" class="btn btn-primary" id="addfileBon">#}
-{#            <span class="glyphicon glyphicon-plus"></span>#}
-{#            Joindre un ou plusieurs documents<br/>#}
-{#            Plans, relevés, bons de pose…#}
-{#          </button>#}
-{#        </div>#}
+        {{ form_row(form.validationObligatoireByClient) }}
       </div>
     </div>
     <div class="alert alert-info">
@@ -168,6 +162,26 @@
           Joindre un ou plusieurs documents<br/>
           Plans, relevés, bons de pose…
         </button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="list-group" id="filelist">
+        {% if finder %}
+          {% for file in finder %}
+            <a class="list-group-item">
+              <span class="glyphicon glyphicon-file"></span>
+              <span class="filename">{{ file.filename }}</span>
+              <span class="pull-right">
+              <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_new_upload_delete', {dir: form.children.commande.dir.vars.value, file: file.filename}) }}">
+                <span class="glyphicon glyphicon-trash"></span>
+                <span class="hidden-xs">Supprimer</span>
+              </button>
+            </span>
+            </a>
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   </div>
@@ -387,7 +401,7 @@ $(function(){
 
   // fixme ajouter l'upload dans le bon dossier
   $('#relevesupload').fileupload({
-    url: "{{ path('aw_plans_new_upload', {type: 'releves'}) }}",
+    url: "{{ path('aw_plans_new_st_upload', {type: 'releves'}) }}",
     dataType: 'json',
     formData: {'form[dir]': '{% if form.children.commande.dir is defined %}{{ form.children.commande.dir.vars.value }}{% endif %}'} ,
     add: function(e, data){

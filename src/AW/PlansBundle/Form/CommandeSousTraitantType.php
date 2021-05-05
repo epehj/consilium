@@ -52,7 +52,8 @@ class CommandeSousTraitantType extends AbstractType
             'choices' => array(
                 "STR - Relevé" => CommandeST::PRESTA_RELEVE,
                 "STT - Total" => CommandeST::PRESTA_TOTAL,
-                "STP - Pose" => CommandeST::PRESTA_POSE
+                "STP - Pose" => CommandeST::PRESTA_POSE,
+                "PA" => CommandeST::PA
             )
         ))
         ->add('operation', TextType::class, array(
@@ -111,16 +112,24 @@ class CommandeSousTraitantType extends AbstractType
             'label' => false,
             'required' => false
         ))
-//        ->add('infosComplementaires', ChoiceType::class, array(
-//            'label' => 'Informations complémentaires',
-//            'required' => false,
-//            'expanded' => true,
-//            'multiple' => true,
-//            'choices' => array(
-//                'Relevé/Plan disponible' => 10,
-//                'Validation obligatoire par le client' => 20
-//            )
-//        ))
+        ->add('relevesPlansDispo', ChoiceType::class, array(
+            'label' => 'Relevés/Plans disponibles',
+            'required' => false,
+            'choices' => array(
+                'Oui' => true,
+                'Non' => false
+            ),
+            'placeholder' => false
+        ))
+        ->add('validationObligatoireByClient', ChoiceType::class, array(
+            'label' => 'Validation obligatoire par le client',
+            'required' => false,
+            'choices' => array(
+                'Oui' => true,
+                'Non' => false
+            ),
+            'placeholder' =>false
+        ))
     ;
 
   }
