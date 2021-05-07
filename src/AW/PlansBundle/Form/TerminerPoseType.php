@@ -70,8 +70,6 @@ class TerminerPoseType extends AbstractType
                 'label' => 'Remarque',
                 'required' => false
             ))
-//        ->add('commande', ContactBatNameType::class)
-
         ;
     }
 

@@ -583,10 +583,23 @@ class RelevesController extends Controller
             }
             return $this->redirectToRoute('aw_plans_releves_update', array('id' => $commande->getId(), 'status'=>Commande::RELEVE_STATUS_TERMINE));
         }
+
+
+        if($commande->getDir()){
+            $dir = $this->getParameter('documents_dir').'/cmdplan/'.$commande->getDir().'/creation';
+
+            $finder = new Finder();
+            $finder->files()
+                ->notName('logo.*')
+                ->notName('commande.pdf')
+                ->in($dir);
+        }
+
         return $this->render('AWPlansBundle:Releves:terminerReleve.html.twig',
             array(
                 'commande' => $commande,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'finder' => $finder
             ));
     }
 
@@ -615,10 +628,22 @@ class RelevesController extends Controller
                 return $this->redirectToRoute('aw_plans_releves_view', array('id' => $commande->getId()));
             }
         }
+
+        if($commande->getDir()){
+            $dir = $this->getParameter('documents_dir').'/cmdplan/'.$commande->getDir().'/creation';
+
+            $finder = new Finder();
+            $finder->files()
+                ->notName('logo.*')
+                ->notName('commande.pdf')
+                ->in($dir);
+        }
+
         return $this->render('AWPlansBundle:Releves:terminerPose.html.twig',
             array(
                 'commande' => $commande,
-                'form' => $form->createView()
+                'form' => $form->createView(),
+                'finder' => isset($finder) ? $finder : null
             ));
     }
 }

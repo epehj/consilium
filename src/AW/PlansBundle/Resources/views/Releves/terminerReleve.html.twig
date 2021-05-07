@@ -22,7 +22,41 @@
               <div class="panel-heading"><label for="releveCB">Relevé OK </label> <input type="checkbox" style="visibility: hidden;" id="releveCB" /></div>
               <div class="panel-body collapse" id="releve">
                   {{ form_row(form.commande.releveur)}}
-                  <input type="text" value="TODO ajouter des releves">
+
+                  <div class="panel-body">
+                      <div class="row">
+                          <div class="col-sm-2 col-sm-offset-5">
+                              <button type="button" class="btn btn-primary" id="addfile">
+                                  <span class="glyphicon glyphicon-plus"></span>
+                                  Joindre un ou plusieurs documents<br/>
+                                  Plans, relevés, bons de pose…
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-sm-12">
+                          <div class="list-group" id="filelist">
+                              {% if finder %}
+                                  {% for file in finder %}
+                                      <a class="list-group-item">
+                                          <span class="glyphicon glyphicon-file"></span>
+                                          <span class="filename">{{ file.filename }}</span>
+{#                                          <span class="pull-right">#}
+{#                                             {% if form.children.commande.vars.data.dir%}#}
+{#                                         <button class="btn btn-danger delete-file" data-link="{{ path('aw_plans_new_upload_delete', {dir: form.children.commande.vars.data.dir, file: file.filename}) }}">#}
+{#                                             {% endif %}#}
+{#                                            <span class="glyphicon glyphicon-trash"></span>#}
+{#                                            <span class="hidden-xs">Supprimer</span>#}
+{#                                         </button>#}
+{#                                        </span>#}
+                                      </a>
+                                  {% endfor %}
+                              {% endif %}
+                          </div>
+                      </div>
+                  </div>
+
                   {{ form_row(form.validationObligatoireByReleveur)}}
                   {{ form_row(form.commande.remarques) }}
               </div>
@@ -79,17 +113,20 @@
     </div>
   </div>
 </div>
-{#    {{ form_rest(form) }}#}
     {{ form_row(form._token) }}
     {{ form_end(form, {'render_rest': false}) }}
-
-
+    <div class="hidden">
+        <input type="file" name="form[files][]" id="relevesupload" multiple>
+    </div>
 {% endblock %}
 
 {% block javascripts %}
 {{ parent() }}
+<script src="{{ asset('libs/jquery-file-upload/js/vendor/jquery.ui.widget.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.iframe-transport.js') }}"></script>
 <script src="{{ asset('libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
 <script src="{{ asset('libs/bootstrap-datepicker/locales/bootstrap-datepicker.fr.min.js') }}"></script>
+<script src="{{ asset('libs/jquery-file-upload/js/jquery.fileupload.js') }}"></script>
 <script>
 $(function(){
     $('input:checkbox').on('change', function(event){
@@ -153,8 +190,59 @@ $(function(){
       DoW = Math.round((ms - d.valueOf()) / (7 * 864e5)) + 1;
 
       $('#aw_plansbundle_commande_releve_note_releveNote').val('RDV semaine '+DoW);
-    })
-  ;
+    });
+
+  // trigger de tous les events pour upload
+    $('#addfile').click(function(){
+        $('#relevesupload').trigger('click');
+    });
+
+    $('#relevesupload').fileupload({
+        url: "{{ path('aw_plans_end_st_upload', {type: 'releves'}) }}",
+        dataType: 'json',
+        formData: {'form[dir]': '{% if form.children.commande.vars.data.dir is defined %}{{ form.children.commande.vars.data.dir}}{% endif %}'} ,
+        add: function(e, data){
+            data.context = [];
+            $.each(data.files, function(index, file){
+                var item = $('<a/>')
+                    .addClass('list-group-item')
+                    .append('<span class="glyphicon glyphicon-file"></span><span class="filename">'+file.name+'</span><span class="pull-right"><span class="spinner spinner-xs spinner-inline"></span> <span class="hidden-xs">Envoi du fichier en cours... Merci de patientez...</span></span>');
+                item.appendTo('#filelist');
+                data.context.push(item);
+            });
+            data.submit();
+        },
+        done: function(e, data){
+            $.each(data.result, function (index, file){
+                // data.context[index].find('.filename').text(file.name);
+                //
+                // var deleteBtn = $('<button class="btn btn-danger delete-file" data-link="'+file.delete_url+'"><span class="glyphicon glyphicon-trash"></span><span class="hidden-xs">Supprimer</span></button>');
+                data.context[index].find('.pull-right').html('');
+                // data.context[index].find('.pull-right').append(deleteBtn);
+            });
+        },
+        fail: function(e, data){
+            $.each(data.files, function(index, file){
+                data.context[index].find('.pull-right').html('<strong>Échec</strong>');
+            });
+        }
+    });
+
+    $('#filelist').delegate('.delete-file', 'click', function(e){
+        e.preventDefault();
+
+        var item = $(this).parent().parent();
+        $.ajax({
+            dataType: 'json',
+            method: 'DELETE',
+            url: $(this).data('link'),
+            success: function(data){
+                item.remove();
+            }
+        });
+        return false;
+    });
+
 });
 </script>
 {% endblock %}

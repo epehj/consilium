@@ -467,6 +467,56 @@ class NewController extends Controller
     $message = $form->getErrors() ? $form->getErrors() : 'Échec de téléchargement.';
     throw new \Exception($message);
   }
+  // sale de ouf, mais j'ai plus le temps : upload quand on termine une pose/releve, on sait que le dossier creation existe déjà
+  public function uploadEndAction(Request $request, $type)
+  {
+    $this->denyAccessUnlessGranted('webappli.cmdplan.new');
+
+    $response = array();
+    $builder = $this->createFormBuilder(array(), array('csrf_protection' => false));
+    $builder->add('dir', TextType::class);
+
+    if($type == 'logo'){
+      $builder->add('logo', FileType::class);
+    }else{
+      $builder->add('files', FileType::class, array('multiple' => true));
+    }
+
+    $form = $builder->getForm();
+    if($form->handleRequest($request)->isValid()){
+      $data = $form->getData();
+
+      $fs = new Filesystem();
+      $dir = $this->getParameter('documents_dir').'/cmdplan/'.'/'.$data['dir'].'/creation';
+
+      if(!file_exists($dir)){
+        throw new \Exception('Dossier temporaire introuvable.');
+      }
+
+      if(!is_dir($dir)){
+        throw new \Exception('Dossier temporaire incorrect.');
+      }
+
+    foreach($data['files'] as $file){
+      $filename = $file->getClientOriginalName();
+      $mimetype = $file->getMimeType();
+      $file->move($dir, $filename);
+      $response[] = array(
+        'url' => $filename,
+        'name' => $filename,
+        'type' => $mimetype,
+        'size' => filesize($dir.'/'.$filename),
+        'delete_url' => $this->generateUrl('aw_plans_new_upload_delete', array('dir' => $data['dir'], 'file' => $filename))
+      );
+    }
+
+
+      return new JsonResponse($response);
+    }
+
+    $message = $form->getErrors() ? $form->getErrors() : 'Échec de téléchargement.';
+    throw new \Exception($message);
+  }
 
   public function uploadViewAction($dir, $file)
   {

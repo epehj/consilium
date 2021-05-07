@@ -228,7 +228,7 @@
   </div>
 </div>
 {#  todo a cacher sauf si selection pose#}
-<div id="livraison" class="panel panel-info hidden"> <!-- adresse de livraison -->
+<div id="livraison" class="panel panel-info "> <!-- adresse de livraison -->
   <div class="panel-heading">
     <h3 class="panel-title">Adresse de livraison</h3>
   </div>
@@ -327,13 +327,14 @@ $(function(){
   });
 
   //affichage du div infos de livraison si choix de prestation releve
-  $("input[name='aw_plansbundle_commande_st[prestation]']").click(function() {
-    if ($(this).val() == 1) {
-      $('#livraison').removeClass('hidden');
-    } else {
-      $('#livraison').addClass('hidden');
-    }
-  });
+  // $("input[name='aw_plansbundle_commande_st[prestation]']").click(function() {
+  //   console.log($(this).val());
+  //   if ($(this).val() == "STR - Pose") {
+  //     $('#livraison').removeClass('hidden');
+  //   } else {
+  //     $('#livraison').addClass('hidden');
+  //   }
+  // });
 
   // auto complete pour les adresses
   $('.typeahead').typeahead({
