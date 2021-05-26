@@ -567,6 +567,7 @@ class RelevesController extends Controller
         $commandeST = $commande->getCommandeST();
       //RAZ des ano s'il en existait d'anciennes (demande de Quentin)
         $commandeST->getAnomalies()->clear();
+        $commandeST->setCommande($commande);
         $form = $this->get('form.factory')->create(TerminerReleveType::class, $commandeST);
 
         $form->handleRequest($request);
@@ -609,6 +610,7 @@ class RelevesController extends Controller
         if( $commande->getCommandeST() == null)
             $commande->setCommandeST(new CommandeST());
         $commandeST = $commande->getCommandeST();
+        $commandeST->setCommande($commande);
         // on RAZ les valeurs pour remettre "par defaut" (demande de Quentin)
         $commandeST->getAnomalies()->clear();
         $commandeST->setInaccessible(false);
